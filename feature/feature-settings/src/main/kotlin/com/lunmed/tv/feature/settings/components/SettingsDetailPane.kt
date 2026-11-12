@@ -1,7 +1,9 @@
 package com.lunmed.tv.feature.settings.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -9,18 +11,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Tv
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,9 +36,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -106,30 +122,41 @@ fun SettingsDetailPane(
 
         when (section) {
             SettingsSection.APPEARANCE -> {
-                SettingGroup(title = "Signature Accent Palette") {
-                    AccentPreset.entries.forEach { preset ->
-                        val tokens = LunmedColors.forAccent(preset)
-                        val name = when (preset) {
-                            AccentPreset.CHAMPAGNE_GOLD -> "Champagne Gold"
-                            AccentPreset.ICE_CYAN -> "Ice Cyan"
-                            AccentPreset.PLATINUM_SILVER -> "Platinum Silver"
-                            AccentPreset.OBSIDIAN_AMBER -> "Obsidian Amber"
-                        }
-                        SelectableOptionRow(
-                            title = name,
-                            subtitle = "LUNMED Signature luxury tone",
-                            isSelected = preferences.accentPreset == preset,
-                            leadingChipColor = tokens.accentPrimary,
-                            onClick = { onSetAccentPreset(preset) },
-                        )
-                    }
+                // 1. Apple tvOS Control Center Hero Card
+                AppearanceHeroControlCenterBanner(
+                    onClick = { showAppleControlCenter = true },
+                )
+
+                // 2. Signature Accent Palette Swatch Gallery
+                SettingGroup(title = "Signature Accent Palette (ألوان النظام الملكية)") {
+                    PaletteSwatchGallery(
+                        selectedPreset = preferences.accentPreset,
+                        onSelectPreset = onSetAccentPreset,
+                    )
                 }
 
-                SettingGroup(title = "Interface Density") {
+                // 3. App Icon Presentation Visual Gallery
+                SettingGroup(title = "App Icon Presentation Mode (طريقة عرض الأيقونات)") {
+                    IconModeVisualSelector(
+                        selectedMode = preferences.iconDisplayMode,
+                        onSelectMode = onSetIconDisplayMode,
+                    )
+                }
+
+                // 4. Scenic Dynamic Wallpapers Showcase Gallery
+                SettingGroup(title = "Scenic Dynamic Wallpapers (الخلفيات الخلابة والمتحركة)") {
+                    ScenicWallpaperShowcase(
+                        selectedWallpaperId = preferences.selectedWallpaperId,
+                        onSelectWallpaper = onSelectWallpaper,
+                    )
+                }
+
+                // 5. Interface Density
+                SettingGroup(title = "Interface Density (كثافة وهوامش الشاشة)") {
                     InterfaceDensity.entries.forEach { density ->
                         val (title, sub) = when (density) {
-                            InterfaceDensity.COMFORTABLE -> "Comfortable" to "Spacious margins (48dp) for larger living room displays"
-                            InterfaceDensity.COMPACT -> "Compact" to "Tighter spacing (40dp) to maximize visible apps on screen"
+                            InterfaceDensity.COMFORTABLE -> "Comfortable (مريح)" to "Spacious margins (48dp) for larger living room displays"
+                            InterfaceDensity.COMPACT -> "Compact (مضغوط)" to "Tighter spacing (40dp) to maximize visible apps on screen"
                         }
                         SelectableOptionRow(
                             title = title,
@@ -140,7 +167,8 @@ fun SettingsDetailPane(
                     }
                 }
 
-                SettingGroup(title = "App Card Dimensions") {
+                // 6. App Card Dimensions
+                SettingGroup(title = "App Card Dimensions (أبعاد بطاقات التطبيقات)") {
                     CardSizePreset.entries.forEach { size ->
                         val (title, sub) = when (size) {
                             CardSizePreset.COMPACT -> "Compact (160×90)" to "High density layout"
@@ -152,43 +180,6 @@ fun SettingsDetailPane(
                             subtitle = sub,
                             isSelected = preferences.cardSize == size,
                             onClick = { onSetCardSize(size) },
-                        )
-                    }
-                }
-
-                SettingGroup(title = "Apple tvOS Quick Settings (مركز تحكم نمط آبل)") {
-                    ActionSettingButton(
-                        title = "Open Apple Control Center (فتح مركز تحكم نمط آبل)",
-                        subtitle = "عرض واجهة تحكم آبل السريعة للاتصال، الصوت، الشاشة، والخلفيات بنمط tvOS الفاخر",
-                        icon = Icons.Rounded.Tune,
-                        onClick = { showAppleControlCenter = true },
-                    )
-                }
-
-                SettingGroup(title = "App Icon Presentation Mode (طريقة عرض الأيقونات)") {
-                    IconDisplayMode.entries.forEach { mode ->
-                        val (title, sub) = when (mode) {
-                            IconDisplayMode.CINEMA_BANNER -> "Cinema Banners (شريط سينمائي 16:9)" to "Widescreen dynamic cards with cinematic preview banners"
-                            IconDisplayMode.SQUARE_IOS -> "Apple TV Squircle (أيقونات آبل المربعة)" to "Signature iOS / Apple TV squircle icon grid with ambient jewel aura"
-                            IconDisplayMode.COMPACT_CAPSULE -> "Modern Capsule Dock (كبسولات عصرية)" to "Streamlined horizontal pill capsules with inline app label"
-                        }
-                        SelectableOptionRow(
-                            title = title,
-                            subtitle = sub,
-                            isSelected = preferences.iconDisplayMode == mode,
-                            onClick = { onSetIconDisplayMode(mode) },
-                        )
-                    }
-                }
-
-                SettingGroup(title = "Scenic Dynamic Wallpapers (الخلفيات الخلابة)") {
-                    LunmedWallpapers.BUILT_IN.forEach { wallpaper ->
-                        SelectableOptionRow(
-                            title = wallpaper.title,
-                            subtitle = wallpaper.description,
-                            isSelected = preferences.selectedWallpaperId == wallpaper.id,
-                            leadingChipColor = Color(wallpaper.ambientGlowArgb),
-                            onClick = { onSelectWallpaper(wallpaper.id) },
                         )
                     }
                 }
@@ -485,6 +476,595 @@ fun SettingsDetailPane(
             onRequestDefaultLauncher = onRequestDefaultLauncher,
             onDismiss = { showAppleControlCenter = false },
         )
+    }
+}
+
+@Composable
+private fun AppearanceHeroControlCenterBanner(
+    onClick: () -> Unit,
+) {
+    val colors = LunmedTheme.colors
+    val anim = LunmedTheme.animation
+    val shape = RoundedCornerShape(24.dp)
+    var isFocused by remember { mutableStateOf(false) }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.02f else 1.0f,
+        animationSpec = anim.scaleSpringSpec(),
+        label = "HeroBannerScale",
+    )
+
+    Surface(
+        onClick = onClick,
+        shape = ClickableSurfaceDefaults.shape(shape),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
+            contentColor = colors.textPrimary,
+            focusedContentColor = colors.accentPrimary,
+        ),
+        border = ClickableSurfaceDefaults.border(
+            border = Border(
+                border = BorderStroke(
+                    1.5.dp,
+                    Brush.linearGradient(
+                        listOf(colors.accentPrimary.copy(alpha = 0.5f), Color(0x22FFFFFF), Color(0x0EFFFFFF)),
+                    ),
+                ),
+                shape = shape,
+            ),
+            focusedBorder = Border(
+                border = BorderStroke(
+                    2.dp,
+                    Brush.linearGradient(
+                        listOf(Color(0xFFFFF8E7), colors.accentPrimary, Color(0xFFC49A45)),
+                    ),
+                ),
+                shape = shape,
+            ),
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(shape)
+            .background(
+                Brush.horizontalGradient(
+                    listOf(
+                        if (isFocused) colors.surfaceCardFocused else colors.surfaceElevated.copy(alpha = 0.95f),
+                        Color(0xFF0F111E),
+                        Color(0xFF06070B),
+                    ),
+                ),
+                shape,
+            )
+            .onFocusChanged { isFocused = it.isFocused },
+    ) {
+        Row(
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(54.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(colors.accentPrimary.copy(alpha = 0.35f), Color(0x18FFFFFF)),
+                        ),
+                    )
+                    .border(1.5.dp, colors.accentPrimary, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "",
+                    style = LunmedTheme.typography.headlineSection.copy(fontSize = 24.sp),
+                    color = colors.accentPrimary,
+                )
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = "Apple tvOS Control Center",
+                        style = LunmedTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 16.sp),
+                        color = colors.textPrimary,
+                    )
+                    Box(
+                        modifier = Modifier
+                            .background(colors.accentPrimary.copy(alpha = 0.20f), CircleShape)
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                    ) {
+                        Text(
+                            text = "tvOS 18 Luxury",
+                            style = LunmedTheme.typography.labelMeta.copy(fontSize = 10.sp, fontWeight = FontWeight.Bold),
+                            color = colors.accentPrimary,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(
+                    text = "افتح واجهة تحكم آبل العائمة السريعة للاتصال، الصوت، دقة العرض 4K، والخلفيات الخلابة بنقرة واحدة",
+                    style = LunmedTheme.typography.bodySecondary.copy(fontSize = 12.sp),
+                    color = colors.textMuted,
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (isFocused) colors.accentPrimary else Color(0x22FFFFFF))
+                    .padding(horizontal = 14.dp, vertical = 8.dp),
+            ) {
+                Text(
+                    text = "فتح المركز ▷",
+                    style = LunmedTheme.typography.labelAction.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = if (isFocused) Color.Black else colors.textPrimary,
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PaletteSwatchGallery(
+    selectedPreset: AccentPreset,
+    onSelectPreset: (AccentPreset) -> Unit,
+) {
+    val colors = LunmedTheme.colors
+    val anim = LunmedTheme.animation
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        AccentPreset.entries.forEach { preset ->
+            val isSelected = preset == selectedPreset
+            val tokens = LunmedColors.forAccent(preset)
+            val name = when (preset) {
+                AccentPreset.CHAMPAGNE_GOLD -> "Champagne Gold"
+                AccentPreset.ICE_CYAN -> "Ice Cyan"
+                AccentPreset.PLATINUM_SILVER -> "Platinum Silver"
+                AccentPreset.OBSIDIAN_AMBER -> "Obsidian Amber"
+            }
+            val subtitle = when (preset) {
+                AccentPreset.CHAMPAGNE_GOLD -> "ذهب عيار 24"
+                AccentPreset.ICE_CYAN -> "سيان جليدي"
+                AccentPreset.PLATINUM_SILVER -> "بلاتين ملكي"
+                AccentPreset.OBSIDIAN_AMBER -> "عنبر أوبسيديان"
+            }
+
+            var isFocused by remember { mutableStateOf(false) }
+            val scale by animateFloatAsState(
+                targetValue = if (isFocused) 1.05f else 1.0f,
+                animationSpec = anim.scaleSpringSpec(),
+                label = "SwatchScale",
+            )
+
+            val shape = RoundedCornerShape(16.dp)
+
+            Surface(
+                onClick = { onSelectPreset(preset) },
+                shape = ClickableSurfaceDefaults.shape(shape),
+                colors = ClickableSurfaceDefaults.colors(
+                    containerColor = if (isSelected) colors.surfaceCardFocused else colors.surfaceElevated,
+                    focusedContainerColor = colors.surfaceCardFocused,
+                    contentColor = colors.textPrimary,
+                    focusedContentColor = tokens.accentPrimary,
+                ),
+                border = ClickableSurfaceDefaults.border(
+                    border = Border(
+                        border = BorderStroke(
+                            if (isSelected) 2.dp else 1.dp,
+                            if (isSelected) tokens.accentPrimary else Color(0x20FFFFFF),
+                        ),
+                        shape = shape,
+                    ),
+                    focusedBorder = Border(
+                        border = BorderStroke(2.dp, colors.borderFocused),
+                        shape = shape,
+                    ),
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
+                    .clip(shape)
+                    .onFocusChanged { isFocused = it.isFocused },
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(
+                                        tokens.accentPrimary,
+                                        tokens.accentSecondary,
+                                        tokens.accentPrimary.copy(alpha = 0.8f),
+                                    ),
+                                ),
+                            ),
+                    ) {
+                        if (isSelected) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(6.dp)
+                                    .size(18.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Black.copy(alpha = 0.75f)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    contentDescription = null,
+                                    tint = tokens.accentPrimary,
+                                    modifier = Modifier.size(12.dp),
+                                )
+                            }
+                        }
+                    }
+
+                    Column(modifier = Modifier.padding(10.dp)) {
+                        Text(
+                            text = name,
+                            style = LunmedTheme.typography.bodyPrimary.copy(
+                                fontWeight = if (isSelected || isFocused) FontWeight.Bold else FontWeight.Medium,
+                                fontSize = 12.sp,
+                            ),
+                            color = if (isSelected || isFocused) tokens.accentPrimary else colors.textPrimary,
+                            maxLines = 1,
+                        )
+                        Text(
+                            text = subtitle,
+                            style = LunmedTheme.typography.labelMeta.copy(fontSize = 10.sp),
+                            color = colors.textMuted,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun IconModeVisualSelector(
+    selectedMode: IconDisplayMode,
+    onSelectMode: (IconDisplayMode) -> Unit,
+) {
+    val colors = LunmedTheme.colors
+    val anim = LunmedTheme.animation
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        IconDisplayMode.entries.forEach { mode ->
+            val isSelected = mode == selectedMode
+            var isFocused by remember { mutableStateOf(false) }
+
+            val scale by animateFloatAsState(
+                targetValue = if (isFocused) 1.04f else 1.0f,
+                animationSpec = anim.scaleSpringSpec(),
+                label = "IconModeScale",
+            )
+
+            val shape = RoundedCornerShape(18.dp)
+
+            val (title, subtitle) = when (mode) {
+                IconDisplayMode.CINEMA_BANNER -> "Cinema Banners" to "16:9 أشرطة سينمائية عريضة"
+                IconDisplayMode.SQUARE_IOS -> "Apple TV Squircle" to "1:1 أيقونات آبل المربعة الفاخرة"
+                IconDisplayMode.COMPACT_CAPSULE -> "Capsule Dock" to "كبسولات أفقية عصرية مضغوطة"
+            }
+
+            Surface(
+                onClick = { onSelectMode(mode) },
+                shape = ClickableSurfaceDefaults.shape(shape),
+                colors = ClickableSurfaceDefaults.colors(
+                    containerColor = if (isSelected) colors.surfaceCardFocused else colors.surfaceElevated,
+                    focusedContainerColor = colors.surfaceCardFocused,
+                    contentColor = colors.textPrimary,
+                    focusedContentColor = colors.accentPrimary,
+                ),
+                border = ClickableSurfaceDefaults.border(
+                    border = Border(
+                        border = BorderStroke(
+                            if (isSelected) 2.dp else 1.dp,
+                            if (isSelected) colors.accentPrimary else Color(0x20FFFFFF),
+                        ),
+                        shape = shape,
+                    ),
+                    focusedBorder = Border(
+                        border = BorderStroke(2.dp, colors.borderFocused),
+                        shape = shape,
+                    ),
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
+                    .clip(shape)
+                    .onFocusChanged { isFocused = it.isFocused },
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(68.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0x15FFFFFF)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        when (mode) {
+                            IconDisplayMode.CINEMA_BANNER -> {
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 96.dp, height = 52.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(
+                                            Brush.linearGradient(
+                                                listOf(colors.accentPrimary.copy(alpha = 0.35f), Color(0x33FFFFFF)),
+                                            ),
+                                        )
+                                        .border(1.dp, if (isSelected) colors.accentPrimary else Color(0x33FFFFFF), RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Tv,
+                                        contentDescription = null,
+                                        tint = if (isSelected) colors.accentPrimary else Color.White,
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                }
+                            }
+                            IconDisplayMode.SQUARE_IOS -> {
+                                Box(
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(colors.accentPrimary.copy(alpha = 0.40f), Color(0x22FFFFFF)),
+                                            ),
+                                        )
+                                        .border(1.2.dp, if (isSelected) colors.accentPrimary else Color(0x44FFFFFF), RoundedCornerShape(16.dp)),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Text(
+                                        text = "",
+                                        style = LunmedTheme.typography.titleLarge.copy(fontSize = 20.sp),
+                                        color = if (isSelected) colors.accentPrimary else Color.White,
+                                    )
+                                }
+                            }
+                            IconDisplayMode.COMPACT_CAPSULE -> {
+                                Row(
+                                    modifier = Modifier
+                                        .size(width = 110.dp, height = 36.dp)
+                                        .clip(RoundedCornerShape(18.dp))
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                listOf(colors.accentPrimary.copy(alpha = 0.25f), Color(0x22FFFFFF)),
+                                            ),
+                                        )
+                                        .border(1.dp, if (isSelected) colors.accentPrimary else Color(0x33FFFFFF), RoundedCornerShape(18.dp))
+                                        .padding(horizontal = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clip(CircleShape)
+                                            .background(colors.accentPrimary),
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .size(width = 50.dp, height = 6.dp)
+                                            .clip(RoundedCornerShape(3.dp))
+                                            .background(Color.White.copy(alpha = 0.6f)),
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            Text(
+                                text = title,
+                                style = LunmedTheme.typography.bodyPrimary.copy(
+                                    fontWeight = if (isSelected || isFocused) FontWeight.Bold else FontWeight.Medium,
+                                    fontSize = 13.sp,
+                                ),
+                                color = if (isSelected || isFocused) colors.accentPrimary else colors.textPrimary,
+                            )
+                            if (isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(14.dp)
+                                        .clip(CircleShape)
+                                        .background(colors.accentPrimary),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(10.dp),
+                                    )
+                                }
+                            }
+                        }
+                        Text(
+                            text = subtitle,
+                            style = LunmedTheme.typography.labelMeta.copy(fontSize = 10.sp),
+                            color = colors.textMuted,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScenicWallpaperShowcase(
+    selectedWallpaperId: String,
+    onSelectWallpaper: (String) -> Unit,
+) {
+    val colors = LunmedTheme.colors
+    val anim = LunmedTheme.animation
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        items(LunmedWallpapers.BUILT_IN) { wallpaper ->
+            val isSelected = wallpaper.id == selectedWallpaperId
+            var isFocused by remember { mutableStateOf(false) }
+
+            val scale by animateFloatAsState(
+                targetValue = if (isFocused) 1.06f else 1.0f,
+                animationSpec = anim.scaleSpringSpec(),
+                label = "WallpaperShowcaseScale",
+            )
+
+            val shape = RoundedCornerShape(18.dp)
+
+            Surface(
+                onClick = { onSelectWallpaper(wallpaper.id) },
+                shape = ClickableSurfaceDefaults.shape(shape),
+                colors = ClickableSurfaceDefaults.colors(
+                    containerColor = Color(wallpaper.primaryColorArgb),
+                    focusedContainerColor = Color(wallpaper.primaryColorArgb),
+                    contentColor = colors.textPrimary,
+                    focusedContentColor = colors.textPrimary,
+                ),
+                border = ClickableSurfaceDefaults.border(
+                    border = Border(
+                        border = BorderStroke(
+                            if (isSelected) 2.2.dp else 1.dp,
+                            if (isSelected) colors.accentPrimary else Color(0x30FFFFFF),
+                        ),
+                        shape = shape,
+                    ),
+                    focusedBorder = Border(
+                        border = BorderStroke(2.2.dp, colors.borderFocused),
+                        shape = shape,
+                    ),
+                ),
+                modifier = Modifier
+                    .size(width = 170.dp, height = 110.dp)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
+                    .clip(shape)
+                    .onFocusChanged { isFocused = it.isFocused },
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val w = size.width
+                        val h = size.height
+                        val glow = Color(wallpaper.ambientGlowArgb)
+
+                        drawRect(
+                            brush = Brush.radialGradient(
+                                colors = listOf(glow.copy(alpha = 0.50f), Color.Transparent),
+                                center = Offset(w * 0.5f, h * 0.25f),
+                                radius = w * 0.65f,
+                            ),
+                        )
+
+                        val path = Path().apply {
+                            moveTo(0f, h)
+                            lineTo(0f, h * 0.72f)
+                            cubicTo(w * 0.35f, h * 0.58f, w * 0.65f, h * 0.80f, w, h * 0.65f)
+                            lineTo(w, h)
+                            close()
+                        }
+                        drawPath(
+                            path = path,
+                            brush = Brush.verticalGradient(
+                                listOf(Color(0x55000000), Color(0xDD000000)),
+                                startY = h * 0.58f,
+                                endY = h,
+                            ),
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                        ) {
+                            if (isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clip(CircleShape)
+                                        .background(colors.accentPrimary),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(13.dp),
+                                    )
+                                }
+                            }
+                        }
+
+                        Column {
+                            Text(
+                                text = wallpaper.title,
+                                style = LunmedTheme.typography.bodyPrimary.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                ),
+                                color = if (isSelected) colors.accentPrimary else Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Text(
+                                text = wallpaper.scenicType.name.replace("_", " "),
+                                style = LunmedTheme.typography.labelMeta.copy(fontSize = 10.sp),
+                                color = Color.White.copy(alpha = 0.7f),
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

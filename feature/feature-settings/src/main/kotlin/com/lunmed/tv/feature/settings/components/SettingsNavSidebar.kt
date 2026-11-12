@@ -1,16 +1,23 @@
 package com.lunmed.tv.feature.settings.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.Home
@@ -25,10 +32,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
@@ -51,7 +63,7 @@ fun SettingsNavSidebar(
             .width(320.dp)
             .fillMaxHeight()
             .lunmedFocusGroupRestorer(),
-        verticalArrangement = Arrangement.spacedBy(spacing.xs),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SettingsSection.entries.forEach { section ->
             val isSelected = section == selectedSection
@@ -85,18 +97,32 @@ private fun SidebarItem(
 ) {
     val colors = LunmedTheme.colors
     val anim = LunmedTheme.animation
-    val shape = LunmedTheme.shapes.cardSmall
+    val shape = RoundedCornerShape(16.dp)
     var isFocused by remember { mutableStateOf(false) }
 
-    val containerColor by animateColorAsState(
-        targetValue = when {
-            isFocused -> colors.surfaceCardFocused
-            isSelected -> colors.surfaceElevated
-            else -> Color.Transparent
-        },
-        animationSpec = anim.focusSpec(),
-        label = "SidebarItemBg",
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.02f else 1.0f,
+        animationSpec = anim.scaleSpringSpec(),
+        label = "SidebarItemScale",
     )
+
+    val containerBrush = when {
+        isFocused -> Brush.horizontalGradient(
+            listOf(
+                colors.surfaceCardFocused,
+                colors.surfaceCardFocused.copy(alpha = 0.85f),
+            ),
+        )
+        isSelected -> Brush.horizontalGradient(
+            listOf(
+                colors.surfaceElevated.copy(alpha = 0.95f),
+                colors.surfaceElevated.copy(alpha = 0.60f),
+            ),
+        )
+        else -> Brush.horizontalGradient(
+            listOf(Color.Transparent, Color.Transparent),
+        )
+    }
 
     val contentColor by animateColorAsState(
         targetValue = when {
@@ -112,51 +138,89 @@ private fun SidebarItem(
         onClick = onClick,
         shape = ClickableSurfaceDefaults.shape(shape),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = containerColor,
-            focusedContainerColor = colors.surfaceCardFocused,
+            containerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
             contentColor = contentColor,
             focusedContentColor = colors.accentPrimary,
         ),
         border = ClickableSurfaceDefaults.border(
             border = if (isSelected) {
-                Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = shape)
+                Border(
+                    border = BorderStroke(1.dp, Color(0x33FFFFFF)),
+                    shape = shape,
+                )
             } else {
                 Border.None
             },
             focusedBorder = Border(
-                border = BorderStroke(2.dp, colors.borderFocused),
+                border = BorderStroke(
+                    1.8.dp,
+                    Brush.linearGradient(
+                        listOf(Color(0xFFFFF8E7), colors.accentPrimary, Color(0xFFC49A45)),
+                    ),
+                ),
                 shape = shape,
             ),
         ),
         modifier = Modifier
             .fillMaxWidth()
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(shape)
+            .background(containerBrush, shape)
             .onFocusChanged { isFocused = it.isFocused },
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = contentColor,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
+            // Active Gold Indicator Pill
+            if (isSelected) {
+                Box(
+                    modifier = Modifier
+                        .size(width = 3.5.dp, height = 24.dp)
+                        .background(colors.accentPrimary, RoundedCornerShape(2.dp)),
+                )
+            }
+
+            // Tactile Icon Circle
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isFocused) colors.accentPrimary.copy(alpha = 0.22f)
+                        else if (isSelected) colors.accentPrimary.copy(alpha = 0.14f)
+                        else Color(0x14FFFFFF),
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isFocused || isSelected) colors.accentPrimary else colors.textSecondary,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = LunmedTheme.typography.titleCard,
+                    style = LunmedTheme.typography.bodyPrimary.copy(
+                        fontWeight = if (isSelected || isFocused) FontWeight.Bold else FontWeight.Medium,
+                        fontSize = 14.sp,
+                    ),
                     color = contentColor,
                 )
                 Text(
                     text = subtitle,
-                    style = LunmedTheme.typography.labelMeta,
+                    style = LunmedTheme.typography.labelMeta.copy(fontSize = 11.sp),
                     color = colors.textMuted,
-                    maxLines = 1,
                 )
             }
         }
     }
 }
-
