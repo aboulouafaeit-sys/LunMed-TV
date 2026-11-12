@@ -21,6 +21,7 @@ data class AppLibraryUiState(
     val contextMenuApp: AppInfo? = null,
     val categoryPickerApp: AppInfo? = null,
     val cardSize: CardSizePreset = CardSizePreset.STANDARD,
+    val iconDisplayMode: com.lunmed.tv.core.model.IconDisplayMode = com.lunmed.tv.core.model.IconDisplayMode.CINEMA_BANNER,
     val selectedWallpaperId: String = "lunmed_aurora_nordic",
     val networkStatus: NetworkStatus = NetworkStatus(false, NetworkTransport.OFFLINE),
     val capabilities: DeviceCapabilities? = null,

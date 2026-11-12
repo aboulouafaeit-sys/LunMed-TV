@@ -130,6 +130,12 @@ class AndroidDeviceDiagnosticsRepository @Inject constructor(
             "SDR"
         }
 
+        val audioSummary = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            "Dolby Atmos / 7.1 HD Master Passthrough"
+        } else {
+            "Dolby Digital / PCM 5.1 Passthrough"
+        }
+
         return DisplayDiagnostics(
             resolutionWidth = width,
             resolutionHeight = height,
@@ -137,11 +143,47 @@ class AndroidDeviceDiagnosticsRepository @Inject constructor(
             densityDpi = densityDpi,
             is4k = is4k,
             hdrSupportSummary = hdrTypes,
+            audioOutputPipeline = audioSummary,
         )
     }
 
     private fun queryPlatformDiagnostics(): HardwarePlatformDiagnostics {
         val abis = Build.SUPPORTED_ABIS.joinToString(", ").ifBlank { "Unknown" }
+        val rawBoard = Build.BOARD.ifBlank { Build.HARDWARE }.lowercase()
+        val rawManufacturer = Build.MANUFACTURER.lowercase()
+        val rawBrand = Build.BRAND.lowercase()
+
+        val architecture = when {
+            rawBoard.contains("meson") || rawBoard.contains("gxl") || rawBoard.contains("g12") ||
+                rawBoard.contains("sm1") || rawBoard.contains("amlogic") || rawBoard.contains("s905") ||
+                rawBoard.contains("s912") || rawBoard.contains("s922") || rawBoard.contains("a311") ->
+                "Amlogic Silicon Architecture"
+
+            rawBoard.contains("rk3") || rawBoard.contains("rockchip") ->
+                "Rockchip Ultra Silicon"
+
+            rawBoard.contains("sunxi") || rawBoard.contains("allwinner") || rawBoard.contains("h6") ||
+                rawBoard.contains("h313") || rawBoard.contains("h616") ->
+                "Allwinner Technology Architecture"
+
+            rawBoard.contains("mt") || rawManufacturer.contains("mediatek") ->
+                "MediaTek Kompanio/Dimensity"
+
+            rawBoard.contains("qcom") || rawBoard.contains("msm") || rawBoard.contains("snapdragon") ->
+                "Qualcomm Snapdragon TV"
+
+            rawBoard.contains("tegra") || rawBrand.contains("nvidia") ->
+                "NVIDIA Tegra X1 Superchip"
+
+            rawBoard.contains("exynos") ->
+                "Samsung Exynos TV Engine"
+
+            abis.contains("arm64") ->
+                "ARM64-v8a High Performance Core"
+
+            else -> "ARM Architecture"
+        }
+
         return HardwarePlatformDiagnostics(
             brand = Build.BRAND.replaceFirstChar { it.uppercase() },
             manufacturer = Build.MANUFACTURER.replaceFirstChar { it.uppercase() },
@@ -157,6 +199,8 @@ class AndroidDeviceDiagnosticsRepository @Inject constructor(
                 "N/A"
             },
             buildDisplay = Build.DISPLAY,
+            cpuCores = Runtime.getRuntime().availableProcessors(),
+            chipArchitecture = architecture,
         )
     }
 

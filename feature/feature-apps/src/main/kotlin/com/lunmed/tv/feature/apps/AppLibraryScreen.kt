@@ -203,6 +203,30 @@ fun AppLibraryScreen(
                 onRequestDefaultLauncher = onRequestDefaultLauncher,
             )
 
+            val availableLetters = remember(uiState.apps) {
+                uiState.apps.mapNotNull { it.label.firstOrNull()?.uppercaseChar() }.toSet()
+            }
+
+            fun scrollToLetter(char: Char) {
+                val targetIndex = uiState.apps.indexOfFirst {
+                    if (char == '#') {
+                        val first = it.label.firstOrNull()
+                        first != null && !first.isLetter()
+                    } else {
+                        it.label.startsWith(char, ignoreCase = true)
+                    }
+                }
+                if (targetIndex >= 0) {
+                    coroutineScope.launch {
+                        gridState.animateScrollToItem(targetIndex)
+                        val app = uiState.apps.getOrNull(targetIndex)
+                        if (app != null) {
+                            runCatching { requesterFor(app.packageName).requestFocus() }
+                        }
+                    }
+                }
+            }
+
             AppLibraryControls(
                 searchQuery = uiState.searchQuery,
                 onSearchQueryChanged = onSearchQueryChanged,
@@ -211,6 +235,8 @@ fun AppLibraryScreen(
                 onCategorySelected = onCategorySelected,
                 currentSortOrder = uiState.sortOrder,
                 onCycleSortOrder = onCycleSortOrder,
+                availableLetters = availableLetters,
+                onLetterSelected = ::scrollToLetter,
             )
 
             Spacer(modifier = Modifier.height(spacing.sm))
@@ -226,7 +252,14 @@ fun AppLibraryScreen(
                     modifier = Modifier.weight(1f),
                 )
             } else {
-                val columnsCount = if (uiState.capabilities?.is4kDisplay == true) 6 else 5
+                val columnsCount = remember(uiState.iconDisplayMode, uiState.capabilities?.is4kDisplay) {
+                    val is4k = uiState.capabilities?.is4kDisplay == true
+                    when (uiState.iconDisplayMode) {
+                        com.lunmed.tv.core.model.IconDisplayMode.SQUARE_IOS -> if (is4k) 8 else 7
+                        com.lunmed.tv.core.model.IconDisplayMode.COMPACT_CAPSULE -> if (is4k) 5 else 4
+                        com.lunmed.tv.core.model.IconDisplayMode.CINEMA_BANNER -> if (is4k) 6 else 5
+                    }
+                }
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(columnsCount),
@@ -259,6 +292,7 @@ fun AppLibraryScreen(
                         AppLibraryGridCard(
                             app = app,
                             cardSize = uiState.cardSize,
+                            iconDisplayMode = uiState.iconDisplayMode,
                             sortOrder = uiState.sortOrder,
                             onFocused = {
                                 focusMemory.recordFocus("app_grid", app.packageName)

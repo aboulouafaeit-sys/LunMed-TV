@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Sort
@@ -34,7 +36,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
@@ -54,6 +58,8 @@ fun AppLibraryControls(
     onCategorySelected: (String) -> Unit,
     currentSortOrder: AppSortOrder,
     onCycleSortOrder: () -> Unit,
+    availableLetters: Set<Char> = emptySet(),
+    onLetterSelected: (Char) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val spacing = LunmedTheme.spacing
@@ -84,10 +90,10 @@ fun AppLibraryControls(
             )
         }
 
-        // Bottom line: Category Filter Pills
+        // Middle line: Category Filter Pills
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(spacing.xs),
-            contentPadding = PaddingValues(vertical = 4.dp),
+            contentPadding = PaddingValues(vertical = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .lunmedFocusGroupRestorer(),
@@ -104,6 +110,14 @@ fun AppLibraryControls(
                     onClick = { onCategorySelected(category.id) },
                 )
             }
+        }
+
+        // Bottom line: A-Z Fast Jump Alphabet Rail (Zero-typing TV remote navigation)
+        if (availableLetters.isNotEmpty()) {
+            AppLibraryAlphabetRail(
+                availableLetters = availableLetters,
+                onLetterSelected = onLetterSelected,
+            )
         }
     }
 }
@@ -354,6 +368,95 @@ private fun AppSortOrderButton(
                 text = sortOrder.displayName,
                 style = LunmedTheme.typography.labelAction,
                 color = if (isFocused) colors.accentPrimary else colors.textPrimary,
+            )
+        }
+    }
+}
+
+/**
+ * World-class A-Z Fast Alphabet Jump Rail for 10-foot TV Remote Navigation.
+ * Enables zero-typing navigation across vast TV app libraries.
+ */
+@Composable
+private fun AppLibraryAlphabetRail(
+    availableLetters: Set<Char>,
+    onLetterSelected: (Char) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val alphabet = remember { ('A'..'Z').toList() + '#' }
+
+    LazyRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .lunmedFocusGroupRestorer(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        contentPadding = PaddingValues(vertical = 2.dp),
+    ) {
+        items(
+            items = alphabet,
+            key = { it },
+        ) { char ->
+            val isAvailable = availableLetters.contains(char)
+            AlphabetPill(
+                char = char,
+                isAvailable = isAvailable,
+                onClick = { if (isAvailable) onLetterSelected(char) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun AlphabetPill(
+    char: Char,
+    isAvailable: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = LunmedTheme.colors
+    var isFocused by remember { mutableStateOf(false) }
+
+    val scale by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (isFocused) 1.22f else 1.0f,
+        label = "AlphaPillScale",
+    )
+
+    Surface(
+        onClick = onClick,
+        enabled = isAvailable,
+        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = if (isAvailable) Color(0x18FFFFFF) else Color(0x06FFFFFF),
+            focusedContainerColor = colors.accentPrimary,
+            contentColor = if (isAvailable) colors.textPrimary else Color(0x35FFFFFF),
+            focusedContentColor = Color(0xFF0A0C14),
+            disabledContainerColor = Color(0x06FFFFFF),
+            disabledContentColor = Color(0x35FFFFFF),
+        ),
+        border = ClickableSurfaceDefaults.border(
+            border = Border(
+                border = BorderStroke(1.dp, if (isAvailable) Color(0x25FFFFFF) else Color.Transparent),
+                shape = RoundedCornerShape(8.dp),
+            ),
+            focusedBorder = Border(
+                border = BorderStroke(1.5.dp, Color.White),
+                shape = RoundedCornerShape(8.dp),
+            ),
+        ),
+        modifier = Modifier
+            .size(28.dp)
+            .scale(scale)
+            .onFocusChanged { isFocused = it.isFocused },
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = char.toString(),
+                style = LunmedTheme.typography.labelAction.copy(
+                    fontSize = 11.sp,
+                    fontWeight = if (isAvailable) FontWeight.ExtraBold else FontWeight.Normal,
+                ),
             )
         }
     }

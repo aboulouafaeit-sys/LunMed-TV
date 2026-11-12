@@ -97,13 +97,14 @@ class DeviceCenterViewModel @Inject constructor(
         if (isOptimizing.value) return
         viewModelScope.launch {
             isOptimizing.value = true
+            com.lunmed.tv.core.ui.artwork.AppArtworkCache.clear()
             val bytesFreed = deviceDiagnosticsRepository.clearMemoryCache()
             delay(400) // Brief smooth tactile transition
             val freedMb = bytesFreed.toDouble() / (1024 * 1024)
             statusNotification.value = if (freedMb > 0.1) {
                 String.format(Locale.US, "Optimized: %.1f MB cache recovered", freedMb)
             } else {
-                "Memory is already optimized"
+                "Memory and graphics cache optimized"
             }
             refreshDiagnostics()
             isOptimizing.value = false

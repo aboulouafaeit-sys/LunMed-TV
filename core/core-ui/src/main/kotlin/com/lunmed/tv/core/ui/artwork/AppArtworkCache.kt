@@ -57,7 +57,7 @@ object AppArtworkCache {
     }
 
     fun clear() {
-        cache.evictAll()
+        runCatching { cache.evictAll() }
     }
 
     suspend fun load(

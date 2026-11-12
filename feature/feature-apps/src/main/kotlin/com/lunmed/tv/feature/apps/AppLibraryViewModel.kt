@@ -95,6 +95,7 @@ class AppLibraryViewModel @Inject constructor(
             contextMenuApp = overlay.contextMenu,
             categoryPickerApp = overlay.categoryPicker,
             cardSize = prefs.cardSize,
+            iconDisplayMode = prefs.iconDisplayMode,
             selectedWallpaperId = prefs.selectedWallpaperId,
             networkStatus = network,
             capabilities = capabilities,

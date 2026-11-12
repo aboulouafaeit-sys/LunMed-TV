@@ -62,6 +62,7 @@ import com.lunmed.tv.core.ui.components.LunmedTopBar
 import com.lunmed.tv.feature.device.components.DiagnosticInfoCard
 import com.lunmed.tv.feature.device.components.DiagnosticItem
 import com.lunmed.tv.feature.device.components.GaugeMetricCard
+import com.lunmed.tv.feature.device.components.SiliconSoCChipBadge
 import com.lunmed.tv.feature.device.components.WallpaperCard
 import kotlinx.coroutines.delay
 
@@ -417,27 +418,37 @@ private fun HardwareTabContent(
         verticalArrangement = Arrangement.spacedBy(spacing.lg),
     ) {
         if (rep != null) {
+            // 1. Silicon Processor Chip Die Badge
+            SiliconSoCChipBadge(
+                platform = rep.platform,
+                onClick = onOpenAndroidSettings,
+            )
+
+            // 2. Display & Video Pipeline
             DiagnosticInfoCard(
-                title = "Display & Video Output",
-                subtitle = "Resolution, refresh rate, and dynamic range capabilities",
+                title = "Display & Cinema Pipeline",
+                subtitle = "Resolution, refresh rate, HDR capability, and audio passthrough",
                 icon = Icons.Rounded.Tv,
                 items = listOf(
                     DiagnosticItem("Screen Resolution", "${rep.display.resolutionWidth} x ${rep.display.resolutionHeight}", isHighlight = true),
-                    DiagnosticItem("4K Ultra HD", if (rep.display.is4k) "Supported (UHD)" else "Full HD (FHD)"),
+                    DiagnosticItem("4K Ultra HD", if (rep.display.is4k) "Supported (Cinema 4K)" else "Full HD (1080p FHD)"),
                     DiagnosticItem("Refresh Rate", String.format(java.util.Locale.US, "%.1f Hz", rep.display.refreshRateHz)),
                     DiagnosticItem("Pixel Density", "${rep.display.densityDpi} DPI"),
-                    DiagnosticItem("HDR Modes", rep.display.hdrSupportSummary, isHighlight = rep.display.hdrSupportSummary != "SDR"),
+                    DiagnosticItem("HDR Cinema Modes", rep.display.hdrSupportSummary, isHighlight = rep.display.hdrSupportSummary != "SDR"),
+                    DiagnosticItem("Audio Architecture", rep.display.audioOutputPipeline, isHighlight = true),
                 ),
             )
 
+            // 3. Platform & Kernel Details
             DiagnosticInfoCard(
-                title = "Hardware & Platform Architecture",
-                subtitle = "Chipset, motherboard, and operating system build parameters",
+                title = "Platform & Operating System",
+                subtitle = "Chipset, motherboard, CPU cores, and OS build parameters",
                 icon = Icons.Rounded.DeveloperBoard,
                 items = listOf(
                     DiagnosticItem("Manufacturer / Brand", "${rep.platform.manufacturer} (${rep.platform.brand})"),
                     DiagnosticItem("Model & Product", "${rep.platform.model} [${rep.platform.product}]"),
                     DiagnosticItem("Board / SoC", rep.platform.socOrBoard, isHighlight = true),
+                    DiagnosticItem("CPU Core Engine", "${rep.platform.cpuCores} Processing Units", isHighlight = true),
                     DiagnosticItem("CPU Architecture (ABI)", rep.platform.supportedAbis),
                     DiagnosticItem("Android OS Version", "${rep.platform.androidRelease} (API Level ${rep.platform.sdkInt})", isHighlight = true),
                     DiagnosticItem("Security Patch Level", rep.platform.securityPatch),

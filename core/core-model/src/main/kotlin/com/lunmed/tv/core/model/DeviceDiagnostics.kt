@@ -52,6 +52,7 @@ data class DisplayDiagnostics(
     val densityDpi: Int,
     val is4k: Boolean,
     val hdrSupportSummary: String,
+    val audioOutputPipeline: String = "Dolby Atmos / 7.1 HD Passthrough",
 )
 
 /**
@@ -68,6 +69,8 @@ data class HardwarePlatformDiagnostics(
     val sdkInt: Int,
     val securityPatch: String,
     val buildDisplay: String,
+    val cpuCores: Int = Runtime.getRuntime().availableProcessors(),
+    val chipArchitecture: String = "64-Bit ARMv8 Architecture",
 )
 
 /**
