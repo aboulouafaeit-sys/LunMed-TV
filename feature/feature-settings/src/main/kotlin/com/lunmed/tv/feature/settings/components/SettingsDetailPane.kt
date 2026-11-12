@@ -54,6 +54,7 @@ fun SettingsDetailPane(
     preferences: LauncherPreferences,
     capabilities: DeviceCapabilities?,
     defaultLauncherState: DefaultLauncherState,
+    rootState: com.lunmed.tv.core.model.RootState = com.lunmed.tv.core.model.RootState(),
     onSetAccentPreset: (AccentPreset) -> Unit,
     onSetDensity: (InterfaceDensity) -> Unit,
     onSetCardSize: (CardSizePreset) -> Unit,
@@ -61,9 +62,12 @@ fun SettingsDetailPane(
     onToggleShowClock: (Boolean) -> Unit,
     onToggleShowDeviceIndicators: (Boolean) -> Unit,
     onToggleShowRecentApps: (Boolean) -> Unit,
+    onToggleShowStartupSplash: (Boolean) -> Unit = {},
     onRequestDefaultLauncher: () -> Unit,
     onOpenAndroidSettings: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
+    onEnforceRootDefault: () -> Unit = {},
+    onRevertRootDefault: () -> Unit = {},
     onSetLanguageTag: (String) -> Unit,
     onOpenResetConfirmation: () -> Unit,
     modifier: Modifier = Modifier,
@@ -197,10 +201,63 @@ fun SettingsDetailPane(
                         isChecked = preferences.showRecentApps,
                         onToggle = onToggleShowRecentApps,
                     )
+                    ToggleOptionRow(
+                        title = "Startup Intro Animation",
+                        subtitle = "Display a brief obsidian amber cinematic reveal on cold boot (dismissable with any key)",
+                        isChecked = preferences.showStartupSplash,
+                        onToggle = onToggleShowStartupSplash,
+                    )
                 }
             }
 
             SettingsSection.DEFAULT_LAUNCHER -> {
+                SettingGroup(title = "Root Level Factory Lockdown (الجذر)") {
+                    val rootStatusText = if (rootState.isRootAvailable) {
+                        "Root (su) detected: ${rootState.suBinaryPath ?: "Active"}. Direct kernel lockdown available."
+                    } else {
+                        "Root not detected. Standard Android or Accessibility Watchdog mode is active."
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                if (rootState.isRootAvailable) colors.surfaceCardFocused else colors.surfaceElevated,
+                                LunmedTheme.shapes.cardSmall,
+                            )
+                            .padding(14.dp),
+                    ) {
+                        Column {
+                            Text(
+                                text = "Root Engine Status",
+                                style = LunmedTheme.typography.labelAction,
+                                color = if (rootState.isRootAvailable) colors.accentPrimary else colors.textMuted,
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = rootStatusText,
+                                style = LunmedTheme.typography.bodySecondary,
+                                color = colors.textSecondary,
+                            )
+                        }
+                    }
+
+                    if (rootState.isRootAvailable) {
+                        ActionSettingButton(
+                            title = "Enforce LUNMED TV at Root Level (تثبيت كـ مشغل النظام بالجذر)",
+                            subtitle = "Directly locks Home activity in AOSP and disables competing vendor OEM launchers",
+                            icon = Icons.Rounded.Tune,
+                            onClick = onEnforceRootDefault,
+                        )
+
+                        ActionSettingButton(
+                            title = "Revert Root Lockdown (إلغاء حظر مشغلات OEM)",
+                            subtitle = "Re-enables vendor stock launchers in the package manager",
+                            icon = Icons.Rounded.RestartAlt,
+                            onClick = onRevertRootDefault,
+                        )
+                    }
+                }
+
                 SettingGroup(title = "Android Home Role") {
                     val statusText = if (defaultLauncherState.isDefaultLauncher) {
                         "LUNMED TV is currently set as your default launcher."

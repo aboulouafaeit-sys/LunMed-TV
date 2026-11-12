@@ -82,6 +82,12 @@ abstract class DataModule {
         impl: com.lunmed.tv.core.data.repository.DefaultWallpaperRepository,
     ): com.lunmed.tv.core.data.repository.WallpaperRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindRootLauncherHelper(
+        impl: com.lunmed.tv.core.data.root.AndroidRootLauncherHelper,
+    ): com.lunmed.tv.core.data.root.RootLauncherHelper
+
     companion object {
         @Provides
         @Named("selfPackageName")

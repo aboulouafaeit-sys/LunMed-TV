@@ -28,6 +28,7 @@ import com.lunmed.tv.core.data.repository.PreferencesRepository
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.LauncherPreferences
 import com.lunmed.tv.core.navigation.LunmedDestination
+import com.lunmed.tv.core.ui.components.LunmedStartupIntro
 import com.lunmed.tv.feature.apps.AppLibraryRoute
 import com.lunmed.tv.feature.device.DeviceCenterRoute
 import com.lunmed.tv.feature.home.HomeRoute
@@ -89,13 +90,20 @@ class MainActivity : ComponentActivity() {
                     density = prefs.density,
                     animationIntensity = effectiveAnimation,
                 ) {
-                    var currentDestination by rememberSaveable { mutableStateOf(LunmedDestination.HOME) }
+                    var showColdBootIntro by rememberSaveable { mutableStateOf(true) }
 
-                LaunchedEffect(homePressTick) {
-                    if (homePressTick > 0 && currentDestination != LunmedDestination.HOME) {
-                        currentDestination = LunmedDestination.HOME
-                    }
-                }
+                    if (prefs.showStartupSplash && showColdBootIntro) {
+                        LunmedStartupIntro(
+                            onComplete = { showColdBootIntro = false },
+                        )
+                    } else {
+                        var currentDestination by rememberSaveable { mutableStateOf(LunmedDestination.HOME) }
+
+                        LaunchedEffect(homePressTick) {
+                            if (homePressTick > 0 && currentDestination != LunmedDestination.HOME) {
+                                currentDestination = LunmedDestination.HOME
+                            }
+                        }
 
                 val roleLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartActivityForResult(),
@@ -184,7 +192,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    }
+}
+}
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)

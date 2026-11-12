@@ -52,9 +52,11 @@ class SettingsViewModelTest {
     fun `initial state loads preferences capabilities and default launcher state`() = runTest(dispatcher) {
         val prefsRepo = FakePreferencesRepository()
         val helper = FakeDefaultLauncherHelper()
+        val rootHelper = FakeRootLauncherHelper()
         val vm = SettingsViewModel(
             preferencesRepository = prefsRepo,
             defaultLauncherHelper = helper,
+            rootLauncherHelper = rootHelper,
             capabilityDetector = FakeCapabilityDetector(),
             networkStatusMonitor = FakeNetworkStatusMonitor(),
         )
@@ -65,6 +67,7 @@ class SettingsViewModelTest {
         assertEquals(AccentPreset.CHAMPAGNE_GOLD, vm.uiState.value.preferences.accentPreset)
         assertTrue(vm.uiState.value.defaultLauncherState.isDefaultLauncher)
         assertFalse(vm.uiState.value.isResetConfirmationOpen)
+        assertNotNull(vm.uiState.value.rootState)
 
         job.cancel()
     }
@@ -74,6 +77,7 @@ class SettingsViewModelTest {
         val vm = SettingsViewModel(
             preferencesRepository = FakePreferencesRepository(),
             defaultLauncherHelper = FakeDefaultLauncherHelper(),
+            rootLauncherHelper = FakeRootLauncherHelper(),
             capabilityDetector = FakeCapabilityDetector(),
             networkStatusMonitor = FakeNetworkStatusMonitor(),
         )
@@ -95,6 +99,7 @@ class SettingsViewModelTest {
         val vm = SettingsViewModel(
             preferencesRepository = prefsRepo,
             defaultLauncherHelper = FakeDefaultLauncherHelper(),
+            rootLauncherHelper = FakeRootLauncherHelper(),
             capabilityDetector = FakeCapabilityDetector(),
             networkStatusMonitor = FakeNetworkStatusMonitor(),
         )
@@ -122,9 +127,34 @@ class SettingsViewModelTest {
         vm.onToggleShowRecentApps(false)
         assertFalse(vm.uiState.value.preferences.showRecentApps)
 
+        vm.onToggleShowStartupSplash(false)
+        assertFalse(vm.uiState.value.preferences.showStartupSplash)
+
         vm.onSetLanguageTag("ar")
         assertEquals("ar", vm.uiState.value.preferences.languageTag)
         assertNotNull(vm.uiState.value.statusMessage)
+
+        job.cancel()
+    }
+
+    @Test
+    fun `root enforcement triggers helper and updates status message`() = runTest(dispatcher) {
+        val rootHelper = FakeRootLauncherHelper()
+        val vm = SettingsViewModel(
+            preferencesRepository = FakePreferencesRepository(),
+            defaultLauncherHelper = FakeDefaultLauncherHelper(),
+            rootLauncherHelper = rootHelper,
+            capabilityDetector = FakeCapabilityDetector(),
+            networkStatusMonitor = FakeNetworkStatusMonitor(),
+        )
+
+        val job = backgroundScope.launch(dispatcher) { vm.uiState.collect() }
+
+        vm.onEnforceRootPermanentDefault()
+        assertTrue(vm.uiState.value.statusMessage?.contains("Root enforced", ignoreCase = true) == true)
+
+        vm.onRevertRootEnforcement()
+        assertTrue(vm.uiState.value.statusMessage?.contains("reverted", ignoreCase = true) == true)
 
         job.cancel()
     }
@@ -135,6 +165,7 @@ class SettingsViewModelTest {
         val vm = SettingsViewModel(
             preferencesRepository = prefsRepo,
             defaultLauncherHelper = FakeDefaultLauncherHelper(),
+            rootLauncherHelper = FakeRootLauncherHelper(),
             capabilityDetector = FakeCapabilityDetector(),
             networkStatusMonitor = FakeNetworkStatusMonitor(),
         )
@@ -206,9 +237,32 @@ class SettingsViewModelTest {
             state.value = state.value.copy(selectedWallpaperId = wallpaperId)
         }
 
+        override suspend fun setShowStartupSplash(show: Boolean) {
+            state.value = state.value.copy(showStartupSplash = show)
+        }
+
         override suspend fun resetToDefaults() {
             state.value = LauncherPreferences()
         }
+    }
+
+    private class FakeRootLauncherHelper : com.lunmed.tv.core.data.root.RootLauncherHelper {
+        private var isRoot = true
+        override fun getRootState() = com.lunmed.tv.core.model.RootState(
+            isRootAvailable = isRoot,
+            suBinaryPath = "/system/xbin/su",
+            isPermanentlyEnforced = false,
+        )
+
+        override suspend fun enforceRootPermanentDefault() = com.lunmed.tv.core.model.RootExecutionResult(
+            success = true,
+            message = "Root enforced successfully",
+        )
+
+        override suspend fun revertRootEnforcement() = com.lunmed.tv.core.model.RootExecutionResult(
+            success = true,
+            message = "reverted OEM lockdown",
+        )
     }
 
     private class FakeDefaultLauncherHelper : DefaultLauncherHelper {

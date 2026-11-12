@@ -37,5 +37,6 @@ data class LauncherPreferences(
     val showRecentApps: Boolean = true,
     val languageTag: String = "system",
     val selectedWallpaperId: String = "lunmed_obsidian_01",
+    val showStartupSplash: Boolean = true,
 )
 

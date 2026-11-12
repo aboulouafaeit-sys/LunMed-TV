@@ -154,6 +154,7 @@ class HomeViewModelTest {
         override suspend fun setShowRecentApps(show: Boolean) = Unit
         override suspend fun setLanguageTag(tag: String) = Unit
         override suspend fun setSelectedWallpaperId(wallpaperId: String) = Unit
+        override suspend fun setShowStartupSplash(show: Boolean) = Unit
         override suspend fun resetToDefaults() = Unit
     }
 

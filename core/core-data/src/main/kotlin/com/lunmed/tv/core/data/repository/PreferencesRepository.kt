@@ -21,6 +21,7 @@ interface PreferencesRepository {
     suspend fun setShowRecentApps(show: Boolean)
     suspend fun setLanguageTag(tag: String)
     suspend fun setSelectedWallpaperId(wallpaperId: String)
+    suspend fun setShowStartupSplash(show: Boolean)
     suspend fun resetToDefaults()
 }
 
@@ -65,6 +66,10 @@ class DefaultPreferencesRepository @Inject constructor(
 
     override suspend fun setSelectedWallpaperId(wallpaperId: String) {
         dataSource.setSelectedWallpaperId(wallpaperId)
+    }
+
+    override suspend fun setShowStartupSplash(show: Boolean) {
+        dataSource.setShowStartupSplash(show)
     }
 
     override suspend fun resetToDefaults() {

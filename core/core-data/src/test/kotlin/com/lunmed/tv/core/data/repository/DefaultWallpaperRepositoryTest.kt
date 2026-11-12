@@ -31,6 +31,7 @@ class DefaultWallpaperRepositoryTest {
         override suspend fun setSelectedWallpaperId(wallpaperId: String) {
             state.value = state.value.copy(selectedWallpaperId = wallpaperId)
         }
+        override suspend fun setShowStartupSplash(show: Boolean) {}
         override suspend fun resetToDefaults() {}
     }
 

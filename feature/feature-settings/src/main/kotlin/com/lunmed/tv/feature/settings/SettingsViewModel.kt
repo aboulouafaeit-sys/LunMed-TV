@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.lunmed.tv.core.common.capability.DeviceCapabilityDetector
 import com.lunmed.tv.core.data.apps.DefaultLauncherHelper
 import com.lunmed.tv.core.data.repository.PreferencesRepository
+import com.lunmed.tv.core.data.root.RootLauncherHelper
 import com.lunmed.tv.core.data.system.NetworkStatusMonitor
 import com.lunmed.tv.core.model.AccentPreset
 import com.lunmed.tv.core.model.AnimationIntensity
 import com.lunmed.tv.core.model.CardSizePreset
 import com.lunmed.tv.core.model.InterfaceDensity
+import com.lunmed.tv.core.model.RootState
 import com.lunmed.tv.feature.settings.model.SettingsSection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val defaultLauncherHelper: DefaultLauncherHelper,
+    private val rootLauncherHelper: RootLauncherHelper,
     capabilityDetector: DeviceCapabilityDetector,
     networkStatusMonitor: NetworkStatusMonitor,
 ) : ViewModel() {
@@ -33,14 +36,16 @@ class SettingsViewModel @Inject constructor(
     private val isResetConfirmationOpen = MutableStateFlow(false)
     private val statusMessage = MutableStateFlow<String?>(null)
     private val defaultLauncherState = MutableStateFlow(defaultLauncherHelper.getState())
+    private val rootState = MutableStateFlow(rootLauncherHelper.getRootState())
 
     private val localSettingsState = combine(
         selectedSection,
         isResetConfirmationOpen,
         statusMessage,
         defaultLauncherState,
-    ) { section, resetOpen, msg, launcherState ->
-        LocalSettingsState(section, resetOpen, msg, launcherState)
+        rootState,
+    ) { section, resetOpen, msg, launcherState, root ->
+        LocalSettingsState(section, resetOpen, msg, launcherState, root)
     }
 
     val uiState: StateFlow<SettingsUiState> = combine(
@@ -54,6 +59,7 @@ class SettingsViewModel @Inject constructor(
             capabilities = capabilities,
             networkStatus = network,
             defaultLauncherState = local.launcherState,
+            rootState = local.rootState,
             selectedSection = local.section,
             isResetConfirmationOpen = local.resetConfirmationOpen,
             statusMessage = local.message,
@@ -133,8 +139,35 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onToggleShowStartupSplash(show: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setShowStartupSplash(show)
+        }
+    }
+
+    fun onEnforceRootPermanentDefault() {
+        viewModelScope.launch {
+            statusMessage.value = "Enforcing root default launcher..."
+            val result = rootLauncherHelper.enforceRootPermanentDefault()
+            statusMessage.value = result.message
+            rootState.value = rootLauncherHelper.getRootState()
+            defaultLauncherState.value = defaultLauncherHelper.getState()
+        }
+    }
+
+    fun onRevertRootEnforcement() {
+        viewModelScope.launch {
+            statusMessage.value = "Reverting root lockdown..."
+            val result = rootLauncherHelper.revertRootEnforcement()
+            statusMessage.value = result.message
+            rootState.value = rootLauncherHelper.getRootState()
+            defaultLauncherState.value = defaultLauncherHelper.getState()
+        }
+    }
+
     fun onRefreshLauncherState() {
         defaultLauncherState.value = defaultLauncherHelper.getState()
+        rootState.value = rootLauncherHelper.getRootState()
     }
 
     fun onClearStatusMessage() {
@@ -146,6 +179,7 @@ class SettingsViewModel @Inject constructor(
         val resetConfirmationOpen: Boolean,
         val message: String?,
         val launcherState: com.lunmed.tv.core.model.DefaultLauncherState,
+        val rootState: RootState,
     )
 }
 

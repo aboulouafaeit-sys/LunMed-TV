@@ -5,6 +5,7 @@ import com.lunmed.tv.core.model.DeviceCapabilities
 import com.lunmed.tv.core.model.LauncherPreferences
 import com.lunmed.tv.core.model.NetworkStatus
 import com.lunmed.tv.core.model.NetworkTransport
+import com.lunmed.tv.core.model.RootState
 import com.lunmed.tv.feature.settings.model.SettingsSection
 
 data class SettingsUiState(
@@ -17,6 +18,7 @@ data class SettingsUiState(
         currentDefaultPackage = null,
         canRequestRole = false,
     ),
+    val rootState: RootState = RootState(),
     val selectedSection: SettingsSection = SettingsSection.APPEARANCE,
     val isResetConfirmationOpen: Boolean = false,
     val statusMessage: String? = null,

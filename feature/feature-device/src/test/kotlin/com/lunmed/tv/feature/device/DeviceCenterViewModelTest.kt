@@ -143,6 +143,7 @@ class DeviceCenterViewModelTest {
         override suspend fun setShowRecentApps(show: Boolean) {}
         override suspend fun setLanguageTag(tag: String) {}
         override suspend fun setSelectedWallpaperId(wallpaperId: String) {}
+        override suspend fun setShowStartupSplash(show: Boolean) {}
         override suspend fun resetToDefaults() {}
     }
 
