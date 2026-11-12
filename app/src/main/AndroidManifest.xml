@@ -61,6 +61,20 @@
             </intent-filter>
         </receiver>
 
+        <!-- Enterprise / Device Owner Receiver (Immutable Factory-Level Default Launcher) -->
+        <receiver
+            android:name=".receiver.LunmedDeviceAdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin_receiver" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
         <!-- Persistent Home Watchdog Accessibility Service -->
         <service
             android:name=".service.LunmedHomeWatchdogService"

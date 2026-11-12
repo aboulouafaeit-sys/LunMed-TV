@@ -40,5 +40,13 @@ class LunmedHomeWatchdogServiceTest {
         assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.QUICKBOOT_POWERON"))
         assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.REBOOT"))
     }
+
+    @Test
+    fun deviceAdminReceiver_classNameMatchesDeclaration() {
+        org.junit.Assert.assertEquals(
+            "com.lunmed.tv.receiver.LunmedDeviceAdminReceiver",
+            com.lunmed.tv.receiver.LunmedDeviceAdminReceiver.RECEIVER_CLASS_NAME,
+        )
+    }
 }
 
