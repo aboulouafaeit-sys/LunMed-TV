@@ -13,6 +13,8 @@ import com.lunmed.tv.core.data.repository.AppRepository
 import com.lunmed.tv.core.data.repository.DefaultAppRepository
 import com.lunmed.tv.core.data.repository.DefaultPreferencesRepository
 import com.lunmed.tv.core.data.repository.PreferencesRepository
+import com.lunmed.tv.core.data.system.AndroidNetworkStatusMonitor
+import com.lunmed.tv.core.data.system.NetworkStatusMonitor
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -61,6 +63,12 @@ abstract class DataModule {
     abstract fun bindAppRepository(
         impl: DefaultAppRepository,
     ): AppRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNetworkStatusMonitor(
+        impl: AndroidNetworkStatusMonitor,
+    ): NetworkStatusMonitor
 
     companion object {
         @Provides

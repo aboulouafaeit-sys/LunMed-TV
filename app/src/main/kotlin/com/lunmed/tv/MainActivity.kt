@@ -1,33 +1,26 @@
 package com.lunmed.tv
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.material3.Text
 import com.lunmed.tv.core.common.capability.DeviceCapabilityDetector
 import com.lunmed.tv.core.data.apps.DefaultLauncherHelper
-import com.lunmed.tv.core.data.repository.AppRepository
 import com.lunmed.tv.core.data.repository.PreferencesRepository
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.LauncherPreferences
-import com.lunmed.tv.core.ui.components.LunmedAmbientCanvas
-import com.lunmed.tv.core.ui.components.LunmedFocusableCard
+import com.lunmed.tv.feature.home.HomeRoute
+import com.lunmed.tv.feature.home.HomeViewModel
+import com.lunmed.tv.feature.home.components.HomeNavDestination
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,9 +34,6 @@ class MainActivity : ComponentActivity() {
     lateinit var capabilityDetector: DeviceCapabilityDetector
 
     @Inject
-    lateinit var appRepository: AppRepository
-
-    @Inject
     lateinit var defaultLauncherHelper: DefaultLauncherHelper
 
     private var homePressTick by mutableStateOf(0)
@@ -55,18 +45,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val prefs by preferencesRepository.preferences
                 .collectAsStateWithLifecycle(initialValue = LauncherPreferences())
-            val apps by appRepository.observeApps()
-                .collectAsStateWithLifecycle(initialValue = emptyList())
-
-            var launcherState by androidx.compose.runtime.remember(homePressTick) {
-                mutableStateOf(defaultLauncherHelper.getState())
-            }
-
-            val roleLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForResult(),
-            ) {
-                launcherState = defaultLauncherHelper.getState()
-            }
 
             val effectiveAnimation = if (capabilities.isLowRamDevice) {
                 capabilities.recommendedAnimationIntensity
@@ -79,48 +57,38 @@ class MainActivity : ComponentActivity() {
                 density = prefs.density,
                 animationIntensity = effectiveAnimation,
             ) {
-                LunmedAmbientCanvas {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(LunmedTheme.spacing.overscanHorizontal),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start,
-                    ) {
-                        Text(
-                            text = "LUNMED TV",
-                            style = LunmedTheme.typography.displayHero,
-                            color = LunmedTheme.colors.textPrimary,
-                        )
-                        Spacer(modifier = Modifier.height(LunmedTheme.spacing.sm))
-                        Text(
-                            text = "Apps Discovered: ${apps.size} • Default Launcher: ${if (launcherState.isDefaultLauncher) "Active" else "Not Set"} • API ${capabilities.sdkInt}",
-                            style = LunmedTheme.typography.bodySecondary,
-                            color = LunmedTheme.colors.textSecondary,
-                        )
-                        if (!launcherState.isDefaultLauncher && launcherState.canRequestRole) {
-                            Spacer(modifier = Modifier.height(LunmedTheme.spacing.lg))
-                            Row {
-                                LunmedFocusableCard(
-                                    onClick = {
-                                        defaultLauncherHelper.createRequestDefaultLauncherIntent()
-                                            ?.let { roleLauncher.launch(it) }
-                                    },
-                                ) {
-                                    Text(
-                                        text = "Set LUNMED TV as Default Launcher",
-                                        style = LunmedTheme.typography.labelAction,
-                                        color = LunmedTheme.colors.accentPrimary,
-                                        modifier = Modifier.padding(
-                                            horizontal = LunmedTheme.spacing.lg,
-                                            vertical = LunmedTheme.spacing.md,
-                                        ),
-                                    )
-                                }
+                val homeViewModel: HomeViewModel = hiltViewModel()
+
+                val roleLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult(),
+                ) {
+                    homeViewModel.onRefreshLauncherState()
+                }
+
+                HomeRoute(
+                    viewModel = homeViewModel,
+                    onNavigate = { destination ->
+                        when (destination) {
+                            HomeNavDestination.HOME -> Unit
+                            HomeNavDestination.APPS,
+                            HomeNavDestination.DEVICE,
+                            HomeNavDestination.SETTINGS -> {
+                                // Feature screens will be wired in Milestones 05-07
                             }
                         }
-                    }
-                }
+                    },
+                    onRequestDefaultLauncher = {
+                        defaultLauncherHelper.createRequestDefaultLauncherIntent()
+                            ?.let { roleLauncher.launch(it) }
+                    },
+                    onOpenAppInfo = { packageName ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", packageName, null)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        runCatching { startActivity(intent) }
+                    },
+                )
             }
         }
     }

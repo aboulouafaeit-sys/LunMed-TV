@@ -32,3 +32,5 @@ include(":core:core-datastore")
 include(":core:core-data")
 include(":core:core-navigation")
 
+include(":feature:feature-home")
+
