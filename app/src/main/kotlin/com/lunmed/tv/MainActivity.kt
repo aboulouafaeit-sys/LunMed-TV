@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 HomeRoute(
+                    homePressTick = homePressTick,
                     viewModel = homeViewModel,
                     onNavigate = { destination ->
                         when (destination) {

@@ -44,6 +44,7 @@ import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.DeviceCapabilities
 import com.lunmed.tv.core.model.NetworkStatus
 import com.lunmed.tv.core.model.NetworkTransport
+import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -107,6 +108,7 @@ fun HomeTopBar(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(spacing.xs),
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.lunmedFocusGroupRestorer(),
             ) {
                 TopNavPill(
                     label = "Home",
