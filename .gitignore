@@ -22,3 +22,7 @@ release/
 captures/
 *.log
 
+
+.kotlin/
+*.salive
+
