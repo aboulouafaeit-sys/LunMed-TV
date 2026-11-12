@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":core:core-database"))
     implementation(project(":core:core-navigation"))
     implementation(project(":feature:feature-home"))
+    implementation(project(":feature:feature-apps"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

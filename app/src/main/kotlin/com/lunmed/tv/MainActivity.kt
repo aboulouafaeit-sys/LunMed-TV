@@ -8,8 +8,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,9 +24,10 @@ import com.lunmed.tv.core.data.apps.DefaultLauncherHelper
 import com.lunmed.tv.core.data.repository.PreferencesRepository
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.LauncherPreferences
+import com.lunmed.tv.core.navigation.LunmedDestination
+import com.lunmed.tv.feature.apps.AppLibraryRoute
 import com.lunmed.tv.feature.home.HomeRoute
 import com.lunmed.tv.feature.home.HomeViewModel
-import com.lunmed.tv.feature.home.components.HomeNavDestination
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -57,39 +64,87 @@ class MainActivity : ComponentActivity() {
                 density = prefs.density,
                 animationIntensity = effectiveAnimation,
             ) {
-                val homeViewModel: HomeViewModel = hiltViewModel()
+                var currentDestination by rememberSaveable { mutableStateOf(LunmedDestination.HOME) }
+
+                LaunchedEffect(homePressTick) {
+                    if (homePressTick > 0 && currentDestination != LunmedDestination.HOME) {
+                        currentDestination = LunmedDestination.HOME
+                    }
+                }
 
                 val roleLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartActivityForResult(),
                 ) {
-                    homeViewModel.onRefreshLauncherState()
+                    // Handled inside ViewModels
                 }
 
-                HomeRoute(
-                    homePressTick = homePressTick,
-                    viewModel = homeViewModel,
-                    onNavigate = { destination ->
-                        when (destination) {
-                            HomeNavDestination.HOME -> Unit
-                            HomeNavDestination.APPS,
-                            HomeNavDestination.DEVICE,
-                            HomeNavDestination.SETTINGS -> {
-                                // Feature screens will be wired in Milestones 05-07
-                            }
+                fun openAppInfo(packageName: String) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    runCatching { startActivity(intent) }
+                }
+
+                fun requestDefaultLauncher() {
+                    defaultLauncherHelper.createRequestDefaultLauncherIntent()
+                        ?.let { roleLauncher.launch(it) }
+                }
+
+                val anim = LunmedTheme.animation
+                val transitionSpec = anim.transitionSpec<Float>()
+                val focusSpec = anim.focusSpec<Float>()
+
+                AnimatedContent(
+                    targetState = currentDestination,
+                    transitionSpec = {
+                        fadeIn(animationSpec = transitionSpec)
+                            .togetherWith(fadeOut(animationSpec = focusSpec))
+                    },
+                    label = "MainScreenDestinationTransition",
+                ) { destination ->
+                    when (destination) {
+                        LunmedDestination.HOME -> {
+                            val homeViewModel: HomeViewModel = hiltViewModel()
+                            HomeRoute(
+                                homePressTick = homePressTick,
+                                viewModel = homeViewModel,
+                                onNavigate = { next ->
+                                    when (next) {
+                                        LunmedDestination.HOME -> Unit
+                                        LunmedDestination.APPS -> currentDestination = LunmedDestination.APPS
+                                        LunmedDestination.DEVICE,
+                                        LunmedDestination.SETTINGS -> {
+                                            // Prepared for Milestones 06-07
+                                        }
+                                    }
+                                },
+                                onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onOpenAppInfo = ::openAppInfo,
+                            )
                         }
-                    },
-                    onRequestDefaultLauncher = {
-                        defaultLauncherHelper.createRequestDefaultLauncherIntent()
-                            ?.let { roleLauncher.launch(it) }
-                    },
-                    onOpenAppInfo = { packageName ->
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", packageName, null)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        LunmedDestination.APPS -> {
+                            AppLibraryRoute(
+                                onNavigate = { next ->
+                                    when (next) {
+                                        LunmedDestination.HOME -> currentDestination = LunmedDestination.HOME
+                                        LunmedDestination.APPS -> Unit
+                                        LunmedDestination.DEVICE,
+                                        LunmedDestination.SETTINGS -> {
+                                            // Prepared for Milestones 06-07
+                                        }
+                                    }
+                                },
+                                onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onOpenAppInfo = ::openAppInfo,
+                            )
                         }
-                        runCatching { startActivity(intent) }
-                    },
-                )
+                        LunmedDestination.DEVICE,
+                        LunmedDestination.SETTINGS -> {
+                            // Routed in subsequent milestones
+                        }
+                    }
+                }
             }
         }
     }
