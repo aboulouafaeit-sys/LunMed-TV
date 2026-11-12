@@ -39,3 +39,4 @@ class AndroidAppLauncher @Inject constructor(
         }
     }
 }
+

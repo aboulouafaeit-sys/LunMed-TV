@@ -18,3 +18,4 @@ data class DefaultLauncherState(
     val currentDefaultPackage: String?,
     val canRequestRole: Boolean,
 )
+

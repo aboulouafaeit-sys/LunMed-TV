@@ -83,3 +83,4 @@ class AndroidDefaultLauncherHelper @Inject constructor(
         return resolveInfo?.activityInfo?.packageName
     }
 }
+

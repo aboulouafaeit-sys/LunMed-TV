@@ -86,3 +86,4 @@ class PackageManagerAppDiscoveryDataSource @Inject constructor(
         return if (isSystem) "system" else "other"
     }
 }
+
