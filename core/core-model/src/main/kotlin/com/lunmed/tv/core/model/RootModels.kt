@@ -18,3 +18,4 @@ data class RootExecutionResult(
     val message: String,
     val disabledLaunchers: List<String> = emptyList(),
 )
+
