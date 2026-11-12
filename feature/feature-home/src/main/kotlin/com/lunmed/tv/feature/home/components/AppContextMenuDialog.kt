@@ -111,8 +111,8 @@ private fun ContextActionItem(
             focusedContentColor = colors.accentPrimary,
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, colors.borderSubtle), shape),
-            focusedBorder = Border(BorderStroke(2.dp, colors.borderFocused), shape),
+            border = Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = shape),
+            focusedBorder = Border(border = BorderStroke(2.dp, colors.borderFocused), shape = shape),
         ),
         modifier = modifier.fillMaxWidth(),
     ) {

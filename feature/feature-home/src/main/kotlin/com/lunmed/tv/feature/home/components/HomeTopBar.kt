@@ -209,13 +209,13 @@ private fun TopNavPill(
         ),
         border = ClickableSurfaceDefaults.border(
             border = if (selected) {
-                Border(BorderStroke(1.dp, colors.borderSubtle), LunmedTheme.shapes.pill)
+                Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = LunmedTheme.shapes.pill)
             } else {
                 Border.None
             },
             focusedBorder = Border(
-                BorderStroke(1.5.dp, colors.borderFocused),
-                LunmedTheme.shapes.pill,
+                border = BorderStroke(1.5.dp, colors.borderFocused),
+                shape = LunmedTheme.shapes.pill,
             ),
         ),
         modifier = Modifier.onFocusChanged { isFocused = it.isFocused },
