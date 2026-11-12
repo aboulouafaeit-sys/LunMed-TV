@@ -57,6 +57,7 @@ dependencies {
     implementation(project(":feature:feature-home"))
     implementation(project(":feature:feature-apps"))
     implementation(project(":feature:feature-settings"))
+    implementation(project(":feature:feature-device"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

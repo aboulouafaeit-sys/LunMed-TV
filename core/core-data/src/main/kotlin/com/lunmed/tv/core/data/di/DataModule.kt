@@ -70,6 +70,18 @@ abstract class DataModule {
         impl: AndroidNetworkStatusMonitor,
     ): NetworkStatusMonitor
 
+    @Binds
+    @Singleton
+    abstract fun bindDeviceDiagnosticsRepository(
+        impl: com.lunmed.tv.core.data.repository.AndroidDeviceDiagnosticsRepository,
+    ): com.lunmed.tv.core.data.repository.DeviceDiagnosticsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWallpaperRepository(
+        impl: com.lunmed.tv.core.data.repository.DefaultWallpaperRepository,
+    ): com.lunmed.tv.core.data.repository.WallpaperRepository
+
     companion object {
         @Provides
         @Named("selfPackageName")

@@ -26,6 +26,7 @@ import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.LauncherPreferences
 import com.lunmed.tv.core.navigation.LunmedDestination
 import com.lunmed.tv.feature.apps.AppLibraryRoute
+import com.lunmed.tv.feature.device.DeviceCenterRoute
 import com.lunmed.tv.feature.home.HomeRoute
 import com.lunmed.tv.feature.home.HomeViewModel
 import com.lunmed.tv.feature.settings.SettingsRoute
@@ -149,7 +150,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         LunmedDestination.DEVICE -> {
-                            // Wired in Milestone 07
+                            DeviceCenterRoute(
+                                onNavigate = ::handleNavigate,
+                                onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onOpenAndroidSettings = ::openAndroidSettings,
+                            )
                         }
                     }
                 }
