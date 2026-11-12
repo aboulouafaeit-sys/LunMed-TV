@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -60,6 +61,8 @@ fun SettingsRoute(
         onSetAccentPreset = viewModel::onSetAccentPreset,
         onSetDensity = viewModel::onSetDensity,
         onSetCardSize = viewModel::onSetCardSize,
+        onSetIconDisplayMode = viewModel::onSetIconDisplayMode,
+        onSelectWallpaper = viewModel::onSelectWallpaper,
         onSetAnimationIntensity = viewModel::onSetAnimationIntensity,
         onToggleShowClock = viewModel::onToggleShowClock,
         onToggleShowDeviceIndicators = viewModel::onToggleShowDeviceIndicators,
@@ -85,6 +88,8 @@ fun SettingsScreen(
     onSetAccentPreset: (com.lunmed.tv.core.model.AccentPreset) -> Unit,
     onSetDensity: (com.lunmed.tv.core.model.InterfaceDensity) -> Unit,
     onSetCardSize: (com.lunmed.tv.core.model.CardSizePreset) -> Unit,
+    onSetIconDisplayMode: (com.lunmed.tv.core.model.IconDisplayMode) -> Unit = {},
+    onSelectWallpaper: (String) -> Unit = {},
     onSetAnimationIntensity: (com.lunmed.tv.core.model.AnimationIntensity) -> Unit,
     onToggleShowClock: (Boolean) -> Unit,
     onToggleShowDeviceIndicators: (Boolean) -> Unit,
@@ -108,7 +113,12 @@ fun SettingsScreen(
         }
     }
 
+    val currentWallpaper = remember(uiState.preferences.selectedWallpaperId) {
+        com.lunmed.tv.core.model.LunmedWallpapers.getById(uiState.preferences.selectedWallpaperId)
+    }
+
     LunmedAmbientCanvas(
+        wallpaper = currentWallpaper,
         modifier = Modifier.onRemoteKeyCommand { command ->
             when (command) {
                 RemoteCommand.SETTINGS -> {
@@ -153,10 +163,13 @@ fun SettingsScreen(
                     preferences = uiState.preferences,
                     capabilities = uiState.capabilities,
                     defaultLauncherState = uiState.defaultLauncherState,
+                    networkStatus = uiState.networkStatus,
                     rootState = uiState.rootState,
                     onSetAccentPreset = onSetAccentPreset,
                     onSetDensity = onSetDensity,
                     onSetCardSize = onSetCardSize,
+                    onSetIconDisplayMode = onSetIconDisplayMode,
+                    onSelectWallpaper = onSelectWallpaper,
                     onSetAnimationIntensity = onSetAnimationIntensity,
                     onToggleShowClock = onToggleShowClock,
                     onToggleShowDeviceIndicators = onToggleShowDeviceIndicators,

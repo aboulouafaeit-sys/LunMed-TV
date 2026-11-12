@@ -147,6 +147,7 @@ class HomeViewModelTest {
         override val preferences = MutableStateFlow(LauncherPreferences())
         override suspend fun setAccentPreset(preset: AccentPreset) = Unit
         override suspend fun setCardSize(preset: CardSizePreset) = Unit
+        override suspend fun setIconDisplayMode(mode: com.lunmed.tv.core.model.IconDisplayMode) = Unit
         override suspend fun setDensity(density: InterfaceDensity) = Unit
         override suspend fun setAnimationIntensity(intensity: AnimationIntensity) = Unit
         override suspend fun setShowClock(show: Boolean) = Unit

@@ -10,6 +10,7 @@ import com.lunmed.tv.core.data.system.NetworkStatusMonitor
 import com.lunmed.tv.core.model.AccentPreset
 import com.lunmed.tv.core.model.AnimationIntensity
 import com.lunmed.tv.core.model.CardSizePreset
+import com.lunmed.tv.core.model.IconDisplayMode
 import com.lunmed.tv.core.model.InterfaceDensity
 import com.lunmed.tv.core.model.RootState
 import com.lunmed.tv.feature.settings.model.SettingsSection
@@ -89,6 +90,18 @@ class SettingsViewModel @Inject constructor(
     fun onSetCardSize(size: CardSizePreset) {
         viewModelScope.launch {
             preferencesRepository.setCardSize(size)
+        }
+    }
+
+    fun onSetIconDisplayMode(mode: IconDisplayMode) {
+        viewModelScope.launch {
+            preferencesRepository.setIconDisplayMode(mode)
+        }
+    }
+
+    fun onSelectWallpaper(id: String) {
+        viewModelScope.launch {
+            preferencesRepository.setSelectedWallpaperId(id)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.lunmed.tv.core.ui.components
 
+import android.os.SystemClock
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -15,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,12 +27,20 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Surface
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * World-class TV focusable card implementing Apple TV (tvOS) & Google TV Horizon grade
@@ -39,6 +49,7 @@ import com.lunmed.tv.core.design.theme.LunmedTheme
  * 2. 45° specular light reflection sheen sweep upon receiving focus.
  * 3. Deep ambient atmospheric drop shadow and 3D Z-index lift.
  * 4. Specular champagne-gold beveled rim illumination.
+ * 5. Robust D-pad long-press debounce and KeyUp consumption guard to prevent accidental launches.
  */
 @Composable
 fun LunmedFocusableCard(
@@ -52,7 +63,29 @@ fun LunmedFocusableCard(
     val colors = LunmedTheme.colors
     val focusTokens = LunmedTheme.focus
     val animTokens = LunmedTheme.animation
+    val coroutineScope = rememberCoroutineScope()
     var isFocused by remember { mutableStateOf(false) }
+
+    // Bulletproof long-press / release debounce guard:
+    // Prevents KeyUp on remote D-pad from triggering onClick when releasing after long press
+    var isLongPressConsumed by remember { mutableStateOf(false) }
+    var longPressJob by remember { mutableStateOf<Job?>(null) }
+    var lastLongPressTime by remember { mutableStateOf(0L) }
+
+    val guardedOnClick: () -> Unit = {
+        val now = SystemClock.uptimeMillis()
+        if (now - lastLongPressTime > 750L && !isLongPressConsumed) {
+            onClick()
+        }
+    }
+
+    val guardedOnLongClick: (() -> Unit)? = onLongClick?.let { action ->
+        {
+            lastLongPressTime = SystemClock.uptimeMillis()
+            isLongPressConsumed = true
+            action()
+        }
+    }
 
     // Silky, physics-based spring scaling (Apple TV signature feel)
     val scale by animateFloatAsState(
@@ -96,8 +129,8 @@ fun LunmedFocusableCard(
     }
 
     Surface(
-        onClick = onClick,
-        onLongClick = onLongClick,
+        onClick = guardedOnClick,
+        onLongClick = guardedOnLongClick,
         enabled = enabled,
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
@@ -123,7 +156,36 @@ fun LunmedFocusableCard(
                 scaleY = scale
                 shadowElevation = if (isFocused) 22f else 2f
             }
-            .onFocusChanged { isFocused = it.isFocused },
+            .onFocusChanged { isFocused = it.isFocused }
+            .onPreviewKeyEvent { keyEvent ->
+                val isConfirmKey = keyEvent.key == Key.DirectionCenter ||
+                    keyEvent.key == Key.Enter ||
+                    keyEvent.key == Key.NumPadEnter
+
+                if (isConfirmKey && onLongClick != null) {
+                    if (keyEvent.type == KeyEventType.KeyDown) {
+                        if (keyEvent.nativeKeyEvent.repeatCount == 0) {
+                            isLongPressConsumed = false
+                            longPressJob?.cancel()
+                            longPressJob = coroutineScope.launch {
+                                delay(450L)
+                                isLongPressConsumed = true
+                                lastLongPressTime = SystemClock.uptimeMillis()
+                                onLongClick()
+                            }
+                        }
+                    } else if (keyEvent.type == KeyEventType.KeyUp) {
+                        longPressJob?.cancel()
+                        val wasLongPress = isLongPressConsumed || (SystemClock.uptimeMillis() - lastLongPressTime < 750L)
+                        if (wasLongPress) {
+                            isLongPressConsumed = false
+                            // Swallows KeyUp so Surface does NOT execute onClick on release!
+                            return@onPreviewKeyEvent true
+                        }
+                    }
+                }
+                false
+            },
     ) {
         Box(modifier = Modifier.clip(shape)) {
             // 1. Primary Card Content

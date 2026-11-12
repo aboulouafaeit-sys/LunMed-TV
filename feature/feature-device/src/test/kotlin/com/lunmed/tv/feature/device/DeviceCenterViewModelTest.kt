@@ -136,6 +136,7 @@ class DeviceCenterViewModelTest {
         override val preferences: Flow<LauncherPreferences> = state
         override suspend fun setAccentPreset(preset: AccentPreset) {}
         override suspend fun setCardSize(preset: CardSizePreset) {}
+        override suspend fun setIconDisplayMode(mode: com.lunmed.tv.core.model.IconDisplayMode) {}
         override suspend fun setDensity(density: InterfaceDensity) {}
         override suspend fun setAnimationIntensity(intensity: AnimationIntensity) {}
         override suspend fun setShowClock(show: Boolean) {}

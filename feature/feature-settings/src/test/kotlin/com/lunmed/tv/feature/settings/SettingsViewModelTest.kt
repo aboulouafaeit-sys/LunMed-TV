@@ -209,6 +209,10 @@ class SettingsViewModelTest {
             state.value = state.value.copy(cardSize = preset)
         }
 
+        override suspend fun setIconDisplayMode(mode: com.lunmed.tv.core.model.IconDisplayMode) {
+            state.value = state.value.copy(iconDisplayMode = mode)
+        }
+
         override suspend fun setDensity(density: InterfaceDensity) {
             state.value = state.value.copy(density = density)
         }

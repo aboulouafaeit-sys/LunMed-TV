@@ -24,19 +24,26 @@ enum class AnimationIntensity(val key: String) {
     MINIMAL("minimal"),
 }
 
+enum class IconDisplayMode(val key: String) {
+    CINEMA_BANNER("cinema_banner"),
+    SQUARE_IOS("square_ios"),
+    COMPACT_CAPSULE("compact_capsule"),
+}
+
 /**
  * Persistent user customization preferences for LUNMED TV.
  */
 data class LauncherPreferences(
     val accentPreset: AccentPreset = AccentPreset.CHAMPAGNE_GOLD,
     val cardSize: CardSizePreset = CardSizePreset.STANDARD,
+    val iconDisplayMode: IconDisplayMode = IconDisplayMode.CINEMA_BANNER,
     val density: InterfaceDensity = InterfaceDensity.COMFORTABLE,
     val animationIntensity: AnimationIntensity = AnimationIntensity.FULL,
     val showClock: Boolean = true,
     val showDeviceIndicators: Boolean = true,
     val showRecentApps: Boolean = true,
     val languageTag: String = "system",
-    val selectedWallpaperId: String = "lunmed_obsidian_01",
+    val selectedWallpaperId: String = "lunmed_aurora_nordic",
     val showStartupSplash: Boolean = true,
 )
 

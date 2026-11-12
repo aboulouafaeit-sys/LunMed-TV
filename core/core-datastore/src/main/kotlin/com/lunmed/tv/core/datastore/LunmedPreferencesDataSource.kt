@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.lunmed.tv.core.model.AccentPreset
 import com.lunmed.tv.core.model.AnimationIntensity
 import com.lunmed.tv.core.model.CardSizePreset
+import com.lunmed.tv.core.model.IconDisplayMode
 import com.lunmed.tv.core.model.InterfaceDensity
 import com.lunmed.tv.core.model.LauncherPreferences
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ class LunmedPreferencesDataSource @Inject constructor(
     private object Keys {
         val ACCENT_PRESET = stringPreferencesKey("accent_preset")
         val CARD_SIZE = stringPreferencesKey("card_size")
+        val ICON_DISPLAY_MODE = stringPreferencesKey("icon_display_mode")
         val DENSITY = stringPreferencesKey("density")
         val ANIMATION_INTENSITY = stringPreferencesKey("animation_intensity")
         val SHOW_CLOCK = booleanPreferencesKey("show_clock")
@@ -40,6 +42,9 @@ class LunmedPreferencesDataSource @Inject constructor(
             cardSize = prefs[Keys.CARD_SIZE]?.let { key ->
                 CardSizePreset.entries.firstOrNull { it.key == key }
             } ?: CardSizePreset.STANDARD,
+            iconDisplayMode = prefs[Keys.ICON_DISPLAY_MODE]?.let { key ->
+                IconDisplayMode.entries.firstOrNull { it.key == key }
+            } ?: IconDisplayMode.CINEMA_BANNER,
             density = prefs[Keys.DENSITY]?.let { key ->
                 InterfaceDensity.entries.firstOrNull { it.key == key }
             } ?: InterfaceDensity.COMFORTABLE,
@@ -50,7 +55,7 @@ class LunmedPreferencesDataSource @Inject constructor(
             showDeviceIndicators = prefs[Keys.SHOW_DEVICE_INDICATORS] ?: true,
             showRecentApps = prefs[Keys.SHOW_RECENT_APPS] ?: true,
             languageTag = prefs[Keys.LANGUAGE_TAG] ?: "system",
-            selectedWallpaperId = prefs[Keys.SELECTED_WALLPAPER_ID] ?: "lunmed_obsidian_01",
+            selectedWallpaperId = prefs[Keys.SELECTED_WALLPAPER_ID] ?: "lunmed_aurora_nordic",
             showStartupSplash = prefs[Keys.SHOW_STARTUP_SPLASH] ?: true,
         )
     }
@@ -61,6 +66,10 @@ class LunmedPreferencesDataSource @Inject constructor(
 
     suspend fun setCardSize(preset: CardSizePreset) {
         dataStore.edit { it[Keys.CARD_SIZE] = preset.key }
+    }
+
+    suspend fun setIconDisplayMode(mode: IconDisplayMode) {
+        dataStore.edit { it[Keys.ICON_DISPLAY_MODE] = mode.key }
     }
 
     suspend fun setDensity(density: InterfaceDensity) {

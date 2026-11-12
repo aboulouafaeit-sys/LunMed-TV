@@ -95,6 +95,7 @@ class AppLibraryViewModel @Inject constructor(
             contextMenuApp = overlay.contextMenu,
             categoryPickerApp = overlay.categoryPicker,
             cardSize = prefs.cardSize,
+            selectedWallpaperId = prefs.selectedWallpaperId,
             networkStatus = network,
             capabilities = capabilities,
             statusMessage = overlay.message,
@@ -122,6 +123,8 @@ class AppLibraryViewModel @Inject constructor(
     }
 
     fun onAppClicked(app: AppInfo) {
+        // Prevent launching app if context menu or category picker dialog is active
+        if (contextMenuApp.value != null || categoryPickerApp.value != null) return
         viewModelScope.launch {
             when (val result = appRepository.launchApp(app.packageName)) {
                 LaunchResult.Success -> statusMessage.value = null

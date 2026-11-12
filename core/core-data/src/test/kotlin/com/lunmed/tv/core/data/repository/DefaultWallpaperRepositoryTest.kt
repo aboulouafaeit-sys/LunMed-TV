@@ -22,6 +22,7 @@ class DefaultWallpaperRepositoryTest {
 
         override suspend fun setAccentPreset(preset: AccentPreset) {}
         override suspend fun setCardSize(preset: CardSizePreset) {}
+        override suspend fun setIconDisplayMode(mode: com.lunmed.tv.core.model.IconDisplayMode) {}
         override suspend fun setDensity(density: InterfaceDensity) {}
         override suspend fun setAnimationIntensity(intensity: AnimationIntensity) {}
         override suspend fun setShowClock(show: Boolean) {}
@@ -36,17 +37,18 @@ class DefaultWallpaperRepositoryTest {
     }
 
     @Test
-    fun getBuiltInWallpapers_returns5CinematicPresets() {
+    fun getBuiltInWallpapers_returns6ScenicPresets() {
         val prefsRepo = TestPreferencesRepository()
         val repo = DefaultWallpaperRepository(prefsRepo)
         val wallpapers = repo.getBuiltInWallpapers()
 
-        assertEquals(5, wallpapers.size)
-        assertTrue(wallpapers.any { it.id == "lunmed_obsidian_01" })
-        assertTrue(wallpapers.any { it.id == "lunmed_cosmic_gold_02" })
-        assertTrue(wallpapers.any { it.id == "lunmed_cyber_cyan_03" })
-        assertTrue(wallpapers.any { it.id == "lunmed_aurora_silver_04" })
-        assertTrue(wallpapers.any { it.id == "lunmed_emerald_dusk_05" })
+        assertEquals(6, wallpapers.size)
+        assertTrue(wallpapers.any { it.id == "lunmed_aurora_nordic" })
+        assertTrue(wallpapers.any { it.id == "lunmed_cosmic_nebula" })
+        assertTrue(wallpapers.any { it.id == "lunmed_sunset_sahara" })
+        assertTrue(wallpapers.any { it.id == "lunmed_alpine_mist" })
+        assertTrue(wallpapers.any { it.id == "lunmed_tokyo_cyber" })
+        assertTrue(wallpapers.any { it.id == "lunmed_obsidian_silk" })
     }
 
     @Test
@@ -54,9 +56,9 @@ class DefaultWallpaperRepositoryTest {
         val prefsRepo = TestPreferencesRepository()
         val repo = DefaultWallpaperRepository(prefsRepo)
 
-        val wallpaper = repo.getWallpaperById("lunmed_cyber_cyan_03")
+        val wallpaper = repo.getWallpaperById("lunmed_aurora_nordic")
         assertNotNull(wallpaper)
-        assertEquals("Cyber Azure", wallpaper?.title)
+        assertEquals("Nordic Aurora Borealis", wallpaper?.title)
     }
 
     @Test
@@ -65,12 +67,12 @@ class DefaultWallpaperRepositoryTest {
         val repo = DefaultWallpaperRepository(prefsRepo)
 
         val initial = repo.getSelectedWallpaper().first()
-        assertEquals("lunmed_obsidian_01", initial.id)
+        assertEquals("lunmed_aurora_nordic", initial.id)
 
-        repo.selectWallpaper("lunmed_emerald_dusk_05")
+        repo.selectWallpaper("lunmed_cosmic_nebula")
         val updated = repo.getSelectedWallpaper().first()
-        assertEquals("lunmed_emerald_dusk_05", updated.id)
-        assertEquals("Obsidian Jade", updated.title)
+        assertEquals("lunmed_cosmic_nebula", updated.id)
+        assertEquals("Orion Cosmic Nebula", updated.title)
     }
 }
 

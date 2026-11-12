@@ -4,6 +4,7 @@ import com.lunmed.tv.core.datastore.LunmedPreferencesDataSource
 import com.lunmed.tv.core.model.AccentPreset
 import com.lunmed.tv.core.model.AnimationIntensity
 import com.lunmed.tv.core.model.CardSizePreset
+import com.lunmed.tv.core.model.IconDisplayMode
 import com.lunmed.tv.core.model.InterfaceDensity
 import com.lunmed.tv.core.model.LauncherPreferences
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,7 @@ interface PreferencesRepository {
     val preferences: Flow<LauncherPreferences>
     suspend fun setAccentPreset(preset: AccentPreset)
     suspend fun setCardSize(preset: CardSizePreset)
+    suspend fun setIconDisplayMode(mode: IconDisplayMode)
     suspend fun setDensity(density: InterfaceDensity)
     suspend fun setAnimationIntensity(intensity: AnimationIntensity)
     suspend fun setShowClock(show: Boolean)
@@ -38,6 +40,10 @@ class DefaultPreferencesRepository @Inject constructor(
 
     override suspend fun setCardSize(preset: CardSizePreset) {
         dataSource.setCardSize(preset)
+    }
+
+    override suspend fun setIconDisplayMode(mode: IconDisplayMode) {
+        dataSource.setIconDisplayMode(mode)
     }
 
     override suspend fun setDensity(density: InterfaceDensity) {

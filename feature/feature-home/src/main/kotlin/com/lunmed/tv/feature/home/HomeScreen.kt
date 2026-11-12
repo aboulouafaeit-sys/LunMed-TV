@@ -40,6 +40,7 @@ import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.model.CardSizePreset
+import com.lunmed.tv.core.model.IconDisplayMode
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.core.navigation.focus.rememberFocusMemoryRegistry
 import com.lunmed.tv.core.navigation.remote.RemoteCommand
@@ -158,7 +159,12 @@ fun HomeScreen(
         }
     }
 
+    val currentWallpaper = remember(uiState.preferences.selectedWallpaperId) {
+        com.lunmed.tv.core.model.LunmedWallpapers.getById(uiState.preferences.selectedWallpaperId)
+    }
+
     LunmedAmbientCanvas(
+        wallpaper = currentWallpaper,
         focusedApp = uiState.focusedApp,
         modifier = Modifier.onRemoteKeyCommand { command ->
             when (command) {
@@ -229,6 +235,7 @@ fun HomeScreen(
                                 title = "Favorites",
                                 apps = uiState.favorites,
                                 cardSize = uiState.preferences.cardSize,
+                                iconDisplayMode = uiState.preferences.iconDisplayMode,
                                 isFirstRail = firstSectionId == "favorites",
                                 firstCardFocusRequester = firstCardFocusRequester,
                                 requesterFor = { pkg -> requesterFor("favorites", pkg) },
@@ -253,6 +260,7 @@ fun HomeScreen(
                                 title = "Recently Used",
                                 apps = uiState.recentApps,
                                 cardSize = uiState.preferences.cardSize,
+                                iconDisplayMode = uiState.preferences.iconDisplayMode,
                                 isFirstRail = firstSectionId == "recent",
                                 firstCardFocusRequester = firstCardFocusRequester,
                                 requesterFor = { pkg -> requesterFor("recent", pkg) },
@@ -279,6 +287,7 @@ fun HomeScreen(
                             title = category.title,
                             apps = category.apps,
                             cardSize = uiState.preferences.cardSize,
+                            iconDisplayMode = uiState.preferences.iconDisplayMode,
                             isFirstRail = firstSectionId == category.id,
                             firstCardFocusRequester = firstCardFocusRequester,
                             requesterFor = { pkg -> requesterFor(category.id, pkg) },
@@ -348,6 +357,7 @@ private fun HomeAppRail(
     title: String,
     apps: List<AppInfo>,
     cardSize: CardSizePreset,
+    iconDisplayMode: IconDisplayMode,
     isFirstRail: Boolean,
     firstCardFocusRequester: FocusRequester,
     requesterFor: (String) -> FocusRequester,
@@ -403,6 +413,7 @@ private fun HomeAppRail(
                 HomeAppCard(
                     app = app,
                     cardSize = cardSize,
+                    iconDisplayMode = iconDisplayMode,
                     onFocused = { onAppFocused(app) },
                     onClick = { onAppClicked(app) },
                     onLongClick = { onAppLongClicked(app) },

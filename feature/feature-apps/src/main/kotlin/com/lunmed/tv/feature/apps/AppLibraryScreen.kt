@@ -163,7 +163,12 @@ fun AppLibraryScreen(
         }
     }
 
+    val currentWallpaper = remember(uiState.selectedWallpaperId) {
+        com.lunmed.tv.core.model.LunmedWallpapers.getById(uiState.selectedWallpaperId)
+    }
+
     LunmedAmbientCanvas(
+        wallpaper = currentWallpaper,
         focusedApp = uiState.focusedApp,
         modifier = Modifier.onRemoteKeyCommand { command ->
             when (command) {

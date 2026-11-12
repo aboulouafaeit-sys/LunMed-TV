@@ -82,6 +82,8 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAppClicked(app: AppInfo) {
+        // Prevent launching app if context menu dialog is active
+        if (contextMenuApp.value != null) return
         viewModelScope.launch {
             when (val result = appRepository.launchApp(app.packageName)) {
                 LaunchResult.Success -> statusMessage.value = null

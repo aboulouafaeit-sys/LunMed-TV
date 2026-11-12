@@ -21,6 +21,7 @@ data class AppLibraryUiState(
     val contextMenuApp: AppInfo? = null,
     val categoryPickerApp: AppInfo? = null,
     val cardSize: CardSizePreset = CardSizePreset.STANDARD,
+    val selectedWallpaperId: String = "lunmed_aurora_nordic",
     val networkStatus: NetworkStatus = NetworkStatus(false, NetworkTransport.OFFLINE),
     val capabilities: DeviceCapabilities? = null,
     val statusMessage: String? = null,

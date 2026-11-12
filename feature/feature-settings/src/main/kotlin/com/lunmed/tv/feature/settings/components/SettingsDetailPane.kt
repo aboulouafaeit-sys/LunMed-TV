@@ -44,9 +44,13 @@ import com.lunmed.tv.core.model.AnimationIntensity
 import com.lunmed.tv.core.model.CardSizePreset
 import com.lunmed.tv.core.model.DefaultLauncherState
 import com.lunmed.tv.core.model.DeviceCapabilities
+import com.lunmed.tv.core.model.IconDisplayMode
 import com.lunmed.tv.core.model.InterfaceDensity
 import com.lunmed.tv.core.model.LauncherPreferences
+import com.lunmed.tv.core.model.LunmedWallpapers
+import com.lunmed.tv.core.model.NetworkStatus
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
+import com.lunmed.tv.core.ui.components.AppleControlCenterOverlay
 import com.lunmed.tv.feature.settings.model.SettingsSection
 
 @Composable
@@ -55,10 +59,13 @@ fun SettingsDetailPane(
     preferences: LauncherPreferences,
     capabilities: DeviceCapabilities?,
     defaultLauncherState: DefaultLauncherState,
+    networkStatus: NetworkStatus? = null,
     rootState: com.lunmed.tv.core.model.RootState = com.lunmed.tv.core.model.RootState(),
     onSetAccentPreset: (AccentPreset) -> Unit,
     onSetDensity: (InterfaceDensity) -> Unit,
     onSetCardSize: (CardSizePreset) -> Unit,
+    onSetIconDisplayMode: (IconDisplayMode) -> Unit = {},
+    onSelectWallpaper: (String) -> Unit = {},
     onSetAnimationIntensity: (AnimationIntensity) -> Unit,
     onToggleShowClock: (Boolean) -> Unit,
     onToggleShowDeviceIndicators: (Boolean) -> Unit,
@@ -75,6 +82,7 @@ fun SettingsDetailPane(
 ) {
     val spacing = LunmedTheme.spacing
     val colors = LunmedTheme.colors
+    var showAppleControlCenter by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -144,6 +152,43 @@ fun SettingsDetailPane(
                             subtitle = sub,
                             isSelected = preferences.cardSize == size,
                             onClick = { onSetCardSize(size) },
+                        )
+                    }
+                }
+
+                SettingGroup(title = "Apple tvOS Quick Settings (مركز تحكم نمط آبل)") {
+                    ActionSettingButton(
+                        title = "Open Apple Control Center (فتح مركز تحكم نمط آبل)",
+                        subtitle = "عرض واجهة تحكم آبل السريعة للاتصال، الصوت، الشاشة، والخلفيات بنمط tvOS الفاخر",
+                        icon = Icons.Rounded.Tune,
+                        onClick = { showAppleControlCenter = true },
+                    )
+                }
+
+                SettingGroup(title = "App Icon Presentation Mode (طريقة عرض الأيقونات)") {
+                    IconDisplayMode.entries.forEach { mode ->
+                        val (title, sub) = when (mode) {
+                            IconDisplayMode.CINEMA_BANNER -> "Cinema Banners (شريط سينمائي 16:9)" to "Widescreen dynamic cards with cinematic preview banners"
+                            IconDisplayMode.SQUARE_IOS -> "Apple TV Squircle (أيقونات آبل المربعة)" to "Signature iOS / Apple TV squircle icon grid with ambient jewel aura"
+                            IconDisplayMode.COMPACT_CAPSULE -> "Modern Capsule Dock (كبسولات عصرية)" to "Streamlined horizontal pill capsules with inline app label"
+                        }
+                        SelectableOptionRow(
+                            title = title,
+                            subtitle = sub,
+                            isSelected = preferences.iconDisplayMode == mode,
+                            onClick = { onSetIconDisplayMode(mode) },
+                        )
+                    }
+                }
+
+                SettingGroup(title = "Scenic Dynamic Wallpapers (الخلفيات الخلابة)") {
+                    LunmedWallpapers.BUILT_IN.forEach { wallpaper ->
+                        SelectableOptionRow(
+                            title = wallpaper.title,
+                            subtitle = wallpaper.description,
+                            isSelected = preferences.selectedWallpaperId == wallpaper.id,
+                            leadingChipColor = Color(wallpaper.ambientGlowArgb),
+                            onClick = { onSelectWallpaper(wallpaper.id) },
                         )
                     }
                 }
@@ -426,6 +471,20 @@ fun SettingsDetailPane(
                 }
             }
         }
+    }
+
+    if (showAppleControlCenter) {
+        AppleControlCenterOverlay(
+            preferences = preferences,
+            networkStatus = networkStatus,
+            capabilities = capabilities,
+            defaultLauncherState = defaultLauncherState,
+            onSetIconDisplayMode = onSetIconDisplayMode,
+            onSelectWallpaper = onSelectWallpaper,
+            onOpenAndroidSettings = onOpenAndroidSettings,
+            onRequestDefaultLauncher = onRequestDefaultLauncher,
+            onDismiss = { showAppleControlCenter = false },
+        )
     }
 }
 
