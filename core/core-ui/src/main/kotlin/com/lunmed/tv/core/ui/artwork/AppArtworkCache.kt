@@ -19,15 +19,46 @@ data class AppArtwork(
 )
 
 /**
- * Memory-bounded LRU cache for TV app banners and launcher icons.
+ * Memory-bounded LRU cache for TV app banners and launcher icons
+ * with dynamic low-RAM budgeting and onTrimMemory handling.
  */
 object AppArtworkCache {
-    private const val MAX_ENTRIES = 96
-    private const val MAX_BANNER_WIDTH = 320
-    private const val MAX_BANNER_HEIGHT = 180
-    private const val MAX_ICON_SIZE = 144
+    private var maxEntries = 96
+    private var maxBannerWidth = 320
+    private var maxBannerHeight = 180
+    private var maxIconSize = 144
+    private var isLowRamMode = false
 
-    private val cache = LruCache<String, AppArtwork>(MAX_ENTRIES)
+    private var cache = LruCache<String, AppArtwork>(maxEntries)
+
+    fun configureForLowRam(isLowRam: Boolean) {
+        if (isLowRam == isLowRamMode) return
+        isLowRamMode = isLowRam
+        maxEntries = if (isLowRam) 36 else 96
+        maxBannerWidth = if (isLowRam) 240 else 320
+        maxBannerHeight = if (isLowRam) 135 else 180
+        maxIconSize = if (isLowRam) 96 else 144
+
+        val oldCache = cache
+        cache = LruCache(maxEntries)
+        oldCache.evictAll()
+    }
+
+    fun trimMemory(level: Int) {
+        when {
+            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
+                cache.evictAll()
+            }
+            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW ||
+                level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
+                cache.trimToSize(maxEntries / 3)
+            }
+        }
+    }
+
+    fun clear() {
+        cache.evictAll()
+    }
 
     suspend fun load(
         context: Context,
@@ -43,7 +74,7 @@ object AppArtworkCache {
             val pm = context.packageManager
             val banner = loadBannerDrawable(pm, packageName, activityName)
             if (banner != null) {
-                val bmp = drawableToBitmap(banner, MAX_BANNER_WIDTH, MAX_BANNER_HEIGHT)
+                val bmp = drawableToBitmap(banner, maxBannerWidth, maxBannerHeight)
                 val artwork = AppArtwork(bmp.asImageBitmap(), isBanner = true)
                 cache.put(key, artwork)
                 return@withContext artwork
@@ -51,7 +82,7 @@ object AppArtworkCache {
 
             val icon = runCatching { pm.getApplicationIcon(packageName) }.getOrNull()
                 ?: return@withContext null
-            val bmp = drawableToBitmap(icon, MAX_ICON_SIZE, MAX_ICON_SIZE)
+            val bmp = drawableToBitmap(icon, maxIconSize, maxIconSize)
             val artwork = AppArtwork(bmp.asImageBitmap(), isBanner = false)
             cache.put(key, artwork)
             artwork
