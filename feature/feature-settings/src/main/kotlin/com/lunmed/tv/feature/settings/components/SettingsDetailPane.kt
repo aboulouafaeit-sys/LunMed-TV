@@ -62,6 +62,7 @@ fun SettingsDetailPane(
     onToggleShowRecentApps: (Boolean) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
     onOpenAndroidSettings: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit,
     onOpenResetConfirmation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -228,6 +229,13 @@ fun SettingsDetailPane(
                     }
 
                     ActionSettingButton(
+                        title = "Persistent Home Watchdog (Restricted TV Boxes)",
+                        subtitle = "Enable Accessibility Watchdog to intercept Home key and vendor launchers on locked ROMs",
+                        icon = Icons.Rounded.Tune,
+                        onClick = onOpenAccessibilitySettings,
+                    )
+
+                    ActionSettingButton(
                         title = "Open Android System Settings",
                         subtitle = "Access Wi-Fi, Bluetooth, Audio, and Display settings",
                         icon = Icons.Rounded.Tune,
@@ -241,6 +249,27 @@ fun SettingsDetailPane(
                         highlight = true,
                         onClick = onOpenResetConfirmation,
                     )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(colors.surfaceElevated.copy(alpha = 0.5f), LunmedTheme.shapes.cardSmall)
+                            .padding(14.dp),
+                    ) {
+                        Column {
+                            Text(
+                                text = "STB / Reseller Permanent Lock Command (ADB):",
+                                style = LunmedTheme.typography.labelAction,
+                                color = colors.accentPrimary,
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "adb shell cmd role add-role-holder android.app.role.HOME com.lunmed.tv",
+                                style = LunmedTheme.typography.labelMeta,
+                                color = colors.textSecondary,
+                            )
+                        }
+                    }
                 }
             }
 

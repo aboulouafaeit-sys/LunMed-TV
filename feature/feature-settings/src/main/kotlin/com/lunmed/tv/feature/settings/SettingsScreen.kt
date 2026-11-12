@@ -38,6 +38,7 @@ fun SettingsRoute(
     onNavigate: (LunmedDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
     onOpenAndroidSettings: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,6 +55,7 @@ fun SettingsRoute(
         onNavigate = onNavigate,
         onRequestDefaultLauncher = onRequestDefaultLauncher,
         onOpenAndroidSettings = onOpenAndroidSettings,
+        onOpenAccessibilitySettings = onOpenAccessibilitySettings,
         onSelectSection = viewModel::onSelectSection,
         onSetAccentPreset = viewModel::onSetAccentPreset,
         onSetDensity = viewModel::onSetDensity,
@@ -74,6 +76,7 @@ fun SettingsScreen(
     onNavigate: (LunmedDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
     onOpenAndroidSettings: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit,
     onSelectSection: (SettingsSection) -> Unit,
     onSetAccentPreset: (com.lunmed.tv.core.model.AccentPreset) -> Unit,
     onSetDensity: (com.lunmed.tv.core.model.InterfaceDensity) -> Unit,
@@ -147,6 +150,7 @@ fun SettingsScreen(
                     onToggleShowRecentApps = onToggleShowRecentApps,
                     onRequestDefaultLauncher = onRequestDefaultLauncher,
                     onOpenAndroidSettings = onOpenAndroidSettings,
+                    onOpenAccessibilitySettings = onOpenAccessibilitySettings,
                     onOpenResetConfirmation = onOpenResetConfirmation,
                     modifier = Modifier.weight(1f),
                 )

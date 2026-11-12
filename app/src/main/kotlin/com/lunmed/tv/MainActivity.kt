@@ -115,6 +115,13 @@ class MainActivity : ComponentActivity() {
                         runCatching { startActivity(intent) }
                     }
 
+                    fun openAccessibilitySettings() {
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        runCatching { startActivity(intent) }
+                    }
+
                     when (destination) {
                         LunmedDestination.HOME -> {
                             val homeViewModel: HomeViewModel = hiltViewModel()
@@ -138,6 +145,7 @@ class MainActivity : ComponentActivity() {
                                 onNavigate = ::handleNavigate,
                                 onRequestDefaultLauncher = ::requestDefaultLauncher,
                                 onOpenAndroidSettings = ::openAndroidSettings,
+                                onOpenAccessibilitySettings = ::openAccessibilitySettings,
                             )
                         }
                         LunmedDestination.DEVICE -> {
