@@ -72,16 +72,19 @@ class LunmedHomeWatchdogService : AccessibilityService() {
         private val KNOWN_VENDOR_LAUNCHERS = setOf(
             // Google / Android TV stock
             "com.google.android.tvlauncher",
+            "com.google.android.apps.tv.launcherx",
             "com.google.android.tungsten.setupwraith",
             // Amlogic standard & TV box OEM launchers
             "com.droidlogic.tvlauncher",
             "com.droidlogic.launcher",
             "com.droidlogic.appinstall",
+            "com.alber.tvlauncher",
             // Rockchip OEM launchers
             "com.rockchip.launcher",
             "com.rockchip.devicetest",
             // Allwinner OEM launchers
             "com.allwinner.launcher",
+            "com.shashlik.launcher",
             // Fire TV / Amazon OS
             "com.amazon.tv.launcher",
             // Xiaomi PatchWall / MiTV
@@ -90,6 +93,20 @@ class LunmedHomeWatchdogService : AccessibilityService() {
             "com.mstar.tv.launcher",
             "com.realtek.launcher",
             "com.hisilicon.launcher",
+            "com.skyworth.tvos.launcher",
+            "com.tcl.tv.launcher",
+            "com.tcl.homelauncher",
+            "com.hisense.tv.launcher",
+            "com.huawei.android.tvlauncher",
+            "com.zte.browser.launcher",
+            "com.zte.iptvclient.android.launcher",
+            "com.fh.launcher",
+            "com.inphic.launcher",
+            "com.sunniwell.launcher",
+            // Stock AOSP launchers present in generic ROMs
+            "com.android.launcher3",
+            "com.android.launcher2",
+            "com.cyanogenmod.trebuchet",
         )
 
         fun isKnownVendorStockLauncher(packageName: String): Boolean =

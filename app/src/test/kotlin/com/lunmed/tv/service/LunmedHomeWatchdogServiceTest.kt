@@ -17,6 +17,9 @@ class LunmedHomeWatchdogServiceTest {
     fun isKnownVendorStockLauncher_identifiesRockchipAndAllwinnerLaunchers() {
         assertTrue(LunmedHomeWatchdogService.isKnownVendorStockLauncher("com.rockchip.launcher"))
         assertTrue(LunmedHomeWatchdogService.isKnownVendorStockLauncher("com.allwinner.launcher"))
+        assertTrue(LunmedHomeWatchdogService.isKnownVendorStockLauncher("com.shashlik.launcher"))
+        assertTrue(LunmedHomeWatchdogService.isKnownVendorStockLauncher("com.alber.tvlauncher"))
+        assertTrue(LunmedHomeWatchdogService.isKnownVendorStockLauncher("com.android.launcher3"))
     }
 
     @Test

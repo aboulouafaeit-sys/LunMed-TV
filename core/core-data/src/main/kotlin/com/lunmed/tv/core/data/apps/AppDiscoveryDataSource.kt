@@ -37,16 +37,19 @@ class PackageManagerAppDiscoveryDataSource @Inject constructor(
 
     private fun queryActivities(intent: Intent, isTvApp: Boolean): List<DiscoveredAppEntry> {
         val pm = context.packageManager
-        val resolveInfos: List<ResolveInfo> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0L))
-        } else {
-            @Suppress("DEPRECATION")
-            pm.queryIntentActivities(intent, 0)
-        }
+        val resolveInfos: List<ResolveInfo> = runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0L))
+            } else {
+                @Suppress("DEPRECATION")
+                pm.queryIntentActivities(intent, 0)
+            }
+        }.getOrNull() ?: emptyList()
 
         return resolveInfos.mapNotNull { info ->
-            val activityInfo = info.activityInfo ?: return@mapNotNull null
-            val appInfo = activityInfo.applicationInfo
+            val activityInfo = info?.activityInfo ?: return@mapNotNull null
+            val appInfo = activityInfo.applicationInfo ?: return@mapNotNull null
+            if (activityInfo.packageName.isNullOrBlank()) return@mapNotNull null
             if (!activityInfo.enabled || !appInfo.enabled) return@mapNotNull null
 
             val label = runCatching { info.loadLabel(pm).toString() }

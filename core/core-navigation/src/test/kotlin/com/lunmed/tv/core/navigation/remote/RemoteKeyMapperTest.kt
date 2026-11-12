@@ -17,18 +17,31 @@ class RemoteKeyMapperTest {
         assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_DPAD_CENTER))
         assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_ENTER))
         assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_NUMPAD_ENTER))
+        assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_A))
+        assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_SELECT))
 
         assertEquals(RemoteCommand.BACK, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BACK))
         assertEquals(RemoteCommand.BACK, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_ESCAPE))
+        assertEquals(RemoteCommand.BACK, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_B))
 
         assertEquals(RemoteCommand.MENU, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_MENU))
+        assertEquals(RemoteCommand.MENU, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_INFO))
+        assertEquals(RemoteCommand.MENU, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_GUIDE))
+        assertEquals(RemoteCommand.MENU, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_X))
+
+        assertEquals(RemoteCommand.MOVE_UP, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_PAGE_UP))
+        assertEquals(RemoteCommand.MOVE_UP, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_CHANNEL_UP))
+        assertEquals(RemoteCommand.MOVE_DOWN, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_PAGE_DOWN))
+        assertEquals(RemoteCommand.MOVE_DOWN, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_CHANNEL_DOWN))
+
         assertEquals(RemoteCommand.HOME, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_HOME))
         assertEquals(RemoteCommand.SETTINGS, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_SETTINGS))
     }
 
     @Test
-    fun `unmapped key codes return null`() {
+    fun `unmapped volume and media keys return null to allow system pass-through`() {
         assertNull(RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_VOLUME_UP))
+        assertNull(RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_VOLUME_DOWN))
         assertNull(RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_MUTE))
     }
 }

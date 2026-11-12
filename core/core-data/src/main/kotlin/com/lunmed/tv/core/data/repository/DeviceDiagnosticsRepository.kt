@@ -181,12 +181,14 @@ class AndroidDeviceDiagnosticsRepository @Inject constructor(
         var wifiSpeed: Int? = null
 
         if (caps?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true) {
-            val wm = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
-            val wifiInfo = wm?.connectionInfo
-            if (wifiInfo != null) {
-                wifiSsid = wifiInfo.ssid?.trim('\"')?.takeIf { it != "<unknown ssid>" }
-                wifiRssi = wifiInfo.rssi
-                wifiSpeed = wifiInfo.linkSpeed.takeIf { it > 0 }
+            runCatching {
+                val wm = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+                val wifiInfo = wm?.connectionInfo
+                if (wifiInfo != null) {
+                    wifiSsid = wifiInfo.ssid?.trim('\"')?.takeIf { it != "<unknown ssid>" && it.isNotBlank() }
+                    wifiRssi = wifiInfo.rssi
+                    wifiSpeed = wifiInfo.linkSpeed.takeIf { it > 0 }
+                }
             }
         }
 
