@@ -3,6 +3,7 @@ package com.lunmed.tv.feature.settings.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -385,6 +386,19 @@ fun SettingsDetailPane(
             }
 
             SettingsSection.ABOUT -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = spacing.md),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    com.lunmed.tv.core.ui.components.LunmedBrandBadge(
+                        size = com.lunmed.tv.core.ui.components.LunmedBrandBadgeSize.MEDIUM,
+                        showWordmark = true,
+                        animatedSheen = true,
+                    )
+                }
+
                 SettingGroup(title = "Application Information") {
                     InfoSettingRow(title = "Application Name", value = "LUNMED TV")
                     InfoSettingRow(title = "Version", value = "0.1.0-alpha (Milestone 06)")
@@ -579,16 +593,27 @@ private fun ToggleOptionRow(
 
             Box(
                 modifier = Modifier
+                    .width(44.dp)
+                    .height(24.dp)
                     .background(
-                        color = if (isChecked) colors.accentPrimary.copy(alpha = 0.2f) else colors.surfaceElevated,
+                        color = if (isChecked) colors.accentPrimary.copy(alpha = 0.25f) else colors.surfaceElevated,
                         shape = LunmedTheme.shapes.pill,
                     )
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                    .border(
+                        width = 1.dp,
+                        color = if (isChecked) colors.accentPrimary else colors.borderSubtle,
+                        shape = LunmedTheme.shapes.pill,
+                    )
+                    .padding(3.dp),
+                contentAlignment = if (isChecked) Alignment.CenterEnd else Alignment.CenterStart,
             ) {
-                Text(
-                    text = if (isChecked) "ON" else "OFF",
-                    style = LunmedTheme.typography.labelAction,
-                    color = if (isChecked) colors.accentPrimary else colors.textMuted,
+                Box(
+                    modifier = Modifier
+                        .size(18.dp)
+                        .background(
+                            color = if (isChecked) colors.accentPrimary else colors.textMuted,
+                            shape = androidx.compose.foundation.shape.CircleShape,
+                        ),
                 )
             }
         }

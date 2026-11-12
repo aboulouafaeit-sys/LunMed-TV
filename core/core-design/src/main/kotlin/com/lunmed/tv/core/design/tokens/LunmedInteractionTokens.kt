@@ -23,8 +23,8 @@ data class LunmedFocusTokens(
 
 object LunmedFocusStyle {
     val Default = LunmedFocusTokens(
-        borderWidth = 2.dp,
-        focusedScale = 1.05f,
+        borderWidth = 2.5.dp,
+        focusedScale = 1.08f,
         pressedScale = 0.98f,
         idleScale = 1.0f,
         unfocusedAlpha = 0.92f,

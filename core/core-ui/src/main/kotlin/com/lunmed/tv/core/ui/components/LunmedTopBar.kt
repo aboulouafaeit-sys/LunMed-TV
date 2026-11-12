@@ -1,17 +1,22 @@
 package com.lunmed.tv.core.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Apps
 import androidx.compose.material.icons.rounded.Home
@@ -29,7 +34,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -77,32 +84,33 @@ fun LunmedTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        // Left: Brand Wordmark + Smart Pill Navigation
+        // Left: Luxury Brand Badge + Glassmorphic Capsule Dock
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing.lg),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .background(colors.accentPrimary, LunmedTheme.shapes.pill),
-                )
-                Spacer(modifier = Modifier.width(spacing.xs))
-                Text(
-                    text = "LUNMED",
-                    style = LunmedTheme.typography.labelAction.copy(
-                        letterSpacing = 2.6.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = colors.textPrimary,
-                )
-            }
+            LunmedBrandBadge(
+                size = LunmedBrandBadgeSize.COMPACT,
+                showWordmark = true,
+                animatedSheen = true,
+            )
 
+            // Frosted Glass Floating Dock for Navigation
             Row(
-                horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.lunmedFocusGroupRestorer(),
+                modifier = Modifier
+                    .background(
+                        color = colors.surfaceElevated.copy(alpha = 0.55f),
+                        shape = LunmedTheme.shapes.pill,
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color(0x1FFFFFFF),
+                        shape = LunmedTheme.shapes.pill,
+                    )
+                    .padding(3.dp)
+                    .lunmedFocusGroupRestorer(),
             ) {
                 TopNavPill(
                     label = "Home",
@@ -131,7 +139,7 @@ fun LunmedTopBar(
             }
         }
 
-        // Right: Default Launcher Pill (if needed) + Device Indicators + Live Clock
+        // Right: Default Launcher Pill (if needed) + Device Status + Live Clock
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing.md),
@@ -172,11 +180,17 @@ private fun TopNavPill(
     val anim = LunmedTheme.animation
     var isFocused by remember { mutableStateOf(false) }
 
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.05f else 1.0f,
+        animationSpec = anim.focusSpec(),
+        label = "TopNavPillScale",
+    )
+
     val containerColor by animateColorAsState(
         targetValue = when {
             isFocused -> colors.surfaceCardFocused
-            selected -> colors.surfaceElevated
-            accentHighlight -> colors.accentPrimary.copy(alpha = 0.14f)
+            selected -> colors.surfaceCard.copy(alpha = 0.95f)
+            accentHighlight -> colors.accentPrimary.copy(alpha = 0.16f)
             else -> Color.Transparent
         },
         animationSpec = anim.focusSpec(),
@@ -205,21 +219,48 @@ private fun TopNavPill(
         ),
         border = ClickableSurfaceDefaults.border(
             border = if (selected) {
-                Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = LunmedTheme.shapes.pill)
+                Border(
+                    border = BorderStroke(
+                        width = 1.dp,
+                        brush = Brush.linearGradient(
+                            listOf(
+                                colors.accentPrimary.copy(alpha = 0.5f),
+                                colors.borderSubtle,
+                            ),
+                        ),
+                    ),
+                    shape = LunmedTheme.shapes.pill,
+                )
+            } else if (accentHighlight) {
+                Border(
+                    border = BorderStroke(1.dp, colors.accentPrimary.copy(alpha = 0.6f)),
+                    shape = LunmedTheme.shapes.pill,
+                )
             } else {
                 Border.None
             },
             focusedBorder = Border(
-                border = BorderStroke(1.5.dp, colors.borderFocused),
+                border = BorderStroke(
+                    width = 1.8.dp,
+                    brush = Brush.linearGradient(
+                        listOf(
+                            Color(0xFFFFF8E7),
+                            colors.accentPrimary,
+                            colors.accentSecondary,
+                        ),
+                    ),
+                ),
                 shape = LunmedTheme.shapes.pill,
             ),
         ),
-        modifier = Modifier.onFocusChanged { isFocused = it.isFocused },
+        modifier = Modifier
+            .scale(scale)
+            .onFocusChanged { isFocused = it.isFocused },
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
         ) {
             Icon(
                 imageVector = icon,
@@ -229,9 +270,19 @@ private fun TopNavPill(
             )
             Text(
                 text = label,
-                style = LunmedTheme.typography.labelAction,
+                style = LunmedTheme.typography.labelAction.copy(
+                    fontWeight = if (selected || isFocused) FontWeight.Bold else FontWeight.Medium,
+                    letterSpacing = 0.4.sp,
+                ),
                 color = contentColor,
             )
+            if (selected) {
+                Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .background(colors.accentPrimary, CircleShape),
+                )
+            }
         }
     }
 }
@@ -255,22 +306,62 @@ private fun DeviceStatusCluster(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
-            .background(colors.surfaceElevated.copy(alpha = 0.7f), LunmedTheme.shapes.pill)
+            .background(
+                color = colors.surfaceElevated.copy(alpha = 0.65f),
+                shape = LunmedTheme.shapes.pill,
+            )
+            .border(
+                width = 1.dp,
+                color = Color(0x18FFFFFF),
+                shape = LunmedTheme.shapes.pill,
+            )
             .padding(horizontal = 12.dp, vertical = 6.dp),
     ) {
         if (is4k) {
-            Text(
-                text = "4K",
-                style = LunmedTheme.typography.labelMeta,
-                color = colors.accentPrimary,
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = colors.accentPrimary.copy(alpha = 0.16f),
+                        shape = RoundedCornerShape(4.dp),
+                    )
+                    .border(
+                        width = 0.8.dp,
+                        color = colors.accentPrimary.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(4.dp),
+                    )
+                    .padding(horizontal = 5.dp, vertical = 1.dp),
+            ) {
+                Text(
+                    text = "4K HDR",
+                    style = LunmedTheme.typography.labelMeta.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 9.sp,
+                        letterSpacing = 0.5.sp,
+                    ),
+                    color = colors.accentPrimary,
+                )
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .background(
+                        color = if (networkStatus.isConnected) colors.statusSuccess else colors.statusWarning,
+                        shape = CircleShape,
+                    ),
+            )
+            Icon(
+                imageVector = networkIcon,
+                contentDescription = networkStatus.transport.name,
+                tint = networkTint,
+                modifier = Modifier.size(16.dp),
             )
         }
-        Icon(
-            imageVector = networkIcon,
-            contentDescription = networkStatus.transport.name,
-            tint = networkTint,
-            modifier = Modifier.size(16.dp),
-        )
     }
 }
 
@@ -294,14 +385,18 @@ private fun LunmedLiveClock() {
     Column(horizontalAlignment = Alignment.End) {
         Text(
             text = timeFormatter.format(date),
-            style = LunmedTheme.typography.titleLarge,
+            style = LunmedTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.8.sp,
+            ),
             color = colors.textPrimary,
         )
         Text(
             text = dateFormatter.format(date),
-            style = LunmedTheme.typography.labelMeta,
-            color = colors.textSecondary,
+            style = LunmedTheme.typography.labelMeta.copy(
+                letterSpacing = 0.4.sp,
+            ),
+            color = colors.accentPrimary.copy(alpha = 0.85f),
         )
     }
 }
-

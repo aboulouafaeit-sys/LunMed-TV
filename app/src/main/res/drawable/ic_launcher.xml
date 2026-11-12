@@ -1,0 +1,149 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Deep Obsidian Canvas Background -->
+    <path
+        android:fillColor="#07090E"
+        android:pathData="M0,0h512v512h-512z" />
+
+    <!-- Ambient Amber Backlight Glow behind Emblem -->
+    <path
+        android:pathData="M256,256m-190,0a190,190 0,1 1,380 0a190,190 0,1 1,-380 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="256"
+                android:centerY="256"
+                android:gradientRadius="190"
+                android:type="radial">
+                <item android:color="#4DE5C17B" android:offset="0.0" />
+                <item android:color="#1AE5C17B" android:offset="0.5" />
+                <item android:color="#0007090E" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Outer Cinema Frame (Gold Gradient) -->
+    <path
+        android:pathData="M76,140 C76,134 81,130 87,130 L425,130 C431,130 436,134 436,140 L436,360 C436,366 431,370 425,370 L87,370 C81,370 76,366 76,360 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="76"
+                android:startY="130"
+                android:endX="436"
+                android:endY="370"
+                android:type="linear">
+                <item android:color="#FFF8E7" android:offset="0.0" />
+                <item android:color="#E5C17B" android:offset="0.35" />
+                <item android:color="#C49A45" android:offset="0.7" />
+                <item android:color="#8A651E" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner Cinema Screen (Glossy Obsidian) -->
+    <path
+        android:fillColor="#0D111A"
+        android:pathData="M92,146 L420,146 L420,354 L92,354 Z" />
+
+    <!-- Cinema Screen Curved Arc Bottom Highlight -->
+    <path
+        android:pathData="M92,330 Q256,365 420,330 L420,354 L92,354 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="256"
+                android:startY="330"
+                android:endX="256"
+                android:endY="354"
+                android:type="linear">
+                <item android:color="#00000000" android:offset="0.0" />
+                <item android:color="#33E5C17B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Central Monumental "L" Monogram - Gold Beveled Shadow -->
+    <path
+        android:fillColor="#5A4315"
+        android:pathData="M188,102 L258,62 L258,290 L346,290 L316,342 L188,342 Z" />
+
+    <!-- Central Monumental "L" Monogram - Outer Gold Frame -->
+    <path
+        android:pathData="M184,98 L254,58 L254,286 L342,286 L312,338 L184,338 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="184"
+                android:startY="58"
+                android:endX="342"
+                android:endY="338"
+                android:type="linear">
+                <item android:color="#FFF3D4" android:offset="0.0" />
+                <item android:color="#E5C17B" android:offset="0.4" />
+                <item android:color="#A67B25" android:offset="0.8" />
+                <item android:color="#F7DE9B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Central Monumental "L" Monogram - Inner Obsidian Glass Core -->
+    <path
+        android:fillColor="#0A0E17"
+        android:pathData="M200,122 L238,100 L238,270 L308,270 L290,322 L200,322 Z" />
+
+    <!-- Specular Reflection Glaze on L Core -->
+    <path
+        android:pathData="M200,122 L238,100 L238,210 L200,240 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="200"
+                android:startY="100"
+                android:endX="238"
+                android:endY="240"
+                android:type="linear">
+                <item android:color="#4DFFFFFF" android:offset="0.0" />
+                <item android:color="#00FFFFFF" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Wordmark LUNMED -->
+    <!-- Stylized Gold Text Bar underneath -->
+    <path
+        android:pathData="M120,405 L392,405 L382,410 L130,410 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="120"
+                android:startY="405"
+                android:endX="392"
+                android:endY="410"
+                android:type="linear">
+                <item android:color="#00E5C17B" android:offset="0.0" />
+                <item android:color="#FFE5C17B" android:offset="0.5" />
+                <item android:color="#00E5C17B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Bottom TV Capsule -->
+    <path
+        android:fillColor="#141A26"
+        android:pathData="M228,424 C228,420 231,417 235,417 L277,417 C281,417 284,420 284,424 L284,438 C284,442 281,445 277,445 L235,445 C231,445 228,442 228,438 Z" />
+
+    <path
+        android:strokeColor="#E5C17B"
+        android:strokeWidth="1.2"
+        android:pathData="M228,424 C228,420 231,417 235,417 L277,417 C281,417 284,420 284,424 L284,438 C284,442 281,445 277,445 L235,445 C231,445 228,442 228,438 Z" />
+
+    <!-- "TV" letters inside capsule -->
+    <!-- T -->
+    <path
+        android:fillColor="#E5C17B"
+        android:pathData="M242,424 L252,424 L252,426.5 L248.5,426.5 L248.5,437 L245.5,437 L245.5,426.5 L242,426.5 Z" />
+    <!-- V -->
+    <path
+        android:fillColor="#E5C17B"
+        android:pathData="M256,424 L259.5,424 L263,433.5 L266.5,424 L270,424 L264.8,437 L261.2,437 Z" />
+</vector>

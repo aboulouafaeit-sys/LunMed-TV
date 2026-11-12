@@ -1,7 +1,9 @@
 package com.lunmed.tv.feature.apps.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,21 +14,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
@@ -50,6 +60,7 @@ fun AppLibraryGridCard(
     val context = LocalContext.current
     val colors = LunmedTheme.colors
     val spacing = LunmedTheme.spacing
+    var isCardFocused by remember { mutableStateOf(false) }
 
     val (cardWidth, cardHeight) = remember(cardSize) {
         when (cardSize) {
@@ -67,6 +78,11 @@ fun AppLibraryGridCard(
         value = AppArtworkCache.load(context, app.packageName, app.activityName)
     }
 
+    val labelColor by animateColorAsState(
+        targetValue = if (isCardFocused) colors.textPrimary else colors.textSecondary,
+        label = "AppLibraryGridLabelColor",
+    )
+
     Column(
         modifier = modifier.width(cardWidth),
         horizontalAlignment = Alignment.Start,
@@ -77,7 +93,10 @@ fun AppLibraryGridCard(
             modifier = Modifier
                 .width(cardWidth)
                 .height(cardHeight)
-                .onFocusChanged { if (it.isFocused) onFocused() },
+                .onFocusChanged {
+                    isCardFocused = it.isFocused
+                    if (it.isFocused) onFocused()
+                },
         ) { isFocused ->
             Box(
                 modifier = Modifier
@@ -85,13 +104,28 @@ fun AppLibraryGridCard(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                colors.surfaceElevated,
+                                if (isFocused) colors.surfaceCardFocused else colors.surfaceElevated,
                                 colors.surfaceCard,
                             ),
                         ),
                     ),
                 contentAlignment = Alignment.Center,
             ) {
+                if (isFocused) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(
+                                        colors.accentGlow.copy(alpha = 0.35f),
+                                        Color.Transparent,
+                                    ),
+                                ),
+                            ),
+                    )
+                }
+
                 val loaded = artwork
                 if (loaded != null) {
                     if (loaded.isBanner) {
@@ -102,19 +136,52 @@ fun AppLibraryGridCard(
                             modifier = Modifier.fillMaxSize(),
                         )
                     } else {
-                        Image(
-                            bitmap = loaded.bitmap,
-                            contentDescription = app.label,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(48.dp),
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(52.dp)
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        listOf(
+                                            colors.surfaceElevated.copy(alpha = 0.9f),
+                                            colors.surfaceDeep,
+                                        ),
+                                    ),
+                                    shape = RoundedCornerShape(13.dp),
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = if (isFocused) colors.accentPrimary.copy(alpha = 0.5f) else Color(0x18FFFFFF),
+                                    shape = RoundedCornerShape(13.dp),
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                bitmap = loaded.bitmap,
+                                contentDescription = app.label,
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(RoundedCornerShape(9.dp)),
+                            )
+                        }
                     }
                 } else {
-                    Text(
-                        text = app.label.take(2).uppercase(),
-                        style = LunmedTheme.typography.titleLarge,
-                        color = colors.textMuted,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .background(colors.surfaceElevated, RoundedCornerShape(13.dp))
+                            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(13.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = app.label.take(2).uppercase(),
+                            style = LunmedTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.sp,
+                            ),
+                            color = if (isFocused) colors.accentPrimary else colors.textMuted,
+                        )
+                    }
                 }
 
                 // Top right badges
@@ -140,14 +207,27 @@ fun AppLibraryGridCard(
                     }
 
                     if (app.isFavorite) {
-                        Icon(
-                            imageVector = Icons.Rounded.Star,
-                            contentDescription = "Favorite",
-                            tint = if (isFocused) colors.accentPrimary else colors.accentPrimary.copy(alpha = 0.75f),
+                        Box(
                             modifier = Modifier
                                 .padding(start = 4.dp)
-                                .size(14.dp),
-                        )
+                                .background(
+                                    color = colors.obsidianCanvas.copy(alpha = 0.85f),
+                                    shape = CircleShape,
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = if (isFocused) colors.accentPrimary else colors.accentPrimary.copy(alpha = 0.5f),
+                                    shape = CircleShape,
+                                )
+                                .padding(3.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Star,
+                                contentDescription = "Favorite",
+                                tint = colors.accentPrimary,
+                                modifier = Modifier.size(11.dp),
+                            )
+                        }
                     }
                 }
 
@@ -158,15 +238,24 @@ fun AppLibraryGridCard(
                             .align(Alignment.BottomStart)
                             .padding(6.dp)
                             .background(
-                                color = colors.obsidianCanvas.copy(alpha = 0.7f),
+                                color = colors.obsidianCanvas.copy(alpha = 0.8f),
                                 shape = LunmedTheme.shapes.pill,
                             )
-                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                            .border(
+                                width = 0.8.dp,
+                                color = colors.borderSubtle,
+                                shape = LunmedTheme.shapes.pill,
+                            )
+                            .padding(horizontal = 7.dp, vertical = 2.dp),
                     ) {
                         Text(
                             text = cat.uppercase(),
-                            style = LunmedTheme.typography.labelMeta,
-                            color = colors.textSecondary,
+                            style = LunmedTheme.typography.labelMeta.copy(
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp,
+                            ),
+                            color = colors.accentPrimary.copy(alpha = 0.9f),
                         )
                     }
                 }
@@ -175,14 +264,28 @@ fun AppLibraryGridCard(
 
         Spacer(modifier = Modifier.height(spacing.xs))
 
-        Text(
-            text = app.label,
-            style = LunmedTheme.typography.titleCard,
-            color = colors.textPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 2.dp),
-        )
+        ) {
+            if (isCardFocused) {
+                Box(
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .size(4.dp)
+                        .background(colors.accentPrimary, CircleShape),
+                )
+            }
+            Text(
+                text = app.label,
+                style = LunmedTheme.typography.titleCard.copy(
+                    fontWeight = if (isCardFocused) FontWeight.Bold else FontWeight.Medium,
+                ),
+                color = labelColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
 
         // Subtitle based on sort order or package name
         val metaText = when (sortOrder) {
@@ -201,4 +304,3 @@ fun AppLibraryGridCard(
         )
     }
 }
-

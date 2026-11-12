@@ -1,8 +1,10 @@
 package com.lunmed.tv.feature.device.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -53,6 +58,12 @@ fun GaugeMetricCard(
     val spacing = LunmedTheme.spacing
     var isFocused by remember { mutableStateOf(false) }
 
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.04f else 1.0f,
+        animationSpec = anim.focusSpec(),
+        label = "GaugeCardScale",
+    )
+
     val containerColor by animateColorAsState(
         targetValue = if (isFocused) colors.surfaceCardFocused else colors.surfaceCard,
         animationSpec = anim.focusSpec(),
@@ -66,6 +77,16 @@ fun GaugeMetricCard(
         else -> colors.accentPrimary
     }
 
+    val goldRimBrush = remember(colors.accentPrimary) {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFFFFF8E7),
+                colors.accentPrimary,
+                colors.accentSecondary,
+            ),
+        )
+    }
+
     Surface(
         onClick = onClick,
         shape = ClickableSurfaceDefaults.shape(LunmedTheme.shapes.cardMedium),
@@ -74,10 +95,18 @@ fun GaugeMetricCard(
             focusedContainerColor = colors.surfaceCardFocused,
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = LunmedTheme.shapes.cardMedium),
-            focusedBorder = Border(border = BorderStroke(2.dp, colors.borderFocused), shape = LunmedTheme.shapes.cardMedium),
+            border = Border(
+                border = BorderStroke(1.dp, colors.borderSubtle),
+                shape = LunmedTheme.shapes.cardMedium,
+            ),
+            focusedBorder = Border(
+                border = BorderStroke(2.dp, goldRimBrush),
+                shape = LunmedTheme.shapes.cardMedium,
+            ),
         ),
-        modifier = modifier.onFocusChanged { isFocused = it.isFocused },
+        modifier = modifier
+            .scale(scale)
+            .onFocusChanged { isFocused = it.isFocused },
     ) {
         Column(
             modifier = Modifier
@@ -85,7 +114,7 @@ fun GaugeMetricCard(
                 .padding(spacing.lg),
             verticalArrangement = Arrangement.spacedBy(spacing.md),
         ) {
-            // Header Row: Icon + Title + Status Tag
+            // Header Row: Icon + Title + Percentage Tag
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -97,8 +126,18 @@ fun GaugeMetricCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
-                            .background(colors.surfaceElevated, LunmedTheme.shapes.pill),
+                            .size(38.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    listOf(colors.surfaceElevated, colors.surfaceDeep),
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = if (isFocused) colors.accentPrimary.copy(alpha = 0.5f) else Color(0x18FFFFFF),
+                                shape = RoundedCornerShape(10.dp),
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
@@ -112,7 +151,7 @@ fun GaugeMetricCard(
                     Column {
                         Text(
                             text = title,
-                            style = LunmedTheme.typography.titleCard,
+                            style = LunmedTheme.typography.titleCard.copy(fontWeight = FontWeight.Bold),
                             color = colors.textPrimary,
                         )
                         Text(
@@ -126,31 +165,39 @@ fun GaugeMetricCard(
                 // Percentage Badge
                 Box(
                     modifier = Modifier
-                        .background(gaugeColor.copy(alpha = 0.18f), LunmedTheme.shapes.pill)
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                        .background(gaugeColor.copy(alpha = 0.16f), LunmedTheme.shapes.pill)
+                        .border(1.dp, gaugeColor.copy(alpha = 0.35f), LunmedTheme.shapes.pill)
+                        .padding(horizontal = 12.dp, vertical = 5.dp),
                 ) {
                     Text(
                         text = "${(usageRatio * 100).toInt()}%",
-                        style = LunmedTheme.typography.labelAction.copy(fontWeight = FontWeight.Bold),
+                        style = LunmedTheme.typography.labelAction.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 0.5.sp,
+                        ),
                         color = gaugeColor,
                     )
                 }
             }
 
-            // Luxury Gradient Gauge Bar
+            // Luxury Gradient Gauge Bar with Tip Glow
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp)
+                    .height(9.dp)
                     .background(colors.surfaceElevated, LunmedTheme.shapes.pill),
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(fraction = usageRatio.coerceIn(0.02f, 1f))
-                        .height(8.dp)
+                        .height(9.dp)
                         .background(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(gaugeColor.copy(alpha = 0.7f), gaugeColor),
+                                colors = listOf(
+                                    gaugeColor.copy(alpha = 0.5f),
+                                    gaugeColor,
+                                    Color.White.copy(alpha = 0.85f),
+                                ),
                             ),
                             shape = LunmedTheme.shapes.pill,
                         ),
@@ -205,4 +252,3 @@ fun GaugeMetricCard(
         }
     }
 }
-
