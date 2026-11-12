@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TopBar Destinations -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_apps">التطبيقات</string>
+    <string name="nav_device">الجهاز</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="nav_set_default">تعيين كافتراضي</string>
+
+    <!-- General Actions -->
+    <string name="action_open">فتح</string>
+    <string name="action_close">إغلاق</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_confirm">تأكيد</string>
+    <string name="action_apply">تطبيق</string>
+    <string name="action_favorite">إضافة للمفضلة</string>
+    <string name="action_unfavorite">إزالة من المفضلة</string>
+    <string name="action_hide">إخفاء</string>
+    <string name="action_unhide">إظهار</string>
+    <string name="action_app_info">معلومات التطبيق</string>
+    <string name="action_uninstall">إلغاء التثبيت</string>
+    <string name="action_assign_category">تعيين تصنيف</string>
+
+    <!-- Categories -->
+    <string name="cat_all">الكل</string>
+    <string name="cat_favorites">المفضلة</string>
+    <string name="cat_video">فيديو وبث مباشر</string>
+    <string name="cat_music">موسيقى وصوتيات</string>
+    <string name="cat_games">ألعاب</string>
+    <string name="cat_tools">أدوات ونظام</string>
+    <string name="cat_hidden">التطبيقات المخفية</string>
+</resources>
+

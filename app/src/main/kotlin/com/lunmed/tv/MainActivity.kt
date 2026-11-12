@@ -12,11 +12,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lunmed.tv.core.common.capability.DeviceCapabilityDetector
@@ -61,12 +64,32 @@ class MainActivity : ComponentActivity() {
                 prefs.animationIntensity
             }
 
-            LunmedTheme(
-                accentPreset = prefs.accentPreset,
-                density = prefs.density,
-                animationIntensity = effectiveAnimation,
-            ) {
-                var currentDestination by rememberSaveable { mutableStateOf(LunmedDestination.HOME) }
+            val isArabic = when (prefs.languageTag) {
+                "ar" -> true
+                "system" -> java.util.Locale.getDefault().language == "ar"
+                else -> false
+            }
+            val layoutDirection = if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr
+
+            LaunchedEffect(prefs.languageTag) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    val localeManager = getSystemService(android.app.LocaleManager::class.java)
+                    val locales = if (prefs.languageTag == "system") {
+                        android.os.LocaleList.getEmptyLocaleList()
+                    } else {
+                        android.os.LocaleList.forLanguageTags(prefs.languageTag)
+                    }
+                    runCatching { localeManager.applicationLocales = locales }
+                }
+            }
+
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                LunmedTheme(
+                    accentPreset = prefs.accentPreset,
+                    density = prefs.density,
+                    animationIntensity = effectiveAnimation,
+                ) {
+                    var currentDestination by rememberSaveable { mutableStateOf(LunmedDestination.HOME) }
 
                 LaunchedEffect(homePressTick) {
                     if (homePressTick > 0 && currentDestination != LunmedDestination.HOME) {
@@ -160,6 +183,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
     }
 
     override fun onNewIntent(intent: Intent) {

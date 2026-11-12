@@ -64,6 +64,7 @@ fun SettingsRoute(
         onToggleShowClock = viewModel::onToggleShowClock,
         onToggleShowDeviceIndicators = viewModel::onToggleShowDeviceIndicators,
         onToggleShowRecentApps = viewModel::onToggleShowRecentApps,
+        onSetLanguageTag = viewModel::onSetLanguageTag,
         onOpenResetConfirmation = viewModel::onOpenResetConfirmation,
         onDismissResetConfirmation = viewModel::onDismissResetConfirmation,
         onConfirmResetToDefaults = viewModel::onConfirmResetToDefaults,
@@ -85,6 +86,7 @@ fun SettingsScreen(
     onToggleShowClock: (Boolean) -> Unit,
     onToggleShowDeviceIndicators: (Boolean) -> Unit,
     onToggleShowRecentApps: (Boolean) -> Unit,
+    onSetLanguageTag: (String) -> Unit,
     onOpenResetConfirmation: () -> Unit,
     onDismissResetConfirmation: () -> Unit,
     onConfirmResetToDefaults: () -> Unit,
@@ -151,6 +153,7 @@ fun SettingsScreen(
                     onRequestDefaultLauncher = onRequestDefaultLauncher,
                     onOpenAndroidSettings = onOpenAndroidSettings,
                     onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+                    onSetLanguageTag = onSetLanguageTag,
                     onOpenResetConfirmation = onOpenResetConfirmation,
                     modifier = Modifier.weight(1f),
                 )

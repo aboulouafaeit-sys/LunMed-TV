@@ -17,6 +17,10 @@ enum class SettingsSection(val title: String, val subtitle: String) {
         title = "Default Launcher & System",
         subtitle = "Home role status and Android system settings",
     ),
+    LANGUAGE(
+        title = "Language & Accessibility",
+        subtitle = "Language selection, Arabic RTL, and high-contrast ergonomics",
+    ),
     ABOUT(
         title = "About & Device Info",
         subtitle = "Software version, hardware capabilities, and diagnostics",

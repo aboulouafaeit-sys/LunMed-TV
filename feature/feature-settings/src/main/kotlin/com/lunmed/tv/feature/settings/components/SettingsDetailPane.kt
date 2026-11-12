@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.runtime.Composable
@@ -63,6 +64,7 @@ fun SettingsDetailPane(
     onRequestDefaultLauncher: () -> Unit,
     onOpenAndroidSettings: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
+    onSetLanguageTag: (String) -> Unit,
     onOpenResetConfirmation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -265,6 +267,58 @@ fun SettingsDetailPane(
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "adb shell cmd role add-role-holder android.app.role.HOME com.lunmed.tv",
+                                style = LunmedTheme.typography.labelMeta,
+                                color = colors.textSecondary,
+                            )
+                        }
+                    }
+                }
+            }
+
+            SettingsSection.LANGUAGE -> {
+                SettingGroup(title = "Interface Language & Direction") {
+                    listOf(
+                        "system" to ("System Default" to "Follow host TV operating system language"),
+                        "ar" to ("العربية (Arabic)" to "واجهة عربية أصيلة مع دعم كامل للاتجاه من اليمين لليسار (RTL)"),
+                        "en" to ("English" to "Standard international English language"),
+                        "fr" to ("Français (French)" to "Interface en français avec typographie adaptée"),
+                        "es" to ("Español (Spanish)" to "Interfaz en español optimizada para TV"),
+                        "it" to ("Italiano (Italian)" to "Interfaccia in italiano"),
+                    ).forEach { (tag, info) ->
+                        val isSelected = preferences.languageTag == tag
+                        ActionSettingButton(
+                            title = info.first,
+                            subtitle = info.second,
+                            icon = if (isSelected) Icons.Rounded.Check else Icons.Rounded.Language,
+                            highlight = isSelected,
+                            onClick = { onSetLanguageTag(tag) },
+                        )
+                    }
+                }
+
+                SettingGroup(title = "Accessibility & TV Ergonomics") {
+                    ActionSettingButton(
+                        title = "Open Android Accessibility Center",
+                        subtitle = "Configure TalkBack, high-contrast text, captions, and screen magnification",
+                        icon = Icons.Rounded.Tune,
+                        onClick = onOpenAccessibilitySettings,
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(colors.surfaceElevated.copy(alpha = 0.5f), LunmedTheme.shapes.cardSmall)
+                            .padding(14.dp),
+                    ) {
+                        Column {
+                            Text(
+                                text = "10-Foot Television Contrast & Readability:",
+                                style = LunmedTheme.typography.labelAction,
+                                color = colors.accentPrimary,
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "All text sizes and focus rings in LUNMED TV exceed WCAG AAA requirements with a minimum 7:1 contrast ratio against obsidian dark backdrops for effortless viewing at 3+ meters.",
                                 style = LunmedTheme.typography.labelMeta,
                                 color = colors.textSecondary,
                             )

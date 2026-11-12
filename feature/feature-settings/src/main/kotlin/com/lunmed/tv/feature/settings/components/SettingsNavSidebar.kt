@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.runtime.Composable
@@ -59,6 +60,7 @@ fun SettingsNavSidebar(
                 SettingsSection.ANIMATIONS -> Icons.Rounded.Animation
                 SettingsSection.HOME_SCREEN -> Icons.Rounded.Home
                 SettingsSection.DEFAULT_LAUNCHER -> Icons.Rounded.Tune
+                SettingsSection.LANGUAGE -> Icons.Rounded.Language
                 SettingsSection.ABOUT -> Icons.Rounded.Info
             }
 

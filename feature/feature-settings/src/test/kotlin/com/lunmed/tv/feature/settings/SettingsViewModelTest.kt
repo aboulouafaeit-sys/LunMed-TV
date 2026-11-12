@@ -122,6 +122,10 @@ class SettingsViewModelTest {
         vm.onToggleShowRecentApps(false)
         assertFalse(vm.uiState.value.preferences.showRecentApps)
 
+        vm.onSetLanguageTag("ar")
+        assertEquals("ar", vm.uiState.value.preferences.languageTag)
+        assertNotNull(vm.uiState.value.statusMessage)
+
         job.cancel()
     }
 

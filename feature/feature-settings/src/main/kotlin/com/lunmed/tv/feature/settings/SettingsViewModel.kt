@@ -110,6 +110,13 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onSetLanguageTag(tag: String) {
+        viewModelScope.launch {
+            preferencesRepository.setLanguageTag(tag)
+            statusMessage.value = "Language preference updated"
+        }
+    }
+
     fun onOpenResetConfirmation() {
         isResetConfirmationOpen.value = true
     }

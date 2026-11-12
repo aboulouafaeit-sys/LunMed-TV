@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">Home</string>
+    <string name="nav_apps">Applicazioni</string>
+    <string name="nav_device">Dispositivo</string>
+    <string name="nav_settings">Impostazioni</string>
+    <string name="nav_set_default">Imposta come predefinito</string>
+
+    <string name="action_open">Apri</string>
+    <string name="action_close">Chiudi</string>
+    <string name="action_cancel">Annulla</string>
+    <string name="action_confirm">Conferma</string>
+    <string name="action_apply">Applica</string>
+    <string name="action_favorite">Aggiungi ai preferiti</string>
+    <string name="action_unfavorite">Rimuovi dai preferiti</string>
+    <string name="action_hide">Nascondi</string>
+    <string name="action_unhide">Mostra</string>
+    <string name="action_app_info">Informazioni app</string>
+    <string name="action_uninstall">Disinstalla</string>
+    <string name="action_assign_category">Assegna categoria</string>
+
+    <string name="cat_all">Tutte</string>
+    <string name="cat_favorites">Preferiti</string>
+    <string name="cat_video">Video &amp; Streaming</string>
+    <string name="cat_music">Musica &amp; Audio</string>
+    <string name="cat_games">Giochi</string>
+    <string name="cat_tools">Strumenti</string>
+    <string name="cat_hidden">App nascoste</string>
+</resources>
+

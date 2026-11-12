@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LUNMED TV</string>
+    <string name="accessibility_service_label">مراقب لانشر LUNMED TV الافتراضي</string>
+    <string name="accessibility_service_description">يضمن بقاء LUNMED TV كلانشر افتراضي دائم عند تشغيل الجهاز والضغط على زر الرئيسية، حتى في أجهزة TV Box ذات الرومات المقيدة.</string>
+</resources>
+
