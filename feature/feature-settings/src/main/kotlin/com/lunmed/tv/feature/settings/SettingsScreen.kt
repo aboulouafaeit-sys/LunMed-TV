@@ -109,6 +109,10 @@ fun SettingsScreen(
                     onNavigate(LunmedDestination.HOME)
                     true
                 }
+                RemoteCommand.SEARCH -> {
+                    onNavigate(LunmedDestination.APPS)
+                    true
+                }
                 else -> false
             }
         },

@@ -36,6 +36,19 @@ class RemoteKeyMapperTest {
 
         assertEquals(RemoteCommand.HOME, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_HOME))
         assertEquals(RemoteCommand.SETTINGS, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_SETTINGS))
+        assertEquals(RemoteCommand.SETTINGS, RemoteKeyMapper.mapKeyCode(285))
+        assertEquals(RemoteCommand.SETTINGS, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_HELP))
+
+        assertEquals(RemoteCommand.SEARCH, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_SEARCH))
+        assertEquals(RemoteCommand.SEARCH, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_VOICE_ASSIST))
+        assertEquals(RemoteCommand.SEARCH, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_ASSIST))
+
+        assertEquals(RemoteCommand.MENU, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_PROG_RED))
+        assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_PROG_GREEN))
+        assertEquals(RemoteCommand.MOVE_LEFT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_L1))
+        assertEquals(RemoteCommand.MOVE_RIGHT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_R1))
+        assertEquals(RemoteCommand.SELECT, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_THUMBL))
+        assertEquals(RemoteCommand.MENU, RemoteKeyMapper.mapKeyCode(KeyEvent.KEYCODE_BUTTON_THUMBR))
     }
 
     @Test

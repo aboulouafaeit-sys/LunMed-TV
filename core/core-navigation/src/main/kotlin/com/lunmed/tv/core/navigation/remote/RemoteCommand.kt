@@ -20,6 +20,7 @@ enum class RemoteCommand {
     MENU,
     HOME,
     SETTINGS,
+    SEARCH,
 }
 
 object RemoteKeyMapper {
@@ -32,15 +33,20 @@ object RemoteKeyMapper {
         AndroidKeyEvent.KEYCODE_PAGE_DOWN,
         AndroidKeyEvent.KEYCODE_CHANNEL_DOWN -> RemoteCommand.MOVE_DOWN
 
-        AndroidKeyEvent.KEYCODE_DPAD_LEFT -> RemoteCommand.MOVE_LEFT
-        AndroidKeyEvent.KEYCODE_DPAD_RIGHT -> RemoteCommand.MOVE_RIGHT
+        AndroidKeyEvent.KEYCODE_DPAD_LEFT,
+        AndroidKeyEvent.KEYCODE_BUTTON_L1 -> RemoteCommand.MOVE_LEFT
+
+        AndroidKeyEvent.KEYCODE_DPAD_RIGHT,
+        AndroidKeyEvent.KEYCODE_BUTTON_R1 -> RemoteCommand.MOVE_RIGHT
 
         AndroidKeyEvent.KEYCODE_DPAD_CENTER,
         AndroidKeyEvent.KEYCODE_ENTER,
         AndroidKeyEvent.KEYCODE_NUMPAD_ENTER,
         AndroidKeyEvent.KEYCODE_BUTTON_A,
         AndroidKeyEvent.KEYCODE_BUTTON_SELECT,
-        AndroidKeyEvent.KEYCODE_BUTTON_START -> RemoteCommand.SELECT
+        AndroidKeyEvent.KEYCODE_BUTTON_START,
+        AndroidKeyEvent.KEYCODE_BUTTON_THUMBL,
+        AndroidKeyEvent.KEYCODE_PROG_GREEN -> RemoteCommand.SELECT
 
         AndroidKeyEvent.KEYCODE_BACK,
         AndroidKeyEvent.KEYCODE_ESCAPE,
@@ -52,10 +58,20 @@ object RemoteKeyMapper {
         AndroidKeyEvent.KEYCODE_GUIDE,
         AndroidKeyEvent.KEYCODE_WINDOW,
         AndroidKeyEvent.KEYCODE_BUTTON_X,
-        AndroidKeyEvent.KEYCODE_BUTTON_Y -> RemoteCommand.MENU
+        AndroidKeyEvent.KEYCODE_BUTTON_Y,
+        AndroidKeyEvent.KEYCODE_BUTTON_THUMBR,
+        AndroidKeyEvent.KEYCODE_PROG_RED -> RemoteCommand.MENU
 
         AndroidKeyEvent.KEYCODE_HOME -> RemoteCommand.HOME
-        AndroidKeyEvent.KEYCODE_SETTINGS -> RemoteCommand.SETTINGS
+
+        AndroidKeyEvent.KEYCODE_SETTINGS,
+        AndroidKeyEvent.KEYCODE_HELP,
+        285 /* KEYCODE_QUICK_SETTINGS */ -> RemoteCommand.SETTINGS
+
+        AndroidKeyEvent.KEYCODE_SEARCH,
+        AndroidKeyEvent.KEYCODE_VOICE_ASSIST,
+        AndroidKeyEvent.KEYCODE_ASSIST -> RemoteCommand.SEARCH
+
         else -> null
     }
 }
@@ -72,8 +88,13 @@ fun Modifier.onRemoteKeyCommand(
         val nativeEvent = event.nativeKeyEvent
         val command = RemoteKeyMapper.mapKeyCode(nativeEvent.keyCode) ?: return@onPreviewKeyEvent false
 
-        // Suppress repeating key events for action commands (MENU, SETTINGS)
-        if (nativeEvent.repeatCount > 0 && (command == RemoteCommand.MENU || command == RemoteCommand.SETTINGS)) {
+        // Suppress repeating key events for action commands (MENU, SETTINGS, SEARCH)
+        if (nativeEvent.repeatCount > 0 && (
+                command == RemoteCommand.MENU ||
+                command == RemoteCommand.SETTINGS ||
+                command == RemoteCommand.SEARCH
+            )
+        ) {
             return@onPreviewKeyEvent true
         }
 

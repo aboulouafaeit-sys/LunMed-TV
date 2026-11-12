@@ -14,9 +14,11 @@ class LunmedBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
 
-        val action = intent.action
-        if (action in BOOT_ACTIONS) {
+        val receivedAction = intent.action
+        if (receivedAction in BOOT_ACTIONS) {
             val launchIntent = Intent(context, MainActivity::class.java).apply {
+                setAction(Intent.ACTION_MAIN)
+                addCategory(Intent.CATEGORY_HOME)
                 addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK or
                         Intent.FLAG_ACTIVITY_CLEAR_TOP or

@@ -172,6 +172,10 @@ fun HomeScreen(
                     onNavigate(HomeNavDestination.SETTINGS)
                     true
                 }
+                RemoteCommand.SEARCH -> {
+                    onNavigate(HomeNavDestination.APPS)
+                    true
+                }
                 else -> false
             }
         },

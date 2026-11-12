@@ -116,7 +116,11 @@ fun DeviceCenterScreen(
         modifier = Modifier.onRemoteKeyCommand { command ->
             when (command) {
                 RemoteCommand.SETTINGS -> {
-                    onNavigate(LunmedDestination.HOME)
+                    onNavigate(LunmedDestination.SETTINGS)
+                    true
+                }
+                RemoteCommand.SEARCH -> {
+                    onNavigate(LunmedDestination.APPS)
                     true
                 }
                 else -> false
