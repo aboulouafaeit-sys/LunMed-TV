@@ -98,3 +98,4 @@ Reboot the TV box to verify cold-boot behavior:
 adb reboot
 ```
 Upon startup, the TV Box will boot directly into **LUNMED TV** with zero vendor dialogs or home picker prompts.
+
