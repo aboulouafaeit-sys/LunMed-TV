@@ -34,4 +34,5 @@ include(":core:core-navigation")
 
 include(":feature:feature-home")
 include(":feature:feature-apps")
+include(":feature:feature-settings")
 

@@ -7,7 +7,9 @@ import com.lunmed.tv.core.data.system.NetworkStatusMonitor
 import com.lunmed.tv.core.model.AccentPreset
 import com.lunmed.tv.core.model.AnimationIntensity
 import com.lunmed.tv.core.model.AppInfo
+import com.lunmed.tv.core.model.CardSizePreset
 import com.lunmed.tv.core.model.DeviceCapabilities
+import com.lunmed.tv.core.model.InterfaceDensity
 import com.lunmed.tv.core.model.LaunchResult
 import com.lunmed.tv.core.model.LauncherPreferences
 import com.lunmed.tv.core.model.NetworkStatus
@@ -186,7 +188,14 @@ class AppLibraryViewModelTest {
     private class FakePreferencesRepository : PreferencesRepository {
         override val preferences = MutableStateFlow(LauncherPreferences())
         override suspend fun setAccentPreset(preset: AccentPreset) = Unit
+        override suspend fun setCardSize(preset: CardSizePreset) = Unit
+        override suspend fun setDensity(density: InterfaceDensity) = Unit
         override suspend fun setAnimationIntensity(intensity: AnimationIntensity) = Unit
+        override suspend fun setShowClock(show: Boolean) = Unit
+        override suspend fun setShowDeviceIndicators(show: Boolean) = Unit
+        override suspend fun setShowRecentApps(show: Boolean) = Unit
+        override suspend fun setLanguageTag(tag: String) = Unit
+        override suspend fun setSelectedWallpaperId(wallpaperId: String) = Unit
         override suspend fun resetToDefaults() = Unit
     }
 

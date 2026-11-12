@@ -57,8 +57,36 @@ class LunmedPreferencesDataSource @Inject constructor(
         dataStore.edit { it[Keys.ACCENT_PRESET] = preset.key }
     }
 
+    suspend fun setCardSize(preset: CardSizePreset) {
+        dataStore.edit { it[Keys.CARD_SIZE] = preset.key }
+    }
+
+    suspend fun setDensity(density: InterfaceDensity) {
+        dataStore.edit { it[Keys.DENSITY] = density.key }
+    }
+
     suspend fun setAnimationIntensity(intensity: AnimationIntensity) {
         dataStore.edit { it[Keys.ANIMATION_INTENSITY] = intensity.key }
+    }
+
+    suspend fun setShowClock(show: Boolean) {
+        dataStore.edit { it[Keys.SHOW_CLOCK] = show }
+    }
+
+    suspend fun setShowDeviceIndicators(show: Boolean) {
+        dataStore.edit { it[Keys.SHOW_DEVICE_INDICATORS] = show }
+    }
+
+    suspend fun setShowRecentApps(show: Boolean) {
+        dataStore.edit { it[Keys.SHOW_RECENT_APPS] = show }
+    }
+
+    suspend fun setLanguageTag(tag: String) {
+        dataStore.edit { it[Keys.LANGUAGE_TAG] = tag }
+    }
+
+    suspend fun setSelectedWallpaperId(wallpaperId: String) {
+        dataStore.edit { it[Keys.SELECTED_WALLPAPER_ID] = wallpaperId }
     }
 
     suspend fun resetToDefaults() {

@@ -28,6 +28,7 @@ import com.lunmed.tv.core.navigation.LunmedDestination
 import com.lunmed.tv.feature.apps.AppLibraryRoute
 import com.lunmed.tv.feature.home.HomeRoute
 import com.lunmed.tv.feature.home.HomeViewModel
+import com.lunmed.tv.feature.settings.SettingsRoute
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -103,45 +104,44 @@ class MainActivity : ComponentActivity() {
                     },
                     label = "MainScreenDestinationTransition",
                 ) { destination ->
+                    fun handleNavigate(destination: LunmedDestination) {
+                        currentDestination = destination
+                    }
+
+                    fun openAndroidSettings() {
+                        val intent = Intent(Settings.ACTION_SETTINGS).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        runCatching { startActivity(intent) }
+                    }
+
                     when (destination) {
                         LunmedDestination.HOME -> {
                             val homeViewModel: HomeViewModel = hiltViewModel()
                             HomeRoute(
                                 homePressTick = homePressTick,
                                 viewModel = homeViewModel,
-                                onNavigate = { next ->
-                                    when (next) {
-                                        LunmedDestination.HOME -> Unit
-                                        LunmedDestination.APPS -> currentDestination = LunmedDestination.APPS
-                                        LunmedDestination.DEVICE,
-                                        LunmedDestination.SETTINGS -> {
-                                            // Prepared for Milestones 06-07
-                                        }
-                                    }
-                                },
+                                onNavigate = ::handleNavigate,
                                 onRequestDefaultLauncher = ::requestDefaultLauncher,
                                 onOpenAppInfo = ::openAppInfo,
                             )
                         }
                         LunmedDestination.APPS -> {
                             AppLibraryRoute(
-                                onNavigate = { next ->
-                                    when (next) {
-                                        LunmedDestination.HOME -> currentDestination = LunmedDestination.HOME
-                                        LunmedDestination.APPS -> Unit
-                                        LunmedDestination.DEVICE,
-                                        LunmedDestination.SETTINGS -> {
-                                            // Prepared for Milestones 06-07
-                                        }
-                                    }
-                                },
+                                onNavigate = ::handleNavigate,
                                 onRequestDefaultLauncher = ::requestDefaultLauncher,
                                 onOpenAppInfo = ::openAppInfo,
                             )
                         }
-                        LunmedDestination.DEVICE,
                         LunmedDestination.SETTINGS -> {
-                            // Routed in subsequent milestones
+                            SettingsRoute(
+                                onNavigate = ::handleNavigate,
+                                onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onOpenAndroidSettings = ::openAndroidSettings,
+                            )
+                        }
+                        LunmedDestination.DEVICE -> {
+                            // Wired in Milestone 07
                         }
                     }
                 }
