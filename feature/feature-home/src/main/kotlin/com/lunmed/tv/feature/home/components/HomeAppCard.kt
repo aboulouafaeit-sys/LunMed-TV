@@ -1,6 +1,9 @@
 package com.lunmed.tv.feature.home.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -34,7 +38,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Icon
@@ -44,6 +47,7 @@ import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.model.CardSizePreset
 import com.lunmed.tv.core.ui.artwork.AppArtwork
 import com.lunmed.tv.core.ui.artwork.AppArtworkCache
+import com.lunmed.tv.core.ui.components.AdaptiveAuraEngine
 import com.lunmed.tv.core.ui.components.LunmedFocusableCard
 
 @Composable
@@ -75,6 +79,17 @@ fun HomeAppCard(
     ) {
         value = AppArtworkCache.load(context, app.packageName, app.activityName)
     }
+
+    val appAura = remember(app.packageName, app.categoryId) {
+        AdaptiveAuraEngine.auraForApp(app, colors.accentPrimary)
+    }
+
+    // Inner parallax scale: artwork expands slightly inside card on focus (Apple TV effect)
+    val innerArtworkScale by animateFloatAsState(
+        targetValue = if (isCardFocused) 1.05f else 1.0f,
+        animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing),
+        label = "HomeCardInnerZoom",
+    )
 
     val labelColor by animateColorAsState(
         targetValue = if (isCardFocused) colors.textPrimary else colors.textSecondary,
@@ -109,7 +124,7 @@ fun HomeAppCard(
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                // Ambient backlight glow when focused
+                // Adaptive Ambient Aura Bloom on Focus
                 if (isFocused) {
                     Box(
                         modifier = Modifier
@@ -117,7 +132,7 @@ fun HomeAppCard(
                             .background(
                                 Brush.radialGradient(
                                     colors = listOf(
-                                        colors.accentGlow.copy(alpha = 0.35f),
+                                        appAura.copy(alpha = 0.40f),
                                         Color.Transparent,
                                     ),
                                 ),
@@ -132,25 +147,28 @@ fun HomeAppCard(
                             bitmap = loaded.bitmap,
                             contentDescription = app.label,
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .scale(innerArtworkScale),
                         )
                     } else {
-                        // High-end glass pedestal for standard square icons
+                        // High-end multi-layer 3D glass pedestal for standard icons
                         Box(
                             modifier = Modifier
-                                .size(54.dp)
+                                .size(56.dp)
+                                .scale(innerArtworkScale)
                                 .background(
                                     brush = Brush.verticalGradient(
                                         listOf(
-                                            colors.surfaceElevated.copy(alpha = 0.9f),
+                                            if (isFocused) appAura.copy(alpha = 0.25f) else colors.surfaceElevated.copy(alpha = 0.9f),
                                             colors.surfaceDeep,
                                         ),
                                     ),
                                     shape = RoundedCornerShape(14.dp),
                                 )
                                 .border(
-                                    width = 1.dp,
-                                    color = if (isFocused) colors.accentPrimary.copy(alpha = 0.5f) else Color(0x18FFFFFF),
+                                    width = 1.2.dp,
+                                    color = if (isFocused) appAura.copy(alpha = 0.7f) else Color(0x18FFFFFF),
                                     shape = RoundedCornerShape(14.dp),
                                 ),
                             contentAlignment = Alignment.Center,
@@ -168,7 +186,8 @@ fun HomeAppCard(
                 } else {
                     Box(
                         modifier = Modifier
-                            .size(54.dp)
+                            .size(56.dp)
+                            .scale(innerArtworkScale)
                             .background(colors.surfaceElevated, RoundedCornerShape(14.dp))
                             .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center,
@@ -179,24 +198,24 @@ fun HomeAppCard(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp,
                             ),
-                            color = if (isFocused) colors.accentPrimary else colors.textMuted,
+                            color = if (isFocused) appAura else colors.textMuted,
                         )
                     }
                 }
 
-                // Luxury Favorite Pill Emblem
+                // Luxury Favorite Star Emblem
                 if (app.isFavorite) {
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(8.dp)
                             .background(
-                                color = colors.obsidianCanvas.copy(alpha = 0.85f),
+                                color = colors.obsidianCanvas.copy(alpha = 0.88f),
                                 shape = CircleShape,
                             )
                             .border(
                                 width = 1.dp,
-                                color = if (isFocused) colors.accentPrimary else colors.accentPrimary.copy(alpha = 0.5f),
+                                color = if (isFocused) colors.accentPrimary else colors.accentPrimary.copy(alpha = 0.45f),
                                 shape = CircleShape,
                             )
                             .padding(4.dp),
@@ -214,22 +233,23 @@ fun HomeAppCard(
 
         Spacer(modifier = Modifier.height(spacing.xs))
 
+        // High-contrast label with animated indicator dot
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier.padding(horizontal = 4.dp),
         ) {
             if (isCardFocused) {
                 Box(
                     modifier = Modifier
-                        .size(4.dp)
-                        .background(colors.accentPrimary, CircleShape),
+                        .size(5.dp)
+                        .background(appAura, CircleShape),
                 )
             }
             Text(
                 text = app.label,
                 style = LunmedTheme.typography.titleCard.copy(
-                    fontWeight = if (isCardFocused) FontWeight.Bold else FontWeight.Medium,
+                    fontWeight = if (isCardFocused) FontWeight.ExtraBold else FontWeight.Medium,
                 ),
                 color = labelColor,
                 maxLines = 1,

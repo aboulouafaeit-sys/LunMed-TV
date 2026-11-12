@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
@@ -156,6 +159,7 @@ fun HomeScreen(
     }
 
     LunmedAmbientCanvas(
+        focusedApp = uiState.focusedApp,
         modifier = Modifier.onRemoteKeyCommand { command ->
             when (command) {
                 RemoteCommand.MENU -> {
@@ -355,17 +359,30 @@ private fun HomeAppRail(
     val colors = LunmedTheme.colors
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = title,
-            style = LunmedTheme.typography.headlineSection,
-            color = colors.textPrimary,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(horizontal = spacing.overscanHorizontal),
-        )
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 3.dp, height = 16.dp)
+                    .background(colors.accentPrimary, androidx.compose.foundation.shape.RoundedCornerShape(2.dp)),
+            )
+            Text(
+                text = title,
+                style = LunmedTheme.typography.headlineSection.copy(
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    letterSpacing = 0.4.sp,
+                ),
+                color = colors.textPrimary,
+            )
+        }
 
-        Spacer(modifier = Modifier.height(spacing.sm))
+        Spacer(modifier = Modifier.height(spacing.xxs))
 
         LazyRow(
-            contentPadding = PaddingValues(horizontal = spacing.overscanHorizontal),
+            contentPadding = PaddingValues(horizontal = spacing.overscanHorizontal, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(spacing.cardGap),
             modifier = Modifier.lunmedFocusGroupRestorer(),
         ) {

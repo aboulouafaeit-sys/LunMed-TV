@@ -1,6 +1,7 @@
 package com.lunmed.tv.feature.apps.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
@@ -201,6 +204,22 @@ private fun CategoryFilterPill(
     val anim = LunmedTheme.animation
     var isFocused by remember { mutableStateOf(false) }
 
+    val scale by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (isFocused) 1.06f else 1.0f,
+        animationSpec = anim.scaleSpringSpec(),
+        label = "CatPillScale",
+    )
+
+    val goldRimBrush = remember(colors.accentPrimary) {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFFFFF8E7),
+                colors.accentPrimary,
+                colors.accentSecondary,
+            ),
+        )
+    }
+
     val containerColor by animateColorAsState(
         targetValue = when {
             isFocused -> colors.surfaceCardFocused
@@ -232,16 +251,18 @@ private fun CategoryFilterPill(
         ),
         border = ClickableSurfaceDefaults.border(
             border = if (isSelected) {
-                Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = LunmedTheme.shapes.pill)
+                Border(border = BorderStroke(1.dp, colors.accentPrimary.copy(alpha = 0.5f)), shape = LunmedTheme.shapes.pill)
             } else {
                 Border.None
             },
             focusedBorder = Border(
-                border = BorderStroke(1.5.dp, colors.borderFocused),
+                border = BorderStroke(1.6.dp, goldRimBrush),
                 shape = LunmedTheme.shapes.pill,
             ),
         ),
-        modifier = Modifier.onFocusChanged { isFocused = it.isFocused },
+        modifier = Modifier
+            .scale(scale)
+            .onFocusChanged { isFocused = it.isFocused },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
@@ -279,7 +300,24 @@ private fun AppSortOrderButton(
     onClick: () -> Unit,
 ) {
     val colors = LunmedTheme.colors
+    val anim = LunmedTheme.animation
     var isFocused by remember { mutableStateOf(false) }
+
+    val scale by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (isFocused) 1.06f else 1.0f,
+        animationSpec = anim.scaleSpringSpec(),
+        label = "SortPillScale",
+    )
+
+    val goldRimBrush = remember(colors.accentPrimary) {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFFFFF8E7),
+                colors.accentPrimary,
+                colors.accentSecondary,
+            ),
+        )
+    }
 
     Surface(
         onClick = onClick,
@@ -293,11 +331,13 @@ private fun AppSortOrderButton(
         border = ClickableSurfaceDefaults.border(
             border = Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = LunmedTheme.shapes.pill),
             focusedBorder = Border(
-                border = BorderStroke(1.5.dp, colors.borderFocused),
+                border = BorderStroke(1.6.dp, goldRimBrush),
                 shape = LunmedTheme.shapes.pill,
             ),
         ),
-        modifier = Modifier.onFocusChanged { isFocused = it.isFocused },
+        modifier = Modifier
+            .scale(scale)
+            .onFocusChanged { isFocused = it.isFocused },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),

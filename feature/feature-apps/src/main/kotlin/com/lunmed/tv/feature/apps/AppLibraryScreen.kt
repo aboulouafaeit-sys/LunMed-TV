@@ -164,6 +164,7 @@ fun AppLibraryScreen(
     }
 
     LunmedAmbientCanvas(
+        focusedApp = uiState.focusedApp,
         modifier = Modifier.onRemoteKeyCommand { command ->
             when (command) {
                 RemoteCommand.MENU -> {
