@@ -27,6 +27,13 @@ interface DefaultLauncherHelper {
      * immutable persistent HOME preference. Returns null when already admin / device owner.
      */
     fun createDeviceAdminRequestIntent(): Intent? = null
+
+    /**
+     * Intent that opens the Accessibility screen for the Home watchdog service. On API 26+ it
+     * deep-links straight to the LUNMED TV watchdog toggle (the same flow Projectivy uses),
+     * falling back to the generic Accessibility list and finally to system Settings.
+     */
+    fun createAccessibilitySettingsIntent(): Intent? = null
 }
 
 @Singleton
@@ -79,6 +86,30 @@ class AndroidDefaultLauncherHelper @Inject constructor(
                 )
             }
         }.getOrNull()
+    }
+
+    override fun createAccessibilitySettingsIntent(): Intent? {
+        val serviceComponent = ComponentName(context, WATCHDOG_SERVICE_CLASS_NAME)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // ACTION_ACCESSIBILITY_DETAILS_SETTINGS is a hidden (@SystemApi) framework constant,
+            // so it is referenced by its literal action string. AOSP and vendor Settings build it
+            // from the same value and export the activity.
+            val detailsIntent = Intent(ACTION_ACCESSIBILITY_DETAILS_SETTINGS).apply {
+                putExtra(Intent.EXTRA_COMPONENT_NAME, serviceComponent)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            if (detailsIntent.resolveActivity(context.packageManager) != null) {
+                return detailsIntent
+            }
+        }
+        val listIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (listIntent.resolveActivity(context.packageManager) != null) {
+            return listIntent
+        }
+        val fallbackIntent = Intent(Settings.ACTION_SETTINGS)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return fallbackIntent.takeIf { it.resolveActivity(context.packageManager) != null }
     }
 
     private fun isHomeRoleHeld(): Boolean {
@@ -177,9 +208,13 @@ class AndroidDefaultLauncherHelper @Inject constructor(
 
     private companion object {
         const val WATCHDOG_SERVICE_CLASS_SIMPLE_NAME = "LunmedHomeWatchdogService"
+        const val WATCHDOG_SERVICE_CLASS_NAME =
+            "com.lunmed.tv.service.LunmedHomeWatchdogService"
         const val DEVICE_ADMIN_RECEIVER_CLASS_NAME =
             "com.lunmed.tv.receiver.LunmedDeviceAdminReceiver"
         const val SYSTEM_RESOLVER_PACKAGE = "android"
+        const val ACTION_ACCESSIBILITY_DETAILS_SETTINGS =
+            "android.settings.ACCESSIBILITY_DETAILS_SETTINGS"
     }
 }
 

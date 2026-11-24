@@ -47,6 +47,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.feature.settings.model.SettingsSection
 
@@ -146,7 +147,7 @@ private fun SidebarItem(
         border = ClickableSurfaceDefaults.border(
             border = if (isSelected) {
                 Border(
-                    border = BorderStroke(1.dp, Color(0x33FFFFFF)),
+                    border = BorderStroke(1.dp, colors.borderGlass.copy(alpha = 0.20f)),
                     shape = shape,
                 )
             } else {
@@ -155,9 +156,7 @@ private fun SidebarItem(
             focusedBorder = Border(
                 border = BorderStroke(
                     1.8.dp,
-                    Brush.linearGradient(
-                        listOf(Color(0xFFFFF8E7), colors.accentPrimary, Color(0xFFC49A45)),
-                    ),
+                    Brush.linearGradient(LunmedGradients.focusRimStops(colors)),
                 ),
                 shape = shape,
             ),

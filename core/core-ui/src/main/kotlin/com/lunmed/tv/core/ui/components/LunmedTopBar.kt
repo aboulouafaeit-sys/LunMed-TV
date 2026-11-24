@@ -48,6 +48,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.DeviceCapabilities
 import com.lunmed.tv.core.model.NetworkStatus
 import com.lunmed.tv.core.model.NetworkTransport
@@ -78,8 +79,10 @@ fun LunmedTopBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = spacing.overscanHorizontal,
-                vertical = spacing.md,
+                start = spacing.overscanHorizontal,
+                end = spacing.overscanHorizontal,
+                top = spacing.overscanVertical,
+                bottom = spacing.sm,
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -106,7 +109,7 @@ fun LunmedTopBar(
                     )
                     .border(
                         width = 1.dp,
-                        color = Color(0x1FFFFFFF),
+                        color = colors.borderGlass,
                         shape = LunmedTheme.shapes.pill,
                     )
                     .padding(3.dp)
@@ -180,6 +183,10 @@ private fun TopNavPill(
     val anim = LunmedTheme.animation
     var isFocused by remember { mutableStateOf(false) }
 
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) {
+        LunmedGradients.focusRimBrush(colors)
+    }
+
     val scale by animateFloatAsState(
         targetValue = if (isFocused) 1.05f else 1.0f,
         animationSpec = anim.focusSpec(),
@@ -242,13 +249,7 @@ private fun TopNavPill(
             focusedBorder = Border(
                 border = BorderStroke(
                     width = 1.8.dp,
-                    brush = Brush.linearGradient(
-                        listOf(
-                            Color(0xFFFFF8E7),
-                            colors.accentPrimary,
-                            colors.accentSecondary,
-                        ),
-                    ),
+                    brush = focusRimBrush,
                 ),
                 shape = LunmedTheme.shapes.pill,
             ),
@@ -312,7 +313,7 @@ private fun DeviceStatusCluster(
             )
             .border(
                 width = 1.dp,
-                color = Color(0x18FFFFFF),
+                color = colors.borderGlass,
                 shape = LunmedTheme.shapes.pill,
             )
             .padding(horizontal = 12.dp, vertical = 6.dp),
@@ -335,7 +336,7 @@ private fun DeviceStatusCluster(
                     text = "4K HDR",
                     style = LunmedTheme.typography.labelMeta.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 9.sp,
+                        fontSize = 11.sp,
                         letterSpacing = 0.5.sp,
                     ),
                     color = colors.accentPrimary,

@@ -264,7 +264,7 @@ fun HomeAppCard(
                                     )
                                     .border(
                                         width = 1.2.dp,
-                                        color = if (isFocused) appAura.copy(alpha = 0.7f) else Color(0x18FFFFFF),
+                                        color = if (isFocused) appAura.copy(alpha = 0.7f) else colors.borderGlass,
                                         shape = RoundedCornerShape(16.dp),
                                     ),
                                 contentAlignment = Alignment.Center,
@@ -286,7 +286,7 @@ fun HomeAppCard(
                                 .size(iconSize)
                                 .scale(innerArtworkScale)
                                 .background(colors.surfaceElevated, RoundedCornerShape(16.dp))
-                                .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(16.dp)),
+                                .border(1.dp, colors.borderGlass, RoundedCornerShape(16.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(

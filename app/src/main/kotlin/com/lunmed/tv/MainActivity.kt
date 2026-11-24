@@ -167,10 +167,10 @@ class MainActivity : ComponentActivity() {
                     }
 
                     fun openAccessibilitySettings() {
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        runCatching { startActivity(intent) }
+                        // Deep-links to the LUNMED TV watchdog toggle on API 26+ (Projectivy-style),
+                        // with a graceful fallback to the accessibility list / system settings.
+                        defaultLauncherHelper.createAccessibilitySettingsIntent()
+                            ?.let { intent -> runCatching { startActivity(intent) } }
                     }
 
                     when (destination) {

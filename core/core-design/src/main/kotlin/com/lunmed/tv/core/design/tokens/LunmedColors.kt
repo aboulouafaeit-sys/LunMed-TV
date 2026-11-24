@@ -33,6 +33,7 @@ data class LunmedColorTokens(
     // Borders & Hairlines
     val borderSubtle: Color,
     val borderFocused: Color,
+    val borderGlass: Color,
 
     // Semantic Status
     val statusSuccess: Color,
@@ -50,10 +51,12 @@ object LunmedColors {
 
     val TextPrimary = Color(0xFFF3F5F8)
     val TextSecondary = Color(0xFFA7B1C2)
-    val TextMuted = Color(0xFF6B768A)
+    // Muted labels sit at 5.7:1 on ObsidianCanvas (WCAG AA at 10-foot viewing distance).
+    val TextMuted = Color(0xFF7E8A9E)
     val TextOnAccent = Color(0xFF0A0D14)
 
     val BorderSubtle = Color(0x22FFFFFF)
+    val BorderGlass = Color(0x1FFFFFFF)
 
     val StatusSuccess = Color(0xFF4ADE80)
     val StatusWarning = Color(0xFFFBBF24)
@@ -105,6 +108,7 @@ object LunmedColors {
             ambientBottom = Color(0xFF05070B),
             borderSubtle = BorderSubtle,
             borderFocused = primary,
+            borderGlass = BorderGlass,
             statusSuccess = StatusSuccess,
             statusWarning = StatusWarning,
             statusError = StatusError,

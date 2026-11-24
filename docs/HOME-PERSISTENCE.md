@@ -76,7 +76,37 @@ HOME pinning needs **no** policy at all. Earlier revisions requested `wipe-data`
 `reset-password`, `force-lock`, … which is a needless privacy/security risk for a TV
 launcher and blocks Play Store distribution.
 
-## 4. Reboot risk matrix
+## 4. Enabling the Accessibility watchdog
+
+Android never allows an app to turn its own accessibility service on — the user (or an ADB
+shell with `WRITE_SECURE_SETTINGS`) must do it. This is the same constraint Projectivy has.
+
+In-app path (Projectivy-style):
+
+1. Settings → *Android Home Role* (or *Boot Persistence Layers*) →
+   **Persistent Home Watchdog (Restricted TV Boxes)**.
+2. `MainActivity.openAccessibilitySettings()` calls
+   `DefaultLauncherHelper.createAccessibilitySettingsIntent()`, which deep-links to
+   `android.settings.ACCESSIBILITY_DETAILS_SETTINGS` with
+   `Intent.EXTRA_COMPONENT_NAME = com.lunmed.tv/com.lunmed.tv.service.LunmedHomeWatchdogService`
+   so the user lands directly on the LUNMED TV toggle (API 26+). If that activity is not
+   exported by the ROM it falls back to the Accessibility list, then to system Settings.
+3. Toggle **LUNMED TV Home Watchdog** on → Settings shows *Enabled* on the next resume
+   (`SettingsViewModel.onRefreshLauncherState()`).
+
+Bulk / reseller provisioning over ADB (no user interaction):
+
+```bash
+adb shell settings put secure enabled_accessibility_services \
+  com.lunmed.tv/com.lunmed.tv.service.LunmedHomeWatchdogService
+adb shell settings put secure accessibility_enabled 1
+```
+
+The service re-applies `FLAG_REQUEST_FILTER_KEY_EVENTS` and
+`TYPE_WINDOWS_CHANGED` in `onServiceConnected()`, so a stale flag set stored by the ROM
+cannot silently defeat Home-key interception.
+
+## 5. Reboot risk matrix
 
 | Situation | Result |
 |-----------|--------|
@@ -88,7 +118,7 @@ launcher and blocks Play Store distribution.
 | Fresh install, nothing granted | Android shows the Home chooser; the Home-screen banner and Settings → Default Launcher prompt the user. |
 | Device Owner removed | `onDisabled` clears the pin and Home falls back to the normal chooser instead of dead-ending. |
 
-## 5. Verification checklist (already automated)
+## 6. Verification checklist (already automated)
 
 * `:app:assembleDebug` — clean build, all modules compile.
 * `:app:testDebugUnitTest` — `LunmedHomeWatchdogServiceTest` asserts the boot receiver no
@@ -100,7 +130,7 @@ launcher and blocks Play Store distribution.
   `BIND_ACCESSIBILITY_SERVICE` + config, and the `<queries>` HOME intent required on
   Android 11+ for the launcher to resolve who currently owns HOME.
 
-## 6. Known gaps
+## 7. Known gaps
 
 * `SettingsDetailPane` shows the literal `dpm set-device-owner` hint; it cannot execute it
   (no root shell in the UI thread, and `dpm` requires ADB/root).
@@ -112,4 +142,8 @@ launcher and blocks Play Store distribution.
   hard-coded `KNOWN_VENDOR_LAUNCHERS` list.
 * No Play Store path for the Device Owner layer (enterprise/reseller sideload only); the
   RoleManager + HOME-default layers are store-safe.
+* The accessibility details deep link is a hidden framework action
+  (`android.settings.ACCESSIBILITY_DETAILS_SETTINGS`); on ROMs that do not export that
+  Settings activity, the intent simply falls back to the Accessibility list, so the user may
+  have to pick **LUNMED TV Home Watchdog** manually.
 

@@ -58,6 +58,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.ui.artwork.AppArtwork
 import com.lunmed.tv.core.ui.artwork.AppArtworkCache
@@ -424,13 +425,7 @@ private fun LibraryActionPill(
     val borderStroke = if (isFocused) {
         BorderStroke(
             1.5.dp,
-            Brush.linearGradient(
-                listOf(
-                    Color(0xFFFFF8E7),
-                    colors.accentPrimary,
-                    Color(0xFFC49A45),
-                ),
-            ),
+            Brush.linearGradient(LunmedGradients.focusRimStops(colors)),
         )
     } else {
         BorderStroke(1.dp, Color(0x18FFFFFF))

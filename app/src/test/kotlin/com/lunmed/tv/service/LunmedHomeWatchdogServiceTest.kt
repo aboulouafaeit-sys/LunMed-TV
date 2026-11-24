@@ -60,5 +60,17 @@ class LunmedHomeWatchdogServiceTest {
             com.lunmed.tv.receiver.LunmedDeviceAdminReceiver.RECEIVER_CLASS_NAME,
         )
     }
+
+    @Test
+    fun accessibilityWatchdogService_componentNameIsStableForDeepLink() {
+        // DefaultLauncherHelper deep-links Settings.ACTION_ACCESSIBILITY_DETAILS_SETTINGS to this
+        // exact component, so renaming or moving the service would silently break the
+        // "enable the watchdog" flow that Projectivy also relies on.
+        val serviceClass = Class.forName("com.lunmed.tv.service.LunmedHomeWatchdogService")
+        assertTrue(
+            android.accessibilityservice.AccessibilityService::class.java
+                .isAssignableFrom(serviceClass),
+        )
+    }
 }
 

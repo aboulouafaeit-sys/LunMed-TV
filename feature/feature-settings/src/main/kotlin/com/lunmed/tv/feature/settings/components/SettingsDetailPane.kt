@@ -54,6 +54,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.design.tokens.LunmedColors
 import com.lunmed.tv.core.model.AccentPreset
 import com.lunmed.tv.core.model.AnimationIntensity
@@ -585,9 +586,7 @@ private fun AppearanceHeroControlCenterBanner(
             focusedBorder = Border(
                 border = BorderStroke(
                     2.dp,
-                    Brush.linearGradient(
-                        listOf(Color(0xFFFFF8E7), colors.accentPrimary, Color(0xFFC49A45)),
-                    ),
+                    Brush.linearGradient(LunmedGradients.focusRimStops(colors)),
                 ),
                 shape = shape,
             ),
@@ -603,8 +602,8 @@ private fun AppearanceHeroControlCenterBanner(
                 Brush.horizontalGradient(
                     listOf(
                         if (isFocused) colors.surfaceCardFocused else colors.surfaceElevated.copy(alpha = 0.95f),
-                        Color(0xFF0F111E),
-                        Color(0xFF06070B),
+                        colors.surfaceCard.copy(alpha = 0.92f),
+                        colors.obsidianCanvas,
                     ),
                 ),
                 shape,

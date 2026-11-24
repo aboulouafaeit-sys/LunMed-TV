@@ -54,6 +54,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.ui.artwork.AppArtwork
 import com.lunmed.tv.core.ui.artwork.AppArtworkCache
@@ -103,7 +104,7 @@ fun AppContextMenuDialog(
                         colors = listOf(
                             colors.surfaceElevated.copy(alpha = 0.96f),
                             colors.surfaceCard.copy(alpha = 0.98f),
-                            Color(0xFF08080C),
+                            colors.obsidianCanvas,
                         ),
                     ),
                 )
@@ -114,7 +115,7 @@ fun AppContextMenuDialog(
                             listOf(
                                 colors.accentPrimary.copy(alpha = 0.60f),
                                 colors.borderSubtle,
-                                Color(0x18FFFFFF),
+                                colors.borderGlass,
                             ),
                         ),
                     ),
@@ -318,16 +319,10 @@ private fun ContextActionPill(
     val borderStroke = if (isFocused) {
         BorderStroke(
             1.5.dp,
-            Brush.linearGradient(
-                listOf(
-                    Color(0xFFFFF8E7),
-                    colors.accentPrimary,
-                    Color(0xFFC49A45),
-                ),
-            ),
+            Brush.linearGradient(LunmedGradients.focusRimStops(colors)),
         )
     } else {
-        BorderStroke(1.dp, Color(0x18FFFFFF))
+        BorderStroke(1.dp, colors.borderGlass)
     }
 
     Surface(

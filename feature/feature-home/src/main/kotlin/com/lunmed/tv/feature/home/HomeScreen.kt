@@ -332,7 +332,7 @@ fun HomeScreen(
                 Text(
                     text = uiState.statusMessage.orEmpty(),
                     style = LunmedTheme.typography.bodySecondary,
-                    color = colors.statusWarning,
+                    color = colors.statusError,
                 )
             }
         }

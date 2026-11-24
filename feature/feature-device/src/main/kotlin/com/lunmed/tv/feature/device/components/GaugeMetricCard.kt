@@ -50,6 +50,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -100,15 +101,7 @@ fun GaugeMetricCard(
         else -> Color(0xFF00FF87)
     }
 
-    val goldRimBrush = remember(colors.accentPrimary) {
-        Brush.linearGradient(
-            listOf(
-                Color(0xFFFFF8E7),
-                colors.accentPrimary,
-                Color(0xFFC49A45),
-            ),
-        )
-    }
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) { LunmedGradients.focusRimBrush(colors) }
 
     Surface(
         onClick = onClick,
@@ -123,7 +116,7 @@ fun GaugeMetricCard(
                 shape = RoundedCornerShape(24.dp),
             ),
             focusedBorder = Border(
-                border = BorderStroke(2.dp, goldRimBrush),
+                border = BorderStroke(2.dp, focusRimBrush),
                 shape = RoundedCornerShape(24.dp),
             ),
         ),

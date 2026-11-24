@@ -45,6 +45,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.LunmedWallpaper
 import com.lunmed.tv.core.model.ScenicType
 
@@ -78,15 +79,7 @@ fun WallpaperCard(
         label = "WallpaperCardBg",
     )
 
-    val goldRimBrush = remember(colors.accentPrimary) {
-        Brush.linearGradient(
-            listOf(
-                Color(0xFFFFF8E7),
-                colors.accentPrimary,
-                Color(0xFFC49A45),
-            ),
-        )
-    }
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) { LunmedGradients.focusRimBrush(colors) }
 
     Surface(
         onClick = onSelect,
@@ -102,7 +95,7 @@ fun WallpaperCard(
                 Border(border = BorderStroke(1.dp, Color(0x25FFFFFF)), shape = RoundedCornerShape(20.dp))
             },
             focusedBorder = Border(
-                border = BorderStroke(2.dp, goldRimBrush),
+                border = BorderStroke(2.dp, focusRimBrush),
                 shape = RoundedCornerShape(20.dp),
             ),
         ),
@@ -284,7 +277,7 @@ fun WallpaperCard(
                                 text = "ACTIVE",
                                 style = LunmedTheme.typography.labelMeta.copy(
                                     fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 9.sp,
+                                    fontSize = 11.sp,
                                     letterSpacing = 0.5.sp,
                                 ),
                                 color = Color(0xFF0A0C14),
@@ -300,7 +293,6 @@ fun WallpaperCard(
                     text = wallpaper.title,
                     style = LunmedTheme.typography.titleCard.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
                     ),
                     color = colors.textPrimary,
                     maxLines = 1,

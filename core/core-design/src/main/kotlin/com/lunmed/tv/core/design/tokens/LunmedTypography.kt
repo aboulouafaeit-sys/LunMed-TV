@@ -8,6 +8,11 @@ import androidx.compose.ui.unit.sp
 
 /**
  * 10-foot television typography scale optimized for legibility at 2.5m-4m viewing distance.
+ *
+ * Sizes were re-tuned for real living-room distance: nothing renders below 12sp and the
+ * body/label tiers were lifted one step (13->14sp, 11->12sp, 15->16sp) so metadata stays
+ * readable on a 1080p panel without leaning in. Individual screens may still override a
+ * tier, but they should never drop below [MIN_LEGIBLE_SP].
  */
 @Immutable
 data class LunmedTypographyTokens(
@@ -22,6 +27,9 @@ data class LunmedTypographyTokens(
 )
 
 object LunmedTypography {
+    /** Hard floor for any text rendered on a TV at viewing distance. */
+    const val MIN_LEGIBLE_SP = 12
+
     val Default = LunmedTypographyTokens(
         displayHero = TextStyle(
             fontFamily = FontFamily.SansSerif,
@@ -47,38 +55,37 @@ object LunmedTypography {
         titleCard = TextStyle(
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.Medium,
-            fontSize = 15.sp,
-            lineHeight = 20.sp,
+            fontSize = 16.sp,
+            lineHeight = 22.sp,
             letterSpacing = 0.15.sp,
         ),
         bodyPrimary = TextStyle(
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.Normal,
-            fontSize = 15.sp,
-            lineHeight = 22.sp,
+            fontSize = 16.sp,
+            lineHeight = 23.sp,
             letterSpacing = 0.15.sp,
         ),
         bodySecondary = TextStyle(
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.Normal,
-            fontSize = 13.sp,
-            lineHeight = 18.sp,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
             letterSpacing = 0.2.sp,
         ),
         labelAction = TextStyle(
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 13.sp,
-            lineHeight = 18.sp,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
             letterSpacing = 0.4.sp,
         ),
         labelMeta = TextStyle(
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.Medium,
-            fontSize = 11.sp,
-            lineHeight = 16.sp,
+            fontSize = 12.sp,
+            lineHeight = 17.sp,
             letterSpacing = 0.5.sp,
         ),
     )
 }
-

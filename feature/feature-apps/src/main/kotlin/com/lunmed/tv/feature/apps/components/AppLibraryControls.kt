@@ -45,6 +45,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.feature.apps.model.AppSortOrder
 import com.lunmed.tv.feature.apps.model.CategoryFilterItem
@@ -224,15 +225,7 @@ private fun CategoryFilterPill(
         label = "CatPillScale",
     )
 
-    val goldRimBrush = remember(colors.accentPrimary) {
-        Brush.linearGradient(
-            listOf(
-                Color(0xFFFFF8E7),
-                colors.accentPrimary,
-                colors.accentSecondary,
-            ),
-        )
-    }
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) { LunmedGradients.focusRimBrush(colors) }
 
     val containerColor by animateColorAsState(
         targetValue = when {
@@ -270,7 +263,7 @@ private fun CategoryFilterPill(
                 Border.None
             },
             focusedBorder = Border(
-                border = BorderStroke(1.6.dp, goldRimBrush),
+                border = BorderStroke(1.6.dp, focusRimBrush),
                 shape = LunmedTheme.shapes.pill,
             ),
         ),
@@ -323,15 +316,7 @@ private fun AppSortOrderButton(
         label = "SortPillScale",
     )
 
-    val goldRimBrush = remember(colors.accentPrimary) {
-        Brush.linearGradient(
-            listOf(
-                Color(0xFFFFF8E7),
-                colors.accentPrimary,
-                colors.accentSecondary,
-            ),
-        )
-    }
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) { LunmedGradients.focusRimBrush(colors) }
 
     Surface(
         onClick = onClick,
@@ -345,7 +330,7 @@ private fun AppSortOrderButton(
         border = ClickableSurfaceDefaults.border(
             border = Border(border = BorderStroke(1.dp, colors.borderSubtle), shape = LunmedTheme.shapes.pill),
             focusedBorder = Border(
-                border = BorderStroke(1.6.dp, goldRimBrush),
+                border = BorderStroke(1.6.dp, focusRimBrush),
                 shape = LunmedTheme.shapes.pill,
             ),
         ),

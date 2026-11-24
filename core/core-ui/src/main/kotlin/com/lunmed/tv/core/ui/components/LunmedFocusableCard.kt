@@ -1,13 +1,14 @@
 package com.lunmed.tv.core.ui.components
 
 import android.os.SystemClock
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,12 +33,14 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Surface
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -66,6 +69,13 @@ fun LunmedFocusableCard(
     val coroutineScope = rememberCoroutineScope()
     var isFocused by remember { mutableStateOf(false) }
 
+    // D-pad press feedback: the shared pressedScale token was previously dead code,
+    // so OK never gave any tactile response before launching an app.
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val density = LocalDensity.current
+    val elevationTokens = LunmedTheme.elevation
+
     // Bulletproof long-press / release debounce guard:
     // Prevents KeyUp on remote D-pad from triggering onClick when releasing after long press
     var isLongPressConsumed by remember { mutableStateOf(false) }
@@ -87,11 +97,29 @@ fun LunmedFocusableCard(
         }
     }
 
-    // Silky, physics-based spring scaling (Apple TV signature feel)
+    // Silky, physics-based spring scaling (Apple TV signature feel):
+    // focused lifts the card, pressed dips it back so OK always feels acknowledged.
     val scale by animateFloatAsState(
-        targetValue = if (isFocused) focusTokens.focusedScale else focusTokens.idleScale,
+        targetValue = when {
+            // Pressed is applied *relative* to the focused scale (1.10 -> ~1.08) so OK
+            // reads as a tactile dip instead of a jarring shrink back to card size.
+            isPressed && isFocused -> focusTokens.focusedScale * focusTokens.pressedScale
+            isPressed -> focusTokens.pressedScale
+            isFocused -> focusTokens.focusedScale
+            else -> focusTokens.idleScale
+        },
         animationSpec = animTokens.scaleSpringSpec(),
         label = "LunmedCardSpringScale",
+    )
+
+    // Token-driven depth: focused cards lift on the shared elevation scale instead of
+    // the previous raw 22f pixel constant (which ignored screen density entirely).
+    val focusedElevationPx = with(density) { elevationTokens.focused.toPx() }
+    val idleElevationPx = with(density) { elevationTokens.subtle.toPx() }
+    val cardElevation by animateFloatAsState(
+        targetValue = if (isFocused) focusedElevationPx else idleElevationPx,
+        animationSpec = animTokens.focusSpec(),
+        label = "LunmedCardElevation",
     )
 
     // Specular light reflection sheen sweep across glass face
@@ -108,22 +136,16 @@ fun LunmedFocusableCard(
         }
     }
 
-    val goldRimBrush = remember(colors.accentPrimary) {
-        Brush.linearGradient(
-            colors = listOf(
-                Color(0xFFFFF8E7),
-                colors.accentPrimary,
-                colors.accentSecondary,
-                Color(0xFFC49A45),
-            ),
-        )
+    // Accent-coherent specular rim (was hardcoded champagne gold for every preset).
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) {
+        LunmedGradients.focusRimBrush(colors)
     }
 
     val subtleBorderBrush = remember(colors.borderSubtle) {
         Brush.linearGradient(
             colors = listOf(
                 colors.borderSubtle,
-                Color(0x0EFFFFFF),
+                colors.borderGlass,
             ),
         )
     }
@@ -145,16 +167,17 @@ fun LunmedFocusableCard(
                 shape = shape,
             ),
             focusedBorder = Border(
-                border = BorderStroke(focusTokens.borderWidth, goldRimBrush),
+                border = BorderStroke(focusTokens.borderWidth, focusRimBrush),
                 shape = shape,
             ),
         ),
+        interactionSource = interactionSource,
         modifier = modifier
             .zIndex(if (isFocused) 50f else 1f)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-                shadowElevation = if (isFocused) 22f else 2f
+                shadowElevation = cardElevation
             }
             .onFocusChanged { isFocused = it.isFocused }
             .onPreviewKeyEvent { keyEvent ->

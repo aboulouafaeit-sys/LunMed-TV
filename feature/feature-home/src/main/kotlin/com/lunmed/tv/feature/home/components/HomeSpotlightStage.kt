@@ -245,7 +245,7 @@ private fun RemoteKeycapHint(
                 text = key,
                 style = LunmedTheme.typography.labelMeta.copy(
                     fontWeight = FontWeight.Black,
-                    fontSize = 10.sp,
+                    fontSize = 11.sp,
                     letterSpacing = 0.5.sp,
                 ),
                 color = accentColor,
@@ -254,7 +254,7 @@ private fun RemoteKeycapHint(
         Text(
             text = action,
             style = LunmedTheme.typography.bodySecondary.copy(
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = colors.textSecondary,
@@ -318,7 +318,7 @@ private fun SpotlightBadge(
                 style = LunmedTheme.typography.labelMeta.copy(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
-                    fontSize = 10.sp,
+                    fontSize = 11.sp,
                 ),
                 color = contentCol,
             )

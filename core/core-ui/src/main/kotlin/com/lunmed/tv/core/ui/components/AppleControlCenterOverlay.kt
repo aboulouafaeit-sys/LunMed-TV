@@ -69,6 +69,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
+import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.DefaultLauncherState
 import com.lunmed.tv.core.model.DeviceCapabilities
 import com.lunmed.tv.core.model.IconDisplayMode
@@ -655,9 +656,7 @@ private fun AppleSegmentItem(
                 Border(
                     border = BorderStroke(
                         1.5.dp,
-                        Brush.linearGradient(
-                            listOf(Color(0xFFFFF8E7), colors.accentPrimary, Color(0xFFC49A45)),
-                        ),
+                        Brush.linearGradient(LunmedGradients.focusRimStops(colors)),
                     ),
                     shape = shape,
                 )

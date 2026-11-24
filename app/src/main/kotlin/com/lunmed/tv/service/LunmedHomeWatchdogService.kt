@@ -1,6 +1,7 @@
 package com.lunmed.tv.service
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
@@ -17,9 +18,25 @@ class LunmedHomeWatchdogService : AccessibilityService() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private var lastInterceptEpochMs = 0L
+    private var lastSelfVisibleEpochMs = 0L
 
     private val dynamicLauncherPackages = HashSet<String>()
     private var lastLauncherScanEpochMs = 0L
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        // Re-apply the runtime flags on every connection. Some vendor ROMs keep stale stored
+        // flags from an earlier install, which silently disables KEYCODE_HOME filtering - the
+        // classic "accessibility enabled but Home key is not intercepted" failure.
+        runCatching {
+            val info = serviceInfo ?: AccessibilityServiceInfo()
+            info.eventTypes = info.eventTypes or AccessibilityEvent.TYPE_WINDOWS_CHANGED
+            info.flags = info.flags or AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
+            info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+            info.notificationTimeout = NOTIFICATION_TIMEOUT_MS
+            setServiceInfo(info)
+        }
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null || event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
@@ -27,7 +44,12 @@ class LunmedHomeWatchdogService : AccessibilityService() {
         }
 
         val targetPackage = event.packageName?.toString() ?: return
-        if (targetPackage == packageName) return
+        if (targetPackage == packageName) {
+            // Our own window is in front: remember it so a Home press is handled by
+            // MainActivity.onKeyDown (returns to the Home tab) instead of restarting the task.
+            lastSelfVisibleEpochMs = System.currentTimeMillis()
+            return
+        }
 
         // Intercept known OEM vendor stock launchers or any detected 3rd-party launcher on restricted boxes
         if (isTargetLauncher(targetPackage)) {
@@ -69,6 +91,10 @@ class LunmedHomeWatchdogService : AccessibilityService() {
         if (event != null && event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_HOME -> {
+                    val now = System.currentTimeMillis()
+                    // Already showing our launcher: return false so MainActivity.onKeyDown gets
+                    // the press and navigates back to the Home tab (no task restart flicker).
+                    if (now - lastSelfVisibleEpochMs < SELF_VISIBLE_WINDOW_MS) return false
                     bringLunmedToForeground()
                     return true
                 }
@@ -94,12 +120,15 @@ class LunmedHomeWatchdogService : AccessibilityService() {
                 )
             }
             runCatching { startActivity(intent) }
+            lastSelfVisibleEpochMs = System.currentTimeMillis()
         }
     }
 
     companion object {
         private const val DEBOUNCE_WINDOW_MS = 600L
         private const val DYNAMIC_SCAN_INTERVAL_MS = 60_000L
+        private const val SELF_VISIBLE_WINDOW_MS = 1_500L
+        private const val NOTIFICATION_TIMEOUT_MS = 50L
         private const val SYSTEM_PACKAGE = "android"
 
         private val KNOWN_VENDOR_LAUNCHERS = setOf(
