@@ -193,11 +193,7 @@ class AndroidDeviceDiagnosticsRepository @Inject constructor(
             supportedAbis = abis,
             androidRelease = Build.VERSION.RELEASE,
             sdkInt = Build.VERSION.SDK_INT,
-            securityPatch = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Build.VERSION.SECURITY_PATCH
-            } else {
-                "N/A"
-            },
+            securityPatch = Build.VERSION.SECURITY_PATCH,
             buildDisplay = Build.DISPLAY,
             cpuCores = Runtime.getRuntime().availableProcessors(),
             chipArchitecture = architecture,
