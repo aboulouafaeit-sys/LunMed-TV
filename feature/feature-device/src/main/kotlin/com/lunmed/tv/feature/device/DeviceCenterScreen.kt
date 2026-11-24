@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -61,6 +62,7 @@ import com.lunmed.tv.core.navigation.remote.RemoteCommand
 import com.lunmed.tv.core.navigation.remote.onRemoteKeyCommand
 import com.lunmed.tv.core.ui.components.LunmedAmbientCanvas
 import com.lunmed.tv.core.ui.components.LunmedTopBar
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.feature.device.components.DiagnosticInfoCard
 import com.lunmed.tv.feature.device.components.DiagnosticItem
 import com.lunmed.tv.feature.device.components.GaugeMetricCard
@@ -157,7 +159,7 @@ fun DeviceCenterScreen(
             ) {
                 DeviceCenterTab.entries.forEach { tab ->
                     TabPill(
-                        label = tab.label,
+                        label = stringResource(tab.labelRes),
                         icon = when (tab) {
                             DeviceCenterTab.RESOURCES -> Icons.Rounded.Memory
                             DeviceCenterTab.WALLPAPERS -> Icons.Rounded.Wallpaper
@@ -217,13 +219,25 @@ fun DeviceCenterScreen(
                     .padding(horizontal = 24.dp, vertical = 12.dp),
             ) {
                 Text(
-                    text = uiState.statusNotification.orEmpty(),
+                    text = uiState.statusNotification?.asDisplayText().orEmpty(),
                     style = LunmedTheme.typography.bodySecondary,
                     color = colors.statusSuccess,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun DeviceStatusMessage.asDisplayText(): String = when (this) {
+    DeviceStatusMessage.TelemetryRefreshed -> stringResource(R.string.device_msg_refreshed)
+
+    is DeviceStatusMessage.CacheOptimized -> freedMbFormatted
+        ?.let { stringResource(R.string.device_msg_optimized_mb, it) }
+        ?: stringResource(R.string.device_msg_optimized)
+
+    is DeviceStatusMessage.WallpaperApplied ->
+        stringResource(R.string.device_msg_wallpaper_applied, wallpaperTitle)
 }
 
 @Composable
@@ -300,17 +314,21 @@ private fun ResourcesTabContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ActionCard(
-                label = if (uiState.isOptimizing) "Optimizing..." else "Free Memory Cache",
+                label = if (uiState.isOptimizing) {
+                    stringResource(R.string.device_action_optimizing)
+                } else {
+                    stringResource(R.string.device_action_free_cache)
+                },
                 icon = Icons.Rounded.CleaningServices,
                 onClick = onClearMemoryCache,
             )
             ActionCard(
-                label = "Refresh Metrics",
+                label = stringResource(R.string.device_action_refresh),
                 icon = Icons.Rounded.Refresh,
                 onClick = onRefreshDiagnostics,
             )
             ActionCard(
-                label = "Native Settings",
+                label = stringResource(R.string.device_action_native_settings),
                 icon = Icons.Rounded.Settings,
                 onClick = onOpenAndroidSettings,
             )
@@ -319,44 +337,75 @@ private fun ResourcesTabContent(
         if (rep != null) {
             // RAM Gauge
             GaugeMetricCard(
-                title = "RAM Memory Engine",
-                subtitle = "Active operational memory allocation & buffers",
+                title = stringResource(R.string.device_ram_title),
+                subtitle = stringResource(R.string.device_ram_subtitle),
                 icon = Icons.Rounded.Memory,
                 usedFormatted = rep.memory.usedGbFormatted,
                 totalFormatted = rep.memory.totalGbFormatted,
                 availableFormatted = rep.memory.availableGbFormatted,
                 usageRatio = rep.memory.usageRatio,
-                statusText = if (rep.memory.isLowMemory) "LOW MEMORY" else "OPTIMAL",
+                statusText = if (rep.memory.isLowMemory) {
+                    stringResource(R.string.device_ram_low)
+                } else {
+                    stringResource(R.string.device_ram_optimal)
+                },
                 isWarning = rep.memory.isLowMemory,
                 onClick = onClearMemoryCache,
             )
 
             // Storage Gauge
             GaugeMetricCard(
-                title = "Internal TV Storage",
-                subtitle = "Flash memory filesystem utilization",
+                title = stringResource(R.string.device_storage_title),
+                subtitle = stringResource(R.string.device_storage_subtitle),
                 icon = Icons.Rounded.Storage,
                 usedFormatted = rep.storage.usedGbFormatted,
                 totalFormatted = rep.storage.totalGbFormatted,
                 availableFormatted = rep.storage.availableGbFormatted,
                 usageRatio = rep.storage.usageRatio,
-                statusText = if (rep.storage.usageRatio > 0.9f) "CRITICAL" else "HEALTHY",
+                statusText = if (rep.storage.usageRatio > 0.9f) {
+                    stringResource(R.string.device_storage_critical)
+                } else {
+                    stringResource(R.string.device_storage_healthy)
+                },
                 isWarning = rep.storage.usageRatio > 0.9f,
                 onClick = onOpenAndroidSettings,
             )
 
             // Network Diagnostics Card
             DiagnosticInfoCard(
-                title = "Network Connection & Telemetry",
-                subtitle = "Active transport, IP routing, and wireless performance",
+                title = stringResource(R.string.device_network_title),
+                subtitle = stringResource(R.string.device_network_subtitle),
                 icon = if (rep.network.transportName == "Ethernet") Icons.Rounded.Lan else Icons.Rounded.Wifi,
                 items = listOf(
-                    DiagnosticItem("Connection Transport", rep.network.transportName, isHighlight = true),
-                    DiagnosticItem("Local IP Address", rep.network.ipAddress),
-                    DiagnosticItem("Internet Access", if (rep.network.isConnected) "Active & Reachable" else "Offline"),
-                    DiagnosticItem("Wi-Fi SSID", rep.network.wifiSsid ?: "N/A"),
-                    DiagnosticItem("Wi-Fi Signal Strength", rep.network.wifiRssiDbm?.let { "$it dBm" } ?: "N/A"),
-                    DiagnosticItem("Link Speed", rep.network.wifiLinkSpeedMbps?.let { "$it Mbps" } ?: "N/A"),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_net_transport),
+                        value = rep.network.transportName,
+                        isHighlight = true,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_net_ip),
+                        value = rep.network.ipAddress,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_net_internet),
+                        value = if (rep.network.isConnected) {
+                            stringResource(R.string.device_net_active)
+                        } else {
+                            stringResource(R.string.device_net_offline)
+                        },
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_net_ssid),
+                        value = rep.network.wifiSsid ?: stringResource(R.string.device_value_na),
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_net_signal),
+                        value = rep.network.wifiRssiDbm?.let { "$it dBm" } ?: stringResource(R.string.device_value_na),
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_net_link),
+                        value = rep.network.wifiLinkSpeedMbps?.let { "$it Mbps" } ?: stringResource(R.string.device_value_na),
+                    ),
                 ),
             )
         }
@@ -376,12 +425,12 @@ private fun WallpapersTabContent(
             .padding(bottom = spacing.xl),
     ) {
         Text(
-            text = "Signature Obsidian Wallpapers",
+            text = stringResource(R.string.device_wallpapers_title),
             style = LunmedTheme.typography.titleLarge,
             color = LunmedTheme.colors.textPrimary,
         )
         Text(
-            text = "Fine luxury palettes engineered to enhance cinematic depth and contrast.",
+            text = stringResource(R.string.device_wallpapers_subtitle),
             style = LunmedTheme.typography.bodySecondary,
             color = LunmedTheme.colors.textMuted,
         )
@@ -432,33 +481,89 @@ private fun HardwareTabContent(
 
             // 2. Display & Video Pipeline
             DiagnosticInfoCard(
-                title = "Display & Cinema Pipeline",
-                subtitle = "Resolution, refresh rate, HDR capability, and audio passthrough",
+                title = stringResource(R.string.device_display_title),
+                subtitle = stringResource(R.string.device_display_subtitle),
                 icon = Icons.Rounded.Tv,
                 items = listOf(
-                    DiagnosticItem("Screen Resolution", "${rep.display.resolutionWidth} x ${rep.display.resolutionHeight}", isHighlight = true),
-                    DiagnosticItem("4K Ultra HD", if (rep.display.is4k) "Supported (Cinema 4K)" else "Full HD (1080p FHD)"),
-                    DiagnosticItem("Refresh Rate", String.format(java.util.Locale.US, "%.1f Hz", rep.display.refreshRateHz)),
-                    DiagnosticItem("Pixel Density", "${rep.display.densityDpi} DPI"),
-                    DiagnosticItem("HDR Cinema Modes", rep.display.hdrSupportSummary, isHighlight = rep.display.hdrSupportSummary != "SDR"),
-                    DiagnosticItem("Audio Architecture", rep.display.audioOutputPipeline, isHighlight = true),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_display_resolution),
+                        value = "${rep.display.resolutionWidth} x ${rep.display.resolutionHeight}",
+                        isHighlight = true,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_display_4k),
+                        value = if (rep.display.is4k) {
+                            stringResource(R.string.device_display_4k_supported)
+                        } else {
+                            stringResource(R.string.device_display_fhd)
+                        },
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_display_refresh),
+                        value = String.format(java.util.Locale.US, "%.1f Hz", rep.display.refreshRateHz),
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_display_density),
+                        value = "${rep.display.densityDpi} DPI",
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_display_hdr),
+                        value = rep.display.hdrSupportSummary,
+                        isHighlight = rep.display.hdrSupportSummary != "SDR",
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_display_audio),
+                        value = rep.display.audioOutputPipeline,
+                        isHighlight = true,
+                    ),
                 ),
             )
 
             // 3. Platform & Kernel Details
             DiagnosticInfoCard(
-                title = "Platform & Operating System",
-                subtitle = "Chipset, motherboard, CPU cores, and OS build parameters",
+                title = stringResource(R.string.device_platform_title),
+                subtitle = stringResource(R.string.device_platform_subtitle),
                 icon = Icons.Rounded.DeveloperBoard,
                 items = listOf(
-                    DiagnosticItem("Manufacturer / Brand", "${rep.platform.manufacturer} (${rep.platform.brand})"),
-                    DiagnosticItem("Model & Product", "${rep.platform.model} [${rep.platform.product}]"),
-                    DiagnosticItem("Board / SoC", rep.platform.socOrBoard, isHighlight = true),
-                    DiagnosticItem("CPU Core Engine", "${rep.platform.cpuCores} Processing Units", isHighlight = true),
-                    DiagnosticItem("CPU Architecture (ABI)", rep.platform.supportedAbis),
-                    DiagnosticItem("Android OS Version", "${rep.platform.androidRelease} (API Level ${rep.platform.sdkInt})", isHighlight = true),
-                    DiagnosticItem("Security Patch Level", rep.platform.securityPatch),
-                    DiagnosticItem("Firmware Build ID", rep.platform.buildDisplay),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_manufacturer),
+                        value = "${rep.platform.manufacturer} (${rep.platform.brand})",
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_model),
+                        value = "${rep.platform.model} [${rep.platform.product}]",
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_board),
+                        value = rep.platform.socOrBoard,
+                        isHighlight = true,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_cpu),
+                        value = stringResource(R.string.device_platform_cpu_units, rep.platform.cpuCores),
+                        isHighlight = true,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_abi),
+                        value = rep.platform.supportedAbis,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_android),
+                        value = stringResource(
+                            R.string.device_platform_android_value,
+                            rep.platform.androidRelease,
+                            rep.platform.sdkInt,
+                        ),
+                        isHighlight = true,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_patch),
+                        value = rep.platform.securityPatch,
+                    ),
+                    DiagnosticItem(
+                        label = stringResource(R.string.device_platform_build),
+                        value = rep.platform.buildDisplay,
+                    ),
                 ),
             )
         }

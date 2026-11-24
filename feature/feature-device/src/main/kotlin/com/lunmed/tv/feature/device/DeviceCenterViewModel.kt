@@ -34,7 +34,7 @@ class DeviceCenterViewModel @Inject constructor(
     private val activeTab = MutableStateFlow(DeviceCenterTab.RESOURCES)
     private val deviceReport = MutableStateFlow<FullDeviceReport?>(null)
     private val isOptimizing = MutableStateFlow(false)
-    private val statusNotification = MutableStateFlow<String?>(null)
+    private val statusNotification = MutableStateFlow<DeviceStatusMessage?>(null)
     private val launcherStateTick = MutableStateFlow(0)
 
     init {
@@ -45,7 +45,7 @@ class DeviceCenterViewModel @Inject constructor(
         val tab: DeviceCenterTab,
         val report: FullDeviceReport?,
         val optimizing: Boolean,
-        val notification: String?,
+        val notification: DeviceStatusMessage?,
         val launcherTick: Int,
     )
 
@@ -93,7 +93,7 @@ class DeviceCenterViewModel @Inject constructor(
 
     fun onRefreshDiagnostics() {
         refreshDiagnostics()
-        statusNotification.value = "Hardware telemetry refreshed"
+        statusNotification.value = DeviceStatusMessage.TelemetryRefreshed
     }
 
     /** Silent re-read used when the screen resumes (HOME role may have just changed). */
@@ -110,11 +110,9 @@ class DeviceCenterViewModel @Inject constructor(
             val bytesFreed = deviceDiagnosticsRepository.clearMemoryCache()
             delay(400) // Brief smooth tactile transition
             val freedMb = bytesFreed.toDouble() / (1024 * 1024)
-            statusNotification.value = if (freedMb > 0.1) {
-                String.format(Locale.US, "Optimized: %.1f MB cache recovered", freedMb)
-            } else {
-                "Memory and graphics cache optimized"
-            }
+            statusNotification.value = DeviceStatusMessage.CacheOptimized(
+                freedMbFormatted = if (freedMb > 0.1) String.format(Locale.US, "%.1f", freedMb) else null,
+            )
             refreshDiagnostics()
             isOptimizing.value = false
         }
@@ -124,7 +122,7 @@ class DeviceCenterViewModel @Inject constructor(
         viewModelScope.launch {
             wallpaperRepository.selectWallpaper(wallpaperId)
             val wp = wallpaperRepository.getWallpaperById(wallpaperId)
-            statusNotification.value = "Wallpaper applied: ${wp?.title ?: wallpaperId}"
+            statusNotification.value = DeviceStatusMessage.WallpaperApplied(wallpaperTitle = wp?.title ?: wallpaperId)
         }
     }
 

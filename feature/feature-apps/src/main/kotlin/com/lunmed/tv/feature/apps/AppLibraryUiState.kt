@@ -25,6 +25,16 @@ data class AppLibraryUiState(
     val selectedWallpaperId: String = "lunmed_aurora_nordic",
     val networkStatus: NetworkStatus = NetworkStatus(false, NetworkTransport.OFFLINE),
     val capabilities: DeviceCapabilities? = null,
-    val statusMessage: String? = null,
+    val statusMessage: AppStatusMessage? = null,
 )
+
+/**
+ * Semantic launch-failure message. Resolved to a localised string at render time so the
+ * view model never embeds locale-specific prose.
+ */
+sealed interface AppStatusMessage {
+    data class Unavailable(val appLabel: String) : AppStatusMessage
+    data class PermissionDenied(val appLabel: String) : AppStatusMessage
+    data class LaunchFailed(val appLabel: String, val reason: String) : AppStatusMessage
+}
 

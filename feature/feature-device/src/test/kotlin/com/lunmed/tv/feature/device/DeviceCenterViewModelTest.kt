@@ -247,7 +247,10 @@ class DeviceCenterViewModelTest {
 
         val state = viewModel.uiState.value
         assertEquals("lunmed_cosmic_gold_02", state.selectedWallpaper?.id)
-        assertTrue(state.statusNotification?.contains("Cosmic Amber") == true)
+        assertEquals(
+            DeviceStatusMessage.WallpaperApplied(wallpaperTitle = "Cosmic Amber"),
+            state.statusNotification,
+        )
         job.cancel()
     }
 
@@ -270,7 +273,7 @@ class DeviceCenterViewModelTest {
 
         assertTrue(fakeDiagnosticsRepo.clearCacheCalled)
         val state = viewModel.uiState.value
-        assertTrue(state.statusNotification?.contains("Optimized") == true)
+        assertTrue(state.statusNotification is DeviceStatusMessage.CacheOptimized)
         job.cancel()
     }
 }

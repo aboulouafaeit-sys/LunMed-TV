@@ -36,7 +36,7 @@ class AppLibraryViewModel @Inject constructor(
     private val focusedApp = MutableStateFlow<AppInfo?>(null)
     private val contextMenuApp = MutableStateFlow<AppInfo?>(null)
     private val categoryPickerApp = MutableStateFlow<AppInfo?>(null)
-    private val statusMessage = MutableStateFlow<String?>(null)
+    private val statusMessage = MutableStateFlow<AppStatusMessage?>(null)
 
     private val filterState = combine(
         searchQuery,
@@ -67,7 +67,7 @@ class AppLibraryViewModel @Inject constructor(
             if (id == AppLibraryFilterEngine.CATEGORY_HIDDEN && count == 0) {
                 null
             } else {
-                CategoryFilterItem(id = id, title = title, count = count)
+                CategoryFilterItem(id = id, titleRes = title, count = count)
             }
         }
 
@@ -130,11 +130,11 @@ class AppLibraryViewModel @Inject constructor(
             when (val result = appRepository.launchApp(app.packageName)) {
                 LaunchResult.Success -> statusMessage.value = null
                 is LaunchResult.PackageUnavailable ->
-                    statusMessage.value = "${app.label} is unavailable or was uninstalled."
+                    statusMessage.value = AppStatusMessage.Unavailable(app.label)
                 is LaunchResult.PermissionDenied ->
-                    statusMessage.value = "Permission denied while launching ${app.label}."
+                    statusMessage.value = AppStatusMessage.PermissionDenied(app.label)
                 is LaunchResult.Failed ->
-                    statusMessage.value = "Could not open ${app.label}: ${result.reason}"
+                    statusMessage.value = AppStatusMessage.LaunchFailed(app.label, result.reason)
             }
         }
     }
@@ -191,7 +191,7 @@ class AppLibraryViewModel @Inject constructor(
         val focused: AppInfo?,
         val contextMenu: AppInfo?,
         val categoryPicker: AppInfo?,
-        val message: String?,
+        val message: AppStatusMessage?,
     )
 }
 

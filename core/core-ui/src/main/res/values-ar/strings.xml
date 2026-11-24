@@ -29,5 +29,265 @@
     <string name="cat_games">ألعاب</string>
     <string name="cat_tools">أدوات ونظام</string>
     <string name="cat_hidden">التطبيقات المخفية</string>
+
+    <!-- مركز الجهاز: التبويبات -->
+    <string name="device_tab_resources">الأداء والذاكرة</string>
+    <string name="device_tab_wallpapers">الخلفيات السينمائية</string>
+    <string name="device_tab_hardware">بنية النظام</string>
+
+    <!-- مركز الجهاز: الإجراءات السريعة -->
+    <string name="device_action_free_cache">تفريغ ذاكرة التخزين المؤقت</string>
+    <string name="device_action_optimizing">جارٍ التحسين…</string>
+    <string name="device_action_refresh">تحديث القياسات</string>
+    <string name="device_action_native_settings">إعدادات النظام</string>
+
+    <!-- مركز الجهاز: مؤشرات الموارد -->
+    <string name="device_ram_title">محرك الذاكرة العشوائية</string>
+    <string name="device_ram_subtitle">الذاكرة العاملة النشطة والمخازن المؤقتة</string>
+    <string name="device_ram_low">ذاكرة منخفضة</string>
+    <string name="device_ram_optimal">مثالي</string>
+    <string name="device_storage_title">التخزين الداخلي للتلفاز</string>
+    <string name="device_storage_subtitle">استهلاك نظام ملفات الذاكرة الوميضية</string>
+    <string name="device_storage_critical">حرِج</string>
+    <string name="device_storage_healthy">سليم</string>
+    <string name="device_gauge_used">المساحة المستخدمة</string>
+    <string name="device_gauge_available">المتاح</string>
+    <string name="device_gauge_total">السعة الكلية</string>
+    <string name="device_gauge_optimize">اضغط للتحسين</string>
+
+    <!-- مركز الجهاز: تشخيص الشبكة -->
+    <string name="device_network_title">اتصال الشبكة والقياسات</string>
+    <string name="device_network_subtitle">الناقل النشط وتوجيه IP وأداء الشبكة اللاسلكية</string>
+    <string name="device_net_transport">نوع الاتصال</string>
+    <string name="device_net_ip">عنوان IP المحلي</string>
+    <string name="device_net_internet">الوصول إلى الإنترنت</string>
+    <string name="device_net_active">متصل ومتاح</string>
+    <string name="device_net_offline">غير متصل</string>
+    <string name="device_net_ssid">اسم شبكة Wi-Fi</string>
+    <string name="device_net_signal">قوة إشارة Wi-Fi</string>
+    <string name="device_net_link">سرعة الرابط</string>
+    <string name="device_value_na">غير متاح</string>
+
+    <!-- مركز الجهاز: تبويب الخلفيات -->
+    <string name="device_wallpapers_title">خلفيات أوبسيديان المميزة</string>
+    <string name="device_wallpapers_subtitle">تدرجات فاخرة مصممة لتعزيز العمق السينمائي والتباين.</string>
+    <string name="device_wallpaper_active">مفعّلة</string>
+
+    <!-- مركز الجهاز: تبويب العتاد -->
+    <string name="device_display_title">الشاشة ومسار العرض السينمائي</string>
+    <string name="device_display_subtitle">الدقة ومعدل التحديث ودعم HDR وتمرير الصوت</string>
+    <string name="device_display_resolution">دقة الشاشة</string>
+    <string name="device_display_4k">4K فائق الدقة</string>
+    <string name="device_display_4k_supported">مدعوم (سينما 4K)</string>
+    <string name="device_display_fhd">دقة كاملة (1080p FHD)</string>
+    <string name="device_display_refresh">معدل التحديث</string>
+    <string name="device_display_density">كثافة البكسل</string>
+    <string name="device_display_hdr">أوضاع HDR السينمائية</string>
+    <string name="device_display_audio">معمارية الصوت</string>
+    <string name="device_platform_title">المنصة ونظام التشغيل</string>
+    <string name="device_platform_subtitle">الشريحة واللوحة وأنوية المعالج وإصدار النظام</string>
+    <string name="device_platform_manufacturer">الشركة المصنّعة / العلامة</string>
+    <string name="device_platform_model">الطراز والمنتج</string>
+    <string name="device_platform_board">اللوحة / الشريحة</string>
+    <string name="device_platform_cpu">محرك أنوية المعالج</string>
+    <string name="device_platform_cpu_units">%1$d نواة معالجة</string>
+    <string name="device_platform_abi">معمارية المعالج (ABI)</string>
+    <string name="device_platform_android">إصدار أندرويد</string>
+    <string name="device_platform_android_value">%1$s (مستوى API %2$d)</string>
+    <string name="device_platform_patch">مستوى تحديث الأمان</string>
+    <string name="device_platform_build">معرّف بناء النظام</string>
+
+    <!-- مركز الجهاز: شريحة السيليكون -->
+    <string name="device_chip_platform">منصة السيليكون العتادية</string>
+    <string name="device_chip_online">الشريحة تعمل</string>
+    <string name="device_chip_architecture">معمارية الشريحة</string>
+    <string name="device_chip_board_target">اللوحة: %1$s • المنتج: %2$s</string>
+    <string name="device_chip_cores">أنوية</string>
+    <string name="device_chip_cpu_arch">المعمارية</string>
+    <string name="device_chip_android_os">أندرويد</string>
+    <string name="device_chip_android_value">الإصدار %1$s (API %2$d)</string>
+    <string name="device_chip_security">الأمان</string>
+    <string name="device_chip_firmware">البرنامج الثابت</string>
+
+    <!-- مركز الجهاز: رسائل الحالة -->
+    <string name="device_msg_refreshed">تم تحديث قياسات الجهاز</string>
+    <string name="device_msg_optimized_mb">تم التحسين: استعادة %1$s ميجابايت من الذاكرة المؤقتة</string>
+    <string name="device_msg_optimized">تم تحسين الذاكرة وذاكرة الرسوميات المؤقتة</string>
+    <string name="device_msg_wallpaper_applied">تم تطبيق الخلفية: %1$s</string>
+
+    <!-- مكتبة التطبيقات: البحث والترتيب والتصنيفات -->
+    <string name="apps_search_placeholder">ابحث عن التطبيقات…</string>
+    <string name="apps_search_desc">بحث</string>
+    <string name="apps_clear_search_desc">مسح البحث</string>
+    <string name="apps_sort_desc">ترتيب</string>
+    <string name="sort_name_asc">الاسم (أ–ي)</string>
+    <string name="sort_name_desc">الاسم (ي–أ)</string>
+    <string name="sort_most_used">الأكثر استخدامًا</string>
+    <string name="sort_recently_used">الأحدث استخدامًا</string>
+    <string name="sort_custom">ترتيب مخصص</string>
+    <string name="cat_media">الترفيه والوسائط</string>
+    <string name="cat_system">النظام والإعدادات</string>
+    <string name="cat_other">أخرى</string>
+
+    <!-- مكتبة التطبيقات: الحالات الفارغة -->
+    <string name="apps_empty_title">لا توجد تطبيقات</string>
+    <string name="apps_empty_search">لا يوجد تطبيق يطابق “%1$s”</string>
+    <string name="apps_empty_category">لا توجد تطبيقات متاحة في هذا التصنيف.</string>
+
+    <!-- مكتبة التطبيقات: رسائل فشل التشغيل -->
+    <string name="apps_msg_unavailable">%1$s غير متاح أو تم إلغاء تثبيته.</string>
+    <string name="apps_msg_permission_denied">تم رفض الإذن أثناء تشغيل %1$s.</string>
+    <string name="apps_msg_launch_failed">تعذّر فتح %1$s: %2$s</string>
+
+    <!-- قوائم السياق (الرئيسية ومكتبة التطبيقات) -->
+    <string name="menu_open_app">فتح التطبيق</string>
+    <string name="menu_open_app_sub">تشغيل التطبيق فورًا</string>
+    <string name="menu_fav_add">إضافة إلى المفضلة</string>
+    <string name="menu_fav_add_sub">تثبيت في المفضلة</string>
+    <string name="menu_fav_remove">إزالة من المفضلة</string>
+    <string name="menu_fav_remove_sub">إزالة من قائمة المفضلة</string>
+    <string name="menu_hide">إخفاء التطبيق</string>
+    <string name="menu_hide_sub">إخفاء التطبيق من الواجهة</string>
+    <string name="menu_unhide">إظهار التطبيق</string>
+    <string name="menu_unhide_sub">إظهار التطبيق في المكتبة والشاشة الرئيسية</string>
+    <string name="menu_change_category">تغيير التصنيف</string>
+    <string name="menu_change_category_sub">تعديل تصنيف الوسائط أو الألعاب أو الأدوات</string>
+    <string name="menu_app_info">معلومات التطبيق والتشخيص</string>
+    <string name="menu_app_info_sub">تفاصيل الحزمة ومعلومات النظام</string>
+    <string name="menu_dismiss">إغلاق</string>
+    <string name="menu_dismiss_sub">إغلاق القائمة والرجوع</string>
+    <string name="menu_badge_favorite">★ مفضل</string>
+    <string name="menu_badge_hidden">مخفي</string>
+    <string name="menu_badge_certified">معتمد للتلفاز</string>
+    <string name="menu_assign_category_title">تعيين تصنيف</string>
+    <string name="menu_assign_category_desc">اختر التصنيف الرئيسي لـ %1$s</string>
+    <string name="menu_category_current">التصنيف الحالي</string>
+    <string name="menu_category_select">اختيار هذا التصنيف</string>
+    <string name="menu_cancel">إلغاء</string>
+    <string name="menu_cancel_sub">إلغاء هذا التغيير</string>
+
+    <!-- الشاشة الرئيسية -->
+    <string name="home_empty_title">لا توجد تطبيقات</string>
+    <string name="home_empty_subtitle">ثبّت أي تطبيق أندرويد أو أندرويد TV ليظهر هنا.</string>
+    <string name="cat_applications">تطبيقات</string>
+    <string name="home_rail_favorites">المفضلة</string>
+    <string name="home_rail_recent">المستخدمة حديثًا</string>
+    <string name="spotlight_eyebrow">مسرح LUNMED المميز</string>
+    <string name="spotlight_title_empty">تجربة ترفيه سينمائية</string>
+    <string name="spotlight_apps_count">%1$d تطبيقًا مهيأة للتنقل بجهاز تحكم 4K</string>
+    <string name="spotlight_badge_tv">أندرويد TV</string>
+    <string name="spotlight_badge_app">تطبيق</string>
+    <string name="spotlight_badge_favorite">مفضل</string>
+    <string name="spotlight_played">تم التشغيل %1$d×</string>
+    <string name="spotlight_key_ok">موافق</string>
+    <string name="spotlight_key_hold_ok">موافق مطولًا</string>
+    <string name="spotlight_action_launch">تشغيل التطبيق</string>
+    <string name="spotlight_action_options">الخيارات والإعدادات</string>
+    <string name="menu_hide_home">إخفاء من الشاشة الرئيسية</string>
+    <string name="menu_hide_home_sub">إخفاء التطبيق من واجهة التشغيل الرئيسية</string>
+    <string name="menu_app_info_home_sub">تفاصيل الحزمة والأذونات والتخزين</string>
+
+    <!-- الإعدادات: الأقسام -->
+    <string name="settings_section_appearance">المظهر والثيم</string>
+    <string name="settings_section_appearance_sub">الألوان والكثافة وأحجام البطاقات</string>
+    <string name="settings_section_animations">الحركة والأداء</string>
+    <string name="settings_section_animations_sub">شدة الحركة وتحسين عتاد التلفاز</string>
+    <string name="settings_section_home">تخصيص الشاشة الرئيسية</string>
+    <string name="settings_section_home_sub">الساعة ومؤشرات الحالة وصف التطبيقات الحديثة</string>
+    <string name="settings_section_launcher">المشغل الافتراضي والنظام</string>
+    <string name="settings_section_launcher_sub">حالة دور الرئيسية وإعدادات نظام أندرويد</string>
+    <string name="settings_section_language">اللغة وإمكانية الوصول</string>
+    <string name="settings_section_language_sub">اختيار اللغة ودعم العربية RTL والتباين المريح</string>
+    <string name="settings_section_about">حول التطبيق ومعلومات الجهاز</string>
+    <string name="settings_section_about_sub">إصدار البرنامج وإمكانات العتاد والتشخيص</string>
+
+    <!-- الإعدادات: عناوين المجموعات -->
+    <string name="settings_group_accent">لوحة الألوان الملكية</string>
+    <string name="settings_group_icon_mode">طريقة عرض الأيقونات</string>
+    <string name="settings_group_wallpapers">الخلفيات الخلابة والمتحركة</string>
+    <string name="settings_group_density">كثافة الواجهة</string>
+    <string name="settings_group_card_size">أبعاد بطاقات التطبيقات</string>
+    <string name="settings_group_motion">محرك الحركة</string>
+    <string name="settings_group_home_elements">عناصر الشاشة الرئيسية</string>
+    <string name="settings_group_root">التثبيت الجذري لمشغل النظام</string>
+    <string name="settings_group_boot">طبقات التثبيت بعد إعادة التشغيل</string>
+    <string name="settings_group_home_role">دور الرئيسية في أندرويد</string>
+    <string name="settings_group_language">لغة الواجهة واتجاهها</string>
+    <string name="settings_group_accessibility">إمكانية الوصول وأريحية التلفاز</string>
+    <string name="settings_group_app_info">معلومات التطبيق</string>
+    <string name="settings_group_capabilities">إمكانات الجهاز والعتاد</string>
+
+    <!-- الإعدادات: كثافة الواجهة -->
+    <string name="settings_density_comfortable">مريح</string>
+    <string name="settings_density_comfortable_sub">هوامش واسعة (48dp) لشاشات غرف المعيشة الكبيرة</string>
+    <string name="settings_density_compact">مضغوط</string>
+    <string name="settings_density_compact_sub">تباعد أضيق (40dp) لعرض أكبر عدد من التطبيقات</string>
+
+    <!-- الإعدادات: أبعاد البطاقات -->
+    <string name="settings_card_compact">مضغوط (160×90)</string>
+    <string name="settings_card_compact_sub">تخطيط عالي الكثافة</string>
+    <string name="settings_card_standard">قياسي (192×108)</string>
+    <string name="settings_card_standard_sub">حجم متوازن 16:9 مناسب للتلفاز</string>
+    <string name="settings_card_cinema">سينما (224×126)</string>
+    <string name="settings_card_cinema_sub">صور أكبر وتركيز أبرز</string>
+
+    <!-- الإعدادات: محرك الحركة -->
+    <string name="settings_motion_full">حركة كاملة</string>
+    <string name="settings_motion_full_sub">منحنيات تباطؤ ناعمة 150ms لتجربة تلفاز سلسة</string>
+    <string name="settings_motion_reduced">حركة مخففة</string>
+    <string name="settings_motion_reduced_sub">انتقالات سريعة 90ms لاستجابة أجهزة التلفاز الاقتصادية</string>
+    <string name="settings_motion_minimal">أدنى حد / فوري</string>
+    <string name="settings_motion_minimal_sub">تغيير فوري للحالة دون أي حمل على الرسوميات</string>
+    <string name="settings_low_ram_notice">⚡ تحسين العتاد مُفعّل: تم اكتشاف جهاز بذاكرة منخفضة، وتُطبَّق حركة مخففة تلقائيًا لحفظ ذاكرة النظام.</string>
+
+    <!-- الإعدادات: عناصر الشاشة الرئيسية -->
+    <string name="settings_clock_title">الساعة والتاريخ</string>
+    <string name="settings_clock_sub">عرض الوقت والتاريخ المباشر في الشريط العلوي</string>
+    <string name="settings_indicators_title">مؤشرات حالة الجهاز</string>
+    <string name="settings_indicators_sub">عرض شارات Wi-Fi والإيثرنت وشاشة 4K</string>
+    <string name="settings_recent_title">التطبيقات المستخدمة حديثًا</string>
+    <string name="settings_recent_sub">عرض صف يتحدّث تلقائيًا بأحدث التطبيقات المشغّلة</string>
+    <string name="settings_splash_title">مقدمة التشغيل</string>
+    <string name="settings_splash_sub">عرض مقدمة سينمائية قصيرة عند التشغيل البارد (تُغلق بأي مفتاح)</string>
+
+    <!-- الإعدادات: التثبيت الجذري -->
+    <string name="settings_root_status">حالة محرك الجذر</string>
+    <string name="settings_root_detected">تم اكتشاف الجذر (su): %1$s. التثبيت المباشر على مستوى النواة متاح.</string>
+    <string name="settings_root_active">نشط</string>
+    <string name="settings_root_missing">لم يتم اكتشاف الجذر. يعمل النمط القياسي أو مراقب إمكانية الوصول.</string>
+    <string name="settings_root_enforce">تثبيت LUNMED TV على مستوى الجذر</string>
+    <string name="settings_root_enforce_sub">يقفل نشاط الرئيسية في النظام ويعطّل مشغلات الشركات المنافسة</string>
+    <string name="settings_root_revert">إلغاء القفل الجذري</string>
+    <string name="settings_root_revert_sub">يعيد تمكين مشغلات الشركات الأصلية في مدير الحزم</string>
+
+    <!-- الإعدادات: طبقات التثبيت ودور الرئيسية -->
+    <string name="settings_home_role_title">دور الرئيسية في أندرويد</string>
+    <string name="settings_home_role_held">مُسند إلى LUNMED TV</string>
+    <string name="settings_home_role_held_by">مُسند إلى %1$s</string>
+    <string name="settings_home_role_none">غير مُسند</string>
+    <string name="settings_watchdog_title">مراقب إمكانية الوصول</string>
+    <string name="settings_watchdog_on">مُفعّل (اعتراض زر الرئيسية ومشغلات الشركات)</string>
+    <string name="settings_watchdog_off">غير مُفعّل (افتح إعدادات إمكانية الوصول أدناه)</string>
+    <string name="settings_device_admin_title">مدير الجهاز</string>
+    <string name="settings_device_admin_on">نشط</string>
+    <string name="settings_device_admin_off">غير نشط</string>
+    <string name="settings_device_owner_title">قفل مالك الجهاز</string>
+    <string name="settings_device_owner_on">نشط (رئيسية غير قابلة للتغيير على مستوى النظام)</string>
+    <string name="settings_device_owner_off">غير مُهيّأ (يتطلب تهيئة عبر ADB)</string>
+    <string name="settings_activate_admin">تفعيل مدير الجهاز</string>
+    <string name="settings_activate_admin_sub">يتيح لـ LUNMED TV إعادة فرض الرئيسية بعد التشغيل على الأنظمة التي تعيد تعيين المشغل</string>
+    <string name="settings_immutable_launcher">مشغل غير قابل للتغيير كليًا (تهيئة STB / الموزعين):</string>
+    <string name="settings_role_status_default">LUNMED TV هو المشغل الافتراضي الحالي.</string>
+    <string name="settings_role_status_other">يوجد مشغل آخر نشط (%1$s).</string>
+    <string name="settings_role_none_value">لا يوجد</string>
+    <string name="settings_set_default">تعيين LUNMED TV كمشغل افتراضي</string>
+    <string name="settings_set_default_sub">يفتح محدد دور الرئيسية الرسمي في أندرويد</string>
+    <string name="settings_watchdog_persistent">مراقب الرئيسية الدائم (أجهزة TV Box المقيدة)</string>
+    <string name="settings_watchdog_persistent_sub">تفعيل مراقب إمكانية الوصول لاعتراض زر الرئيسية ومشغلات الشركات على الأنظمة المقيدة</string>
+    <string name="settings_open_system">فتح إعدادات نظام أندرويد</string>
+    <string name="settings_open_system_sub">الوصول إلى إعدادات Wi-Fi والبلوتوث والصوت والعرض</string>
+    <string name="settings_reset_all">إعادة كل التفضيلات إلى الافتراضي</string>
+    <string name="settings_reset_all_sub">يعيد ثيم المصنع والتخطيط وإعدادات الحركة</string>
+    <string name="settings_stb_command">أمر القفل الدائم لأجهزة STB / الموزعين (ADB):</string>
 </resources>
 

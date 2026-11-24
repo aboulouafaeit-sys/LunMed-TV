@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.design.tokens.LunmedGradients
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.ui.artwork.AppArtwork
 import com.lunmed.tv.core.ui.artwork.AppArtworkCache
@@ -193,7 +195,7 @@ fun AppContextMenuDialog(
                                         .padding(horizontal = 8.dp, vertical = 2.dp),
                                 ) {
                                     Text(
-                                        text = "★ Favorite",
+                                        text = stringResource(R.string.menu_badge_favorite),
                                         style = LunmedTheme.typography.labelMeta.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold),
                                         color = colors.accentPrimary,
                                     )
@@ -206,7 +208,7 @@ fun AppContextMenuDialog(
                                         .padding(horizontal = 8.dp, vertical = 2.dp),
                                 ) {
                                     Text(
-                                        text = "TV Certified",
+                                        text = stringResource(R.string.menu_badge_certified),
                                         style = LunmedTheme.typography.labelMeta.copy(fontSize = 11.sp),
                                         color = Color(0xFF00E5FF),
                                     )
@@ -231,8 +233,8 @@ fun AppContextMenuDialog(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     ContextActionPill(
                         icon = Icons.Rounded.PlayArrow,
-                        title = "Open Application",
-                        subtitle = "تشغيل التطبيق فوراً",
+                        title = stringResource(R.string.menu_open_app),
+                        subtitle = stringResource(R.string.menu_open_app_sub),
                         isPrimary = true,
                         onClick = onLaunch,
                         modifier = Modifier.focusRequester(firstFocus),
@@ -240,32 +242,32 @@ fun AppContextMenuDialog(
 
                     ContextActionPill(
                         icon = Icons.Rounded.Star,
-                        title = if (app.isFavorite) "Remove from Favorites" else "Add to Favorites",
-                        subtitle = if (app.isFavorite) "إزالة من قائمة المفضلة" else "تثبيت في المفضلة للشاشة الرئيسية",
+                        title = if (app.isFavorite) stringResource(R.string.menu_fav_remove) else stringResource(R.string.menu_fav_add),
+                        subtitle = if (app.isFavorite) stringResource(R.string.menu_fav_remove_sub) else stringResource(R.string.menu_fav_add_sub),
                         isPrimary = false,
                         onClick = onToggleFavorite,
                     )
 
                     ContextActionPill(
                         icon = Icons.Rounded.VisibilityOff,
-                        title = "Hide from Home Screen",
-                        subtitle = "إخفاء التطبيق من واجهة التشغيل",
+                        title = stringResource(R.string.menu_hide_home),
+                        subtitle = stringResource(R.string.menu_hide_home_sub),
                         isPrimary = false,
                         onClick = onHide,
                     )
 
                     ContextActionPill(
                         icon = Icons.Rounded.Info,
-                        title = "App Info & Diagnostics",
-                        subtitle = "تفاصيل الحزمة، الأذونات، والتخزين",
+                        title = stringResource(R.string.menu_app_info),
+                        subtitle = stringResource(R.string.menu_app_info_home_sub),
                         isPrimary = false,
                         onClick = onOpenAppInfo,
                     )
 
                     ContextActionPill(
                         icon = Icons.Rounded.Clear,
-                        title = "Dismiss",
-                        subtitle = "إغلاق القائمة والرجوع",
+                        title = stringResource(R.string.menu_dismiss),
+                        subtitle = stringResource(R.string.menu_dismiss_sub),
                         isPrimary = false,
                         onClick = onDismiss,
                     )

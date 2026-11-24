@@ -39,6 +39,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +55,7 @@ import com.lunmed.tv.core.model.NetworkStatus
 import com.lunmed.tv.core.model.NetworkTransport
 import com.lunmed.tv.core.navigation.LunmedDestination
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
+import com.lunmed.tv.core.ui.R
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -116,25 +118,25 @@ fun LunmedTopBar(
                     .lunmedFocusGroupRestorer(),
             ) {
                 TopNavPill(
-                    label = "Home",
+                    label = stringResource(R.string.nav_home),
                     icon = Icons.Rounded.Home,
                     selected = activeDestination == LunmedDestination.HOME,
                     onClick = { onNavigate(LunmedDestination.HOME) },
                 )
                 TopNavPill(
-                    label = "Apps",
+                    label = stringResource(R.string.nav_apps),
                     icon = Icons.Rounded.Apps,
                     selected = activeDestination == LunmedDestination.APPS,
                     onClick = { onNavigate(LunmedDestination.APPS) },
                 )
                 TopNavPill(
-                    label = "Device",
+                    label = stringResource(R.string.nav_device),
                     icon = Icons.Rounded.Memory,
                     selected = activeDestination == LunmedDestination.DEVICE,
                     onClick = { onNavigate(LunmedDestination.DEVICE) },
                 )
                 TopNavPill(
-                    label = "Settings",
+                    label = stringResource(R.string.nav_settings),
                     icon = Icons.Rounded.Settings,
                     selected = activeDestination == LunmedDestination.SETTINGS,
                     onClick = { onNavigate(LunmedDestination.SETTINGS) },
@@ -149,7 +151,7 @@ fun LunmedTopBar(
         ) {
             if (!isDefaultLauncher && canRequestDefaultLauncher) {
                 TopNavPill(
-                    label = "Set Default",
+                    label = stringResource(R.string.nav_set_default),
                     icon = Icons.Rounded.Home,
                     selected = false,
                     accentHighlight = true,

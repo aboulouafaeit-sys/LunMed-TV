@@ -40,12 +40,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.model.CardSizePreset
 import com.lunmed.tv.core.model.IconDisplayMode
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.core.ui.artwork.AppArtwork
 import com.lunmed.tv.core.ui.artwork.AppArtworkCache
 import com.lunmed.tv.core.ui.components.AdaptiveAuraEngine
@@ -184,7 +186,7 @@ fun HomeAppCard(
                 if (app.isFavorite) {
                     Icon(
                         imageVector = Icons.Rounded.Star,
-                        contentDescription = "Favorite",
+                        contentDescription = stringResource(R.string.action_favorite),
                         tint = colors.accentPrimary,
                         modifier = Modifier.size(14.dp),
                     )
@@ -318,7 +320,7 @@ fun HomeAppCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Star,
-                                contentDescription = "Favorite",
+                                contentDescription = stringResource(R.string.action_favorite),
                                 tint = colors.accentPrimary,
                                 modifier = Modifier.size(12.dp),
                             )

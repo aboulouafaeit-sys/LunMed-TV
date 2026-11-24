@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,6 +52,7 @@ import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.HardwarePlatformDiagnostics
+import com.lunmed.tv.core.ui.R
 
 /**
  * World-class Cybernetic Silicon SoC Processor Chip Badge.
@@ -136,7 +138,7 @@ fun SiliconSoCChipBadge(
 
                         Column {
                             Text(
-                                text = "HARDWARE SILICON PLATFORM",
+                                text = stringResource(R.string.device_chip_platform),
                                 style = LunmedTheme.typography.labelAction.copy(
                                     letterSpacing = 1.8.sp,
                                     fontSize = 11.sp,
@@ -173,7 +175,7 @@ fun SiliconSoCChipBadge(
                                     .background(Color(0xFF00FF87), CircleShape),
                             )
                             Text(
-                                text = "SILICON ONLINE",
+                                text = stringResource(R.string.device_chip_online),
                                 style = LunmedTheme.typography.labelMeta.copy(
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = 1.sp,
@@ -209,7 +211,7 @@ fun SiliconSoCChipBadge(
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "CHIPSET DIE ARCHITECTURE",
+                                text = stringResource(R.string.device_chip_architecture),
                                 style = LunmedTheme.typography.labelMeta.copy(
                                     fontSize = 10.sp,
                                     letterSpacing = 1.sp,
@@ -225,7 +227,7 @@ fun SiliconSoCChipBadge(
                                 color = colors.accentPrimary,
                             )
                             Text(
-                                text = "Board Target: ${platform.socOrBoard} • Product: ${platform.product}",
+                                text = stringResource(R.string.device_chip_board_target, platform.socOrBoard, platform.product),
                                 style = LunmedTheme.typography.labelMeta.copy(fontSize = 11.sp),
                                 color = colors.textSecondary,
                             )
@@ -257,7 +259,7 @@ fun SiliconSoCChipBadge(
                                     color = colors.accentPrimary,
                                 )
                                 Text(
-                                    text = "CORES",
+                                    text = stringResource(R.string.device_chip_cores),
                                     style = LunmedTheme.typography.labelMeta.copy(
                                         fontSize = 8.sp,
                                         fontWeight = FontWeight.Bold,
@@ -276,22 +278,22 @@ fun SiliconSoCChipBadge(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     PlatformMicroSpec(
-                        label = "CPU ARCH",
+                        label = stringResource(R.string.device_chip_cpu_arch),
                         value = platform.supportedAbis.take(12),
                         modifier = Modifier.weight(1f),
                     )
                     PlatformMicroSpec(
-                        label = "ANDROID OS",
-                        value = "v${platform.androidRelease} (API ${platform.sdkInt})",
+                        label = stringResource(R.string.device_chip_android_os),
+                        value = stringResource(R.string.device_chip_android_value, platform.androidRelease, platform.sdkInt),
                         modifier = Modifier.weight(1f),
                     )
                     PlatformMicroSpec(
-                        label = "SECURITY",
+                        label = stringResource(R.string.device_chip_security),
                         value = platform.securityPatch,
                         modifier = Modifier.weight(1f),
                     )
                     PlatformMicroSpec(
-                        label = "FIRMWARE",
+                        label = stringResource(R.string.device_chip_firmware),
                         value = platform.buildDisplay.take(14),
                         modifier = Modifier.weight(1f),
                     )

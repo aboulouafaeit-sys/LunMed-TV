@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +49,7 @@ import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.feature.apps.model.AppSortOrder
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.feature.apps.model.CategoryFilterItem
 
 @Composable
@@ -105,7 +107,7 @@ fun AppLibraryControls(
             ) { category ->
                 val isSelected = category.id == selectedCategory
                 CategoryFilterPill(
-                    title = category.title,
+                    title = stringResource(category.titleRes),
                     count = category.count,
                     isSelected = isSelected,
                     onClick = { onCategorySelected(category.id) },
@@ -157,7 +159,7 @@ private fun AppLibrarySearchBar(
         ) {
             Icon(
                 imageVector = Icons.Rounded.Search,
-                contentDescription = "Search",
+                contentDescription = stringResource(R.string.apps_search_desc),
                 tint = if (isFocused) colors.accentPrimary else colors.textMuted,
                 modifier = Modifier.size(18.dp),
             )
@@ -167,7 +169,7 @@ private fun AppLibrarySearchBar(
             Box(modifier = Modifier.weight(1f)) {
                 if (query.isEmpty()) {
                     Text(
-                        text = "Search applications...",
+                        text = stringResource(R.string.apps_search_placeholder),
                         style = LunmedTheme.typography.bodySecondary,
                         color = colors.textMuted,
                     )
@@ -198,7 +200,7 @@ private fun AppLibrarySearchBar(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Clear,
-                        contentDescription = "Clear search",
+                        contentDescription = stringResource(R.string.apps_clear_search_desc),
                         tint = colors.textSecondary,
                         modifier = Modifier.size(16.dp),
                     )
@@ -345,12 +347,12 @@ private fun AppSortOrderButton(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.Sort,
-                contentDescription = "Sort order",
+                contentDescription = stringResource(R.string.apps_sort_desc),
                 tint = if (isFocused) colors.accentPrimary else colors.textSecondary,
                 modifier = Modifier.size(16.dp),
             )
             Text(
-                text = sortOrder.displayName,
+                text = stringResource(sortOrder.displayNameRes),
                 style = LunmedTheme.typography.labelAction,
                 color = if (isFocused) colors.accentPrimary else colors.textPrimary,
             )
@@ -400,6 +402,8 @@ private fun AlphabetPill(
     val colors = LunmedTheme.colors
     var isFocused by remember { mutableStateOf(false) }
 
+    val focusRimBrush = remember(colors.accentPrimary, colors.accentSecondary) { LunmedGradients.focusRimBrush(colors) }
+
     val scale by androidx.compose.animation.core.animateFloatAsState(
         targetValue = if (isFocused) 1.22f else 1.0f,
         label = "AlphaPillScale",
@@ -413,7 +417,7 @@ private fun AlphabetPill(
             containerColor = if (isAvailable) Color(0x18FFFFFF) else Color(0x06FFFFFF),
             focusedContainerColor = colors.accentPrimary,
             contentColor = if (isAvailable) colors.textPrimary else Color(0x35FFFFFF),
-            focusedContentColor = Color(0xFF0A0C14),
+            focusedContentColor = colors.obsidianCanvas,
             disabledContainerColor = Color(0x06FFFFFF),
             disabledContentColor = Color(0x35FFFFFF),
         ),
@@ -423,7 +427,7 @@ private fun AlphabetPill(
                 shape = RoundedCornerShape(8.dp),
             ),
             focusedBorder = Border(
-                border = BorderStroke(1.5.dp, Color.White),
+                border = BorderStroke(1.5.dp, focusRimBrush),
                 shape = RoundedCornerShape(8.dp),
             ),
         ),

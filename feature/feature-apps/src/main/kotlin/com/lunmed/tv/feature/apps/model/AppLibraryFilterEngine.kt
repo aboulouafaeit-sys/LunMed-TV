@@ -1,6 +1,9 @@
 package com.lunmed.tv.feature.apps.model
 
 import com.lunmed.tv.core.model.AppInfo
+import com.lunmed.tv.core.ui.R
+import com.lunmed.tv.core.ui.text.LunmedCategories
+import androidx.annotation.StringRes
 
 object AppLibraryFilterEngine {
 
@@ -8,16 +11,20 @@ object AppLibraryFilterEngine {
     const val CATEGORY_FAVORITES = "favorites"
     const val CATEGORY_HIDDEN = "hidden"
 
-    val DEFAULT_CATEGORIES = listOf(
-        CATEGORY_ALL to "All Apps",
-        CATEGORY_FAVORITES to "Favorites",
-        "media" to "Entertainment & Media",
-        "games" to "Games",
-        "utilities" to "Utilities",
-        "system" to "System",
-        "other" to "Other",
-        CATEGORY_HIDDEN to "Hidden Apps",
+    /** Stable category id to translatable label mapping (localised at render time). */
+    val DEFAULT_CATEGORIES: List<Pair<String, Int>> = listOf(
+        CATEGORY_ALL to R.string.cat_all,
+        CATEGORY_FAVORITES to R.string.cat_favorites,
+        "media" to R.string.cat_media,
+        "games" to R.string.cat_games,
+        "utilities" to R.string.cat_tools,
+        "system" to R.string.cat_system,
+        "other" to R.string.cat_other,
+        CATEGORY_HIDDEN to R.string.cat_hidden,
     )
+
+    @StringRes
+    fun categoryLabelRes(categoryId: String?): Int = LunmedCategories.labelRes(categoryId)
 
     fun filterAndSort(
         allApps: List<AppInfo>,

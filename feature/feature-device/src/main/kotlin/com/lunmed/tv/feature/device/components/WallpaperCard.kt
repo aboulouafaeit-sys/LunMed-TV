@@ -36,6 +36,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +49,7 @@ import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.LunmedWallpaper
 import com.lunmed.tv.core.model.ScenicType
+import com.lunmed.tv.core.ui.R
 
 /**
  * World-class Scenic Wallpaper Card with procedural GPU vector canvas rendering.
@@ -269,12 +271,12 @@ fun WallpaperCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
-                                contentDescription = "Active",
+                                contentDescription = stringResource(R.string.device_wallpaper_active),
                                 tint = Color(0xFF0A0C14),
                                 modifier = Modifier.size(12.dp),
                             )
                             Text(
-                                text = "ACTIVE",
+                                text = stringResource(R.string.device_wallpaper_active),
                                 style = LunmedTheme.typography.labelMeta.copy(
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 11.sp,

@@ -11,6 +11,7 @@ import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.model.DefaultLauncherState
 import com.lunmed.tv.core.model.LaunchResult
 import com.lunmed.tv.core.model.LauncherPreferences
+import com.lunmed.tv.core.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +33,7 @@ class HomeViewModel @Inject constructor(
     private val capabilities = capabilityDetector.detect()
     private val focusedApp = MutableStateFlow<AppInfo?>(null)
     private val contextMenuApp = MutableStateFlow<AppInfo?>(null)
-    private val statusMessage = MutableStateFlow<String?>(null)
+    private val statusMessage = MutableStateFlow<HomeStatusMessage?>(null)
     private val defaultLauncherState = MutableStateFlow(defaultLauncherHelper.getState())
 
     private val localOverlayState = combine(
@@ -88,11 +89,11 @@ class HomeViewModel @Inject constructor(
             when (val result = appRepository.launchApp(app.packageName)) {
                 LaunchResult.Success -> statusMessage.value = null
                 is LaunchResult.PackageUnavailable ->
-                    statusMessage.value = "${app.label} is unavailable or was uninstalled."
+                    statusMessage.value = HomeStatusMessage.Unavailable(app.label)
                 is LaunchResult.PermissionDenied ->
-                    statusMessage.value = "Permission denied while launching ${app.label}."
+                    statusMessage.value = HomeStatusMessage.PermissionDenied(app.label)
                 is LaunchResult.Failed ->
-                    statusMessage.value = "Could not open ${app.label}: ${result.reason}"
+                    statusMessage.value = HomeStatusMessage.LaunchFailed(app.label, result.reason)
             }
         }
     }
@@ -130,7 +131,7 @@ class HomeViewModel @Inject constructor(
     private data class LocalOverlayState(
         val focusedApp: AppInfo?,
         val contextMenuApp: AppInfo?,
-        val statusMessage: String?,
+        val statusMessage: HomeStatusMessage?,
         val defaultLauncherState: DefaultLauncherState,
     )
 
@@ -142,11 +143,11 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private val CATEGORY_ORDER = listOf(
-            "media" to "Entertainment & Media",
-            "games" to "Games",
-            "utilities" to "Utilities & Productivity",
-            "other" to "Applications",
-            "system" to "System",
+            "media" to R.string.cat_media,
+            "games" to R.string.cat_games,
+            "utilities" to R.string.cat_tools,
+            "other" to R.string.cat_applications,
+            "system" to R.string.cat_system,
         )
 
         internal fun buildHomeSections(
@@ -166,7 +167,7 @@ class HomeViewModel @Inject constructor(
             val grouped = apps.groupBy { it.categoryId ?: "other" }
             val categories = CATEGORY_ORDER.mapNotNull { (id, title) ->
                 val list = grouped[id].orEmpty()
-                if (list.isEmpty()) null else HomeCategorySection(id = id, title = title, apps = list)
+                if (list.isEmpty()) null else HomeCategorySection(id = id, titleRes = title, apps = list)
             }
 
             return HomeSections(

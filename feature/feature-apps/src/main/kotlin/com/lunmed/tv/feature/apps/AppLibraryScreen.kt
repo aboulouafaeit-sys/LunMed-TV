@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,6 +38,7 @@ import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.navigation.LunmedDestination
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.core.navigation.focus.rememberFocusMemoryRegistry
 import com.lunmed.tv.core.navigation.remote.RemoteCommand
@@ -243,11 +245,11 @@ fun AppLibraryScreen(
 
             if (!uiState.isLoading && uiState.apps.isEmpty()) {
                 LunmedEmptyState(
-                    title = "No applications found",
+                    title = stringResource(R.string.apps_empty_title),
                     subtitle = if (uiState.searchQuery.isNotBlank()) {
-                        "No apps match \"${uiState.searchQuery}\""
+                        stringResource(R.string.apps_empty_search, uiState.searchQuery)
                     } else {
-                        "No applications available in this category."
+                        stringResource(R.string.apps_empty_category)
                     },
                     modifier = Modifier.weight(1f),
                 )
@@ -326,7 +328,7 @@ fun AppLibraryScreen(
                     .padding(horizontal = 20.dp, vertical = 10.dp),
             ) {
                 Text(
-                    text = uiState.statusMessage.orEmpty(),
+                    text = uiState.statusMessage?.asDisplayText().orEmpty(),
                     style = LunmedTheme.typography.bodySecondary,
                     color = colors.statusWarning,
                 )
@@ -368,3 +370,10 @@ fun AppLibraryScreen(
     }
 }
 
+
+@Composable
+private fun AppStatusMessage.asDisplayText(): String = when (this) {
+    is AppStatusMessage.Unavailable -> stringResource(R.string.apps_msg_unavailable, appLabel)
+    is AppStatusMessage.PermissionDenied -> stringResource(R.string.apps_msg_permission_denied, appLabel)
+    is AppStatusMessage.LaunchFailed -> stringResource(R.string.apps_msg_launch_failed, appLabel, reason)
+}

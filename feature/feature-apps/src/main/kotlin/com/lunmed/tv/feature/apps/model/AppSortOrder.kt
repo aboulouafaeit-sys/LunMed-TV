@@ -1,16 +1,20 @@
 package com.lunmed.tv.feature.apps.model
 
-enum class AppSortOrder(val displayName: String) {
-    NAME_ASC("Name (A–Z)"),
-    NAME_DESC("Name (Z–A)"),
-    MOST_USED("Most Used"),
-    RECENTLY_USED("Recently Used"),
-    CUSTOM("Custom Order"),
+import androidx.annotation.StringRes
+import com.lunmed.tv.core.ui.R
+
+enum class AppSortOrder(@StringRes val displayNameRes: Int) {
+    NAME_ASC(R.string.sort_name_asc),
+    NAME_DESC(R.string.sort_name_desc),
+    MOST_USED(R.string.sort_most_used),
+    RECENTLY_USED(R.string.sort_recently_used),
+    CUSTOM(R.string.sort_custom),
 }
 
 data class CategoryFilterItem(
     val id: String,
-    val title: String,
+    @StringRes val titleRes: Int,
     val count: Int = 0,
 )
+
 

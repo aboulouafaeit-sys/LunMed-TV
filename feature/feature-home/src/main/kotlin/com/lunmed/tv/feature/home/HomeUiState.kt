@@ -1,5 +1,6 @@
 package com.lunmed.tv.feature.home
 
+import androidx.annotation.StringRes
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.model.DefaultLauncherState
 import com.lunmed.tv.core.model.DeviceCapabilities
@@ -9,9 +10,10 @@ import com.lunmed.tv.core.model.NetworkTransport
 
 data class HomeCategorySection(
     val id: String,
-    val title: String,
+    @StringRes val titleRes: Int,
     val apps: List<AppInfo>,
 )
+
 
 data class HomeUiState(
     val isLoading: Boolean = true,
@@ -29,6 +31,15 @@ data class HomeUiState(
         canRequestRole = false,
     ),
     val capabilities: DeviceCapabilities? = null,
-    val statusMessage: String? = null,
+    val statusMessage: HomeStatusMessage? = null,
 )
+
+/**
+ * Semantic launch-failure message, localised by the composable that renders the toast.
+ */
+sealed interface HomeStatusMessage {
+    data class Unavailable(val appLabel: String) : HomeStatusMessage
+    data class PermissionDenied(val appLabel: String) : HomeStatusMessage
+    data class LaunchFailed(val appLabel: String, val reason: String) : HomeStatusMessage
+}
 

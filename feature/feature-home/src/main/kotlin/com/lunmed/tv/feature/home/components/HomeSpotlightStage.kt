@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,8 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.model.AppInfo
+import com.lunmed.tv.core.ui.R
+import com.lunmed.tv.core.ui.text.LunmedCategories
 import com.lunmed.tv.core.ui.components.AdaptiveAuraEngine
 
 /**
@@ -107,7 +110,7 @@ fun HomeSpotlightStage(
                                 .background(colors.accentPrimary, CircleShape),
                         )
                         Text(
-                            text = "LUNMED SIGNATURE THEATER",
+                            text = stringResource(R.string.spotlight_eyebrow),
                             style = LunmedTheme.typography.labelAction.copy(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 2.sp,
@@ -119,7 +122,7 @@ fun HomeSpotlightStage(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Cinema Entertainment Experience",
+                        text = stringResource(R.string.spotlight_title_empty),
                         style = LunmedTheme.typography.displayHero.copy(
                             fontWeight = FontWeight.Bold,
                         ),
@@ -129,7 +132,7 @@ fun HomeSpotlightStage(
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "$totalAppsCount applications optimized for 4K TV remote navigation",
+                        text = stringResource(R.string.spotlight_apps_count, totalAppsCount),
                         style = LunmedTheme.typography.bodySecondary,
                         color = colors.textSecondary,
                     )
@@ -142,7 +145,7 @@ fun HomeSpotlightStage(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         SpotlightBadge(
-                            text = if (app.isTvApp) "ANDROID TV" else "APP",
+                            text = if (app.isTvApp) stringResource(R.string.spotlight_badge_tv) else stringResource(R.string.spotlight_badge_app),
                             icon = if (app.isTvApp) Icons.Rounded.Tv else null,
                             accentColor = auraColor,
                             highlighted = true,
@@ -150,7 +153,7 @@ fun HomeSpotlightStage(
 
                         app.categoryId?.let { cat ->
                             SpotlightBadge(
-                                text = cat.uppercase(),
+                                text = stringResource(LunmedCategories.labelRes(cat)).uppercase(),
                                 accentColor = auraColor,
                                 highlighted = false,
                                 showDot = true,
@@ -159,7 +162,7 @@ fun HomeSpotlightStage(
 
                         if (app.isFavorite) {
                             SpotlightBadge(
-                                text = "FAVORITE",
+                                text = stringResource(R.string.spotlight_badge_favorite),
                                 icon = Icons.Rounded.Star,
                                 accentColor = colors.accentPrimary,
                                 highlighted = false,
@@ -169,7 +172,7 @@ fun HomeSpotlightStage(
 
                         if (app.launchCount > 0) {
                             SpotlightBadge(
-                                text = "PLAYED ${app.launchCount}×",
+                                text = stringResource(R.string.spotlight_played, app.launchCount),
                                 icon = Icons.Rounded.PlayArrow,
                                 accentColor = colors.textSecondary,
                                 highlighted = false,
@@ -198,13 +201,13 @@ fun HomeSpotlightStage(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        RemoteKeycapHint(key = "OK", action = "Launch App", accentColor = auraColor)
+                        RemoteKeycapHint(key = stringResource(R.string.spotlight_key_ok), action = stringResource(R.string.spotlight_action_launch), accentColor = auraColor)
                         Text(
                             text = "•",
                             style = LunmedTheme.typography.bodySecondary,
                             color = colors.textMuted,
                         )
-                        RemoteKeycapHint(key = "HOLD OK", action = "Options & Settings", accentColor = colors.accentPrimary)
+                        RemoteKeycapHint(key = stringResource(R.string.spotlight_key_hold_ok), action = stringResource(R.string.spotlight_action_options), accentColor = colors.accentPrimary)
                     }
                 }
             }

@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,7 @@ import com.lunmed.tv.core.navigation.focus.rememberFocusMemoryRegistry
 import com.lunmed.tv.core.navigation.remote.RemoteCommand
 import com.lunmed.tv.core.navigation.remote.onRemoteKeyCommand
 import com.lunmed.tv.core.ui.components.LunmedAmbientCanvas
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.core.ui.components.LunmedEmptyState
 import com.lunmed.tv.feature.home.components.AppContextMenuDialog
 import com.lunmed.tv.feature.home.components.HomeAppCard
@@ -220,8 +222,8 @@ fun HomeScreen(
 
             if (!uiState.isLoading && uiState.allAppsCount == 0) {
                 LunmedEmptyState(
-                    title = "No applications found",
-                    subtitle = "Install an Android TV or Android application to see it here.",
+                    title = stringResource(R.string.home_empty_title),
+                    subtitle = stringResource(R.string.home_empty_subtitle),
                 )
             } else {
                 val firstSectionId = when {
@@ -240,7 +242,7 @@ fun HomeScreen(
                         item(key = "section_favorites") {
                             HomeAppRail(
                                 sectionId = "favorites",
-                                title = "Favorites",
+                                title = stringResource(R.string.home_rail_favorites),
                                 apps = uiState.favorites,
                                 cardSize = uiState.preferences.cardSize,
                                 iconDisplayMode = uiState.preferences.iconDisplayMode,
@@ -265,7 +267,7 @@ fun HomeScreen(
                         item(key = "section_recent") {
                             HomeAppRail(
                                 sectionId = "recent",
-                                title = "Recently Used",
+                                title = stringResource(R.string.home_rail_recent),
                                 apps = uiState.recentApps,
                                 cardSize = uiState.preferences.cardSize,
                                 iconDisplayMode = uiState.preferences.iconDisplayMode,
@@ -292,7 +294,7 @@ fun HomeScreen(
                     ) { category ->
                         HomeAppRail(
                             sectionId = category.id,
-                            title = category.title,
+                            title = stringResource(category.titleRes),
                             apps = category.apps,
                             cardSize = uiState.preferences.cardSize,
                             iconDisplayMode = uiState.preferences.iconDisplayMode,
@@ -330,7 +332,7 @@ fun HomeScreen(
                     .padding(horizontal = 20.dp, vertical = 10.dp),
             ) {
                 Text(
-                    text = uiState.statusMessage.orEmpty(),
+                    text = uiState.statusMessage?.asDisplayText().orEmpty(),
                     style = LunmedTheme.typography.bodySecondary,
                     color = colors.statusError,
                 )
@@ -430,4 +432,11 @@ private fun HomeAppRail(
             }
         }
     }
+}
+
+@Composable
+private fun HomeStatusMessage.asDisplayText(): String = when (this) {
+    is HomeStatusMessage.Unavailable -> stringResource(R.string.apps_msg_unavailable, appLabel)
+    is HomeStatusMessage.PermissionDenied -> stringResource(R.string.apps_msg_permission_denied, appLabel)
+    is HomeStatusMessage.LaunchFailed -> stringResource(R.string.apps_msg_launch_failed, appLabel, reason)
 }

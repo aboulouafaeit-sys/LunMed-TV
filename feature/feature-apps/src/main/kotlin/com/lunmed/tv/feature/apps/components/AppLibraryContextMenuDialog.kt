@@ -45,8 +45,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,8 +63,10 @@ import com.lunmed.tv.core.design.tokens.LunmedGradients
 import com.lunmed.tv.core.model.AppInfo
 import com.lunmed.tv.core.ui.artwork.AppArtwork
 import com.lunmed.tv.core.ui.artwork.AppArtworkCache
+import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.core.ui.components.AdaptiveAuraEngine
 
+import com.lunmed.tv.feature.apps.model.AppLibraryFilterEngine
 @Composable
 fun AppLibraryContextMenuDialog(
     app: AppInfo,
@@ -172,7 +175,7 @@ fun AppLibraryContextMenuDialog(
                         Spacer(modifier = Modifier.height(3.dp))
 
                         Text(
-                            text = "${app.packageName} • ${app.categoryId ?: "other"}",
+                            text = "${app.packageName} • ${stringResource(AppLibraryFilterEngine.categoryLabelRes(app.categoryId))}",
                             style = LunmedTheme.typography.labelMeta,
                             color = colors.textMuted,
                             maxLines = 1,
@@ -189,7 +192,7 @@ fun AppLibraryContextMenuDialog(
                                         .padding(horizontal = 8.dp, vertical = 2.dp),
                                 ) {
                                     Text(
-                                        text = "★ Favorite",
+                                        text = stringResource(R.string.menu_badge_favorite),
                                         style = LunmedTheme.typography.labelMeta.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold),
                                         color = colors.accentPrimary,
                                     )
@@ -202,7 +205,7 @@ fun AppLibraryContextMenuDialog(
                                         .padding(horizontal = 8.dp, vertical = 2.dp),
                                 ) {
                                     Text(
-                                        text = "Hidden",
+                                        text = stringResource(R.string.menu_badge_hidden),
                                         style = LunmedTheme.typography.labelMeta.copy(fontSize = 11.sp),
                                         color = Color(0xFFFF5252),
                                     )
@@ -227,8 +230,8 @@ fun AppLibraryContextMenuDialog(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     LibraryActionPill(
                         icon = Icons.Rounded.PlayArrow,
-                        title = "Open Application",
-                        subtitle = "تشغيل التطبيق فوراً",
+                        title = stringResource(R.string.menu_open_app),
+                        subtitle = stringResource(R.string.menu_open_app_sub),
                         isPrimary = true,
                         onClick = onLaunch,
                         modifier = Modifier.focusRequester(firstFocus),
@@ -236,40 +239,40 @@ fun AppLibraryContextMenuDialog(
 
                     LibraryActionPill(
                         icon = Icons.Rounded.Star,
-                        title = if (app.isFavorite) "Remove from Favorites" else "Add to Favorites",
-                        subtitle = if (app.isFavorite) "إزالة من قائمة المفضلة" else "تثبيت في المفضلة",
+                        title = if (app.isFavorite) stringResource(R.string.menu_fav_remove) else stringResource(R.string.menu_fav_add),
+                        subtitle = if (app.isFavorite) stringResource(R.string.menu_fav_remove_sub) else stringResource(R.string.menu_fav_add_sub),
                         isPrimary = false,
                         onClick = onToggleFavorite,
                     )
 
                     LibraryActionPill(
                         icon = if (app.isHidden) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
-                        title = if (app.isHidden) "Unhide Application" else "Hide Application",
-                        subtitle = if (app.isHidden) "إظهار التطبيق في المكتبة والواجهة" else "إخفاء التطبيق من الشاشة",
+                        title = if (app.isHidden) stringResource(R.string.menu_unhide) else stringResource(R.string.menu_hide),
+                        subtitle = if (app.isHidden) stringResource(R.string.menu_unhide_sub) else stringResource(R.string.menu_hide_sub),
                         isPrimary = false,
                         onClick = onToggleHidden,
                     )
 
                     LibraryActionPill(
                         icon = Icons.Rounded.Tune,
-                        title = "Change Category",
-                        subtitle = "تعديل تصنيف التطبيق (وسائط، ألعاب، أدوات)",
+                        title = stringResource(R.string.menu_change_category),
+                        subtitle = stringResource(R.string.menu_change_category_sub),
                         isPrimary = false,
                         onClick = onChangeCategory,
                     )
 
                     LibraryActionPill(
                         icon = Icons.Rounded.Info,
-                        title = "App Info & Diagnostics",
-                        subtitle = "تفاصيل الحزمة ومعلومات النظام",
+                        title = stringResource(R.string.menu_app_info),
+                        subtitle = stringResource(R.string.menu_app_info_sub),
                         isPrimary = false,
                         onClick = onOpenAppInfo,
                     )
 
                     LibraryActionPill(
                         icon = Icons.Rounded.Clear,
-                        title = "Dismiss",
-                        subtitle = "إغلاق القائمة والرجوع",
+                        title = stringResource(R.string.menu_dismiss),
+                        subtitle = stringResource(R.string.menu_dismiss_sub),
                         isPrimary = false,
                         onClick = onDismiss,
                     )
@@ -289,11 +292,11 @@ fun CategoryAssignmentDialog(
     val firstFocus = remember { FocusRequester() }
 
     val categories = listOf(
-        "media" to "Entertainment & Media (وسائط وترفيه)",
-        "games" to "Games & Arcade (ألعاب وتسلية)",
-        "utilities" to "Utilities & Tools (أدوات وإنتاجية)",
-        "system" to "System & Settings (أدوات النظام)",
-        "other" to "General / Other (تطبيقات عامة)",
+        "media",
+        "games",
+        "utilities",
+        "system",
+        "other",
     )
 
     LaunchedEffect(app.packageName) {
@@ -332,13 +335,13 @@ fun CategoryAssignmentDialog(
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Column {
                     Text(
-                        text = "Assign Category (تصنيف التطبيق)",
+                        text = stringResource(R.string.menu_assign_category_title),
                         style = LunmedTheme.typography.headlineSection.copy(fontWeight = FontWeight.Bold),
                         color = colors.textPrimary,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Select primary category for ${app.label}",
+                        text = stringResource(R.string.menu_assign_category_desc, app.label),
                         style = LunmedTheme.typography.bodySecondary,
                         color = colors.textMuted,
                     )
@@ -356,12 +359,12 @@ fun CategoryAssignmentDialog(
                 )
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    categories.forEachIndexed { index, (catId, title) ->
+                    categories.forEachIndexed { index, catId ->
                         val isCurrent = (app.categoryId ?: "other") == catId
                         LibraryActionPill(
                             icon = if (isCurrent) Icons.Rounded.Check else Icons.Rounded.Category,
-                            title = title,
-                            subtitle = if (isCurrent) "Current Selection (التصنيف الحالي)" else "Tap to assign",
+                            title = stringResource(AppLibraryFilterEngine.categoryLabelRes(catId)),
+                            subtitle = if (isCurrent) stringResource(R.string.menu_category_current) else stringResource(R.string.menu_category_select),
                             isPrimary = isCurrent,
                             onClick = { onSelectCategory(catId) },
                             modifier = if (index == 0) Modifier.focusRequester(firstFocus) else Modifier,
@@ -370,8 +373,8 @@ fun CategoryAssignmentDialog(
 
                     LibraryActionPill(
                         icon = Icons.Rounded.Clear,
-                        title = "Cancel",
-                        subtitle = "إلغاء التغيير",
+                            title = stringResource(R.string.menu_cancel),
+                            subtitle = stringResource(R.string.menu_cancel_sub),
                         isPrimary = false,
                         onClick = onDismiss,
                     )

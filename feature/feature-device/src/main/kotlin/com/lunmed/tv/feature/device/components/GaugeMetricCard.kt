@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +52,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.design.tokens.LunmedGradients
+import com.lunmed.tv.core.ui.R
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -301,7 +303,7 @@ fun GaugeMetricCard(
                                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     Text(
-                                        text = "CLICK TO OPTIMIZE",
+                                        text = stringResource(R.string.device_gauge_optimize),
                                         style = LunmedTheme.typography.labelMeta.copy(
                                             fontSize = 9.sp,
                                             fontWeight = FontWeight.Bold,
@@ -326,19 +328,19 @@ fun GaugeMetricCard(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         MetricPillBox(
-                            label = "USED SPACE",
+                            label = stringResource(R.string.device_gauge_used),
                             value = usedFormatted,
                             valueColor = colors.textPrimary,
                             modifier = Modifier.weight(1f),
                         )
                         MetricPillBox(
-                            label = "AVAILABLE",
+                            label = stringResource(R.string.device_gauge_available),
                             value = availableFormatted,
                             valueColor = Color(0xFF00FF87),
                             modifier = Modifier.weight(1f),
                         )
                         MetricPillBox(
-                            label = "TOTAL CAPACITY",
+                            label = stringResource(R.string.device_gauge_total),
                             value = totalFormatted,
                             valueColor = colors.textSecondary,
                             modifier = Modifier.weight(1f),

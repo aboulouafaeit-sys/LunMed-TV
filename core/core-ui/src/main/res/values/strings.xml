@@ -29,5 +29,330 @@
     <string name="cat_games">Games</string>
     <string name="cat_tools">Tools &amp; Utilities</string>
     <string name="cat_hidden">Hidden Apps</string>
+
+    <!-- Device Center: tabs -->
+    <string name="device_tab_resources">Performance &amp; Memory</string>
+    <string name="device_tab_wallpapers">Cinematic Wallpapers</string>
+    <string name="device_tab_hardware">System Architecture</string>
+
+    <!-- Device Center: quick actions -->
+    <string name="device_action_free_cache">Free Memory Cache</string>
+    <string name="device_action_optimizing">Optimizing…</string>
+    <string name="device_action_refresh">Refresh Metrics</string>
+    <string name="device_action_native_settings">Native Settings</string>
+
+    <!-- Device Center: resource gauges -->
+    <string name="device_ram_title">RAM Memory Engine</string>
+    <string name="device_ram_subtitle">Active operational memory allocation and buffers</string>
+    <string name="device_ram_low">LOW MEMORY</string>
+    <string name="device_ram_optimal">OPTIMAL</string>
+    <string name="device_storage_title">Internal TV Storage</string>
+    <string name="device_storage_subtitle">Flash memory filesystem utilization</string>
+    <string name="device_storage_critical">CRITICAL</string>
+    <string name="device_storage_healthy">HEALTHY</string>
+    <string name="device_gauge_used">USED SPACE</string>
+    <string name="device_gauge_available">AVAILABLE</string>
+    <string name="device_gauge_total">TOTAL CAPACITY</string>
+    <string name="device_gauge_optimize">CLICK TO OPTIMIZE</string>
+
+    <!-- Device Center: network diagnostics -->
+    <string name="device_network_title">Network Connection &amp; Telemetry</string>
+    <string name="device_network_subtitle">Active transport, IP routing, and wireless performance</string>
+    <string name="device_net_transport">Connection Transport</string>
+    <string name="device_net_ip">Local IP Address</string>
+    <string name="device_net_internet">Internet Access</string>
+    <string name="device_net_active">Active &amp; Reachable</string>
+    <string name="device_net_offline">Offline</string>
+    <string name="device_net_ssid">Wi-Fi SSID</string>
+    <string name="device_net_signal">Wi-Fi Signal Strength</string>
+    <string name="device_net_link">Link Speed</string>
+    <string name="device_value_na">N/A</string>
+
+    <!-- Device Center: wallpapers tab -->
+    <string name="device_wallpapers_title">Signature Obsidian Wallpapers</string>
+    <string name="device_wallpapers_subtitle">Fine luxury palettes engineered to enhance cinematic depth and contrast.</string>
+    <string name="device_wallpaper_active">ACTIVE</string>
+
+    <!-- Device Center: hardware tab -->
+    <string name="device_display_title">Display &amp; Cinema Pipeline</string>
+    <string name="device_display_subtitle">Resolution, refresh rate, HDR capability, and audio passthrough</string>
+    <string name="device_display_resolution">Screen Resolution</string>
+    <string name="device_display_4k">4K Ultra HD</string>
+    <string name="device_display_4k_supported">Supported (Cinema 4K)</string>
+    <string name="device_display_fhd">Full HD (1080p FHD)</string>
+    <string name="device_display_refresh">Refresh Rate</string>
+    <string name="device_display_density">Pixel Density</string>
+    <string name="device_display_hdr">HDR Cinema Modes</string>
+    <string name="device_display_audio">Audio Architecture</string>
+    <string name="device_platform_title">Platform &amp; Operating System</string>
+    <string name="device_platform_subtitle">Chipset, motherboard, CPU cores, and OS build parameters</string>
+    <string name="device_platform_manufacturer">Manufacturer / Brand</string>
+    <string name="device_platform_model">Model &amp; Product</string>
+    <string name="device_platform_board">Board / SoC</string>
+    <string name="device_platform_cpu">CPU Core Engine</string>
+    <string name="device_platform_cpu_units">%1$d Processing Units</string>
+    <string name="device_platform_abi">CPU Architecture (ABI)</string>
+    <string name="device_platform_android">Android OS Version</string>
+    <string name="device_platform_android_value">%1$s (API Level %2$d)</string>
+    <string name="device_platform_patch">Security Patch Level</string>
+    <string name="device_platform_build">Firmware Build ID</string>
+
+    <!-- Device Center: silicon chip badge -->
+    <string name="device_chip_platform">HARDWARE SILICON PLATFORM</string>
+    <string name="device_chip_online">SILICON ONLINE</string>
+    <string name="device_chip_architecture">CHIPSET DIE ARCHITECTURE</string>
+    <string name="device_chip_board_target">Board Target: %1$s • Product: %2$s</string>
+    <string name="device_chip_cores">CORES</string>
+    <string name="device_chip_cpu_arch">CPU ARCH</string>
+    <string name="device_chip_android_os">ANDROID OS</string>
+    <string name="device_chip_android_value">v%1$s (API %2$d)</string>
+    <string name="device_chip_security">SECURITY</string>
+    <string name="device_chip_firmware">FIRMWARE</string>
+
+    <!-- Device Center: status messages -->
+    <string name="device_msg_refreshed">Hardware telemetry refreshed</string>
+    <string name="device_msg_optimized_mb">Optimized: %1$s MB cache recovered</string>
+    <string name="device_msg_optimized">Memory and graphics cache optimized</string>
+    <string name="device_msg_wallpaper_applied">Wallpaper applied: %1$s</string>
+
+    <!-- App Library: search, sort, filters -->
+    <string name="apps_search_placeholder">Search applications…</string>
+    <string name="apps_search_desc">Search</string>
+    <string name="apps_clear_search_desc">Clear search</string>
+    <string name="apps_sort_desc">Sort order</string>
+    <string name="sort_name_asc">Name (A–Z)</string>
+    <string name="sort_name_desc">Name (Z–A)</string>
+    <string name="sort_most_used">Most Used</string>
+    <string name="sort_recently_used">Recently Used</string>
+    <string name="sort_custom">Custom Order</string>
+    <string name="cat_media">Entertainment &amp; Media</string>
+    <string name="cat_system">System &amp; Settings</string>
+    <string name="cat_other">Other</string>
+
+    <!-- App Library: empty states -->
+    <string name="apps_empty_title">No applications found</string>
+    <string name="apps_empty_search">No apps match “%1$s”</string>
+    <string name="apps_empty_category">No applications available in this category.</string>
+
+    <!-- App Library: launch failure messages -->
+    <string name="apps_msg_unavailable">%1$s is unavailable or was uninstalled.</string>
+    <string name="apps_msg_permission_denied">Permission denied while launching %1$s.</string>
+    <string name="apps_msg_launch_failed">Could not open %1$s: %2$s</string>
+
+    <!-- Context menus (Home and App Library) -->
+    <string name="menu_open_app">Open Application</string>
+    <string name="menu_open_app_sub">Launch the app immediately</string>
+    <string name="menu_fav_add">Add to Favorites</string>
+    <string name="menu_fav_add_sub">Pin to your favorites</string>
+    <string name="menu_fav_remove">Remove from Favorites</string>
+    <string name="menu_fav_remove_sub">Remove from your favorites list</string>
+    <string name="menu_hide">Hide Application</string>
+    <string name="menu_hide_sub">Hide the app from the launcher</string>
+    <string name="menu_unhide">Unhide Application</string>
+    <string name="menu_unhide_sub">Show the app in the library and home screen</string>
+    <string name="menu_change_category">Change Category</string>
+    <string name="menu_change_category_sub">Reassign media, games, or tools category</string>
+    <string name="menu_app_info">App Info &amp; Diagnostics</string>
+    <string name="menu_app_info_sub">Package details and system information</string>
+    <string name="menu_dismiss">Dismiss</string>
+    <string name="menu_dismiss_sub">Close the menu and go back</string>
+    <string name="menu_badge_favorite">★ Favorite</string>
+    <string name="menu_badge_hidden">Hidden</string>
+    <string name="menu_badge_certified">TV Certified</string>
+    <string name="menu_assign_category_title">Assign Category</string>
+    <string name="menu_assign_category_desc">Select the primary category for %1$s</string>
+    <string name="menu_category_current">Current Selection</string>
+    <string name="menu_category_select">Select this category</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="menu_cancel_sub">Cancel this change</string>
+
+    <!-- Home screen -->
+    <string name="home_empty_title">No applications found</string>
+    <string name="home_empty_subtitle">Install an Android TV or Android application to see it here.</string>
+    <string name="cat_applications">Applications</string>
+    <string name="home_rail_favorites">Favorites</string>
+    <string name="home_rail_recent">Recently Used</string>
+    <string name="spotlight_eyebrow">LUNMED SIGNATURE THEATER</string>
+    <string name="spotlight_title_empty">Cinema Entertainment Experience</string>
+    <string name="spotlight_apps_count">%1$d applications optimized for 4K TV remote navigation</string>
+    <string name="spotlight_badge_tv">ANDROID TV</string>
+    <string name="spotlight_badge_app">APP</string>
+    <string name="spotlight_badge_favorite">FAVORITE</string>
+    <string name="spotlight_played">PLAYED %1$d×</string>
+    <string name="spotlight_key_ok">OK</string>
+    <string name="spotlight_key_hold_ok">HOLD OK</string>
+    <string name="spotlight_action_launch">Launch App</string>
+    <string name="spotlight_action_options">Options &amp; Settings</string>
+    <string name="menu_hide_home">Hide from Home Screen</string>
+    <string name="menu_hide_home_sub">Remove the app from the launcher home screen</string>
+    <string name="menu_app_info_home_sub">Package details, permissions, and storage</string>
+
+    <!-- Settings: sections -->
+    <string name="settings_section_appearance">Appearance &amp; Theme</string>
+    <string name="settings_section_appearance_sub">Accents, density, and card sizing</string>
+    <string name="settings_section_animations">Motion &amp; Performance</string>
+    <string name="settings_section_animations_sub">Animation intensity and TV hardware optimization</string>
+    <string name="settings_section_home">Home Customization</string>
+    <string name="settings_section_home_sub">Clock, status indicators, and recent apps row</string>
+    <string name="settings_section_launcher">Default Launcher &amp; System</string>
+    <string name="settings_section_launcher_sub">Home role status and Android system settings</string>
+    <string name="settings_section_language">Language &amp; Accessibility</string>
+    <string name="settings_section_language_sub">Language selection, Arabic RTL, and contrast ergonomics</string>
+    <string name="settings_section_about">About &amp; Device Info</string>
+    <string name="settings_section_about_sub">Software version, hardware capabilities, and diagnostics</string>
+
+    <!-- Settings: group headers -->
+    <string name="settings_group_accent">Signature Accent Palette</string>
+    <string name="settings_group_icon_mode">App Icon Presentation</string>
+    <string name="settings_group_wallpapers">Scenic Dynamic Wallpapers</string>
+    <string name="settings_group_density">Interface Density</string>
+    <string name="settings_group_card_size">App Card Dimensions</string>
+    <string name="settings_group_motion">Motion Engine</string>
+    <string name="settings_group_home_elements">Home Screen Elements</string>
+    <string name="settings_group_root">Root Level Factory Lockdown</string>
+    <string name="settings_group_boot">Boot Persistence Layers</string>
+    <string name="settings_group_home_role">Android Home Role</string>
+    <string name="settings_group_language">Interface Language &amp; Direction</string>
+    <string name="settings_group_accessibility">Accessibility &amp; TV Ergonomics</string>
+    <string name="settings_group_app_info">Application Information</string>
+    <string name="settings_group_capabilities">Device &amp; Hardware Capabilities</string>
+
+    <!-- Settings: interface density -->
+    <string name="settings_density_comfortable">Comfortable</string>
+    <string name="settings_density_comfortable_sub">Spacious margins (48dp) for larger living room displays</string>
+    <string name="settings_density_compact">Compact</string>
+    <string name="settings_density_compact_sub">Tighter spacing (40dp) to maximize visible apps on screen</string>
+
+    <!-- Settings: card dimensions -->
+    <string name="settings_card_compact">Compact (160×90)</string>
+    <string name="settings_card_compact_sub">High density layout</string>
+    <string name="settings_card_standard">Standard (192×108)</string>
+    <string name="settings_card_standard_sub">Balanced 16:9 TV card size</string>
+    <string name="settings_card_cinema">Cinema (224×126)</string>
+    <string name="settings_card_cinema_sub">Larger artwork and prominent focus</string>
+
+    <!-- Settings: motion engine -->
+    <string name="settings_motion_full">Full Animations</string>
+    <string name="settings_motion_full_sub">Smooth 150ms deceleration curves for a fluid TV experience</string>
+    <string name="settings_motion_reduced">Reduced Motion</string>
+    <string name="settings_motion_reduced_sub">Fast 90ms transitions for snappy budget TV box responsiveness</string>
+    <string name="settings_motion_minimal">Minimal / Instant</string>
+    <string name="settings_motion_minimal_sub">Immediate state changes with zero GPU animation load</string>
+    <string name="settings_low_ram_notice">⚡ Hardware Optimization Active: low-RAM device detected. Reduced animations are applied automatically to preserve system memory.</string>
+
+    <!-- Settings: home screen elements -->
+    <string name="settings_clock_title">Clock &amp; Date Header</string>
+    <string name="settings_clock_sub">Display live time and current date in the top bar</string>
+    <string name="settings_indicators_title">Device Status Indicators</string>
+    <string name="settings_indicators_sub">Show Wi-Fi, Ethernet, and 4K display badges</string>
+    <string name="settings_recent_title">Recently Used Applications</string>
+    <string name="settings_recent_sub">Show an auto-updating rail of recently launched apps</string>
+    <string name="settings_splash_title">Startup Intro Animation</string>
+    <string name="settings_splash_sub">Display a brief obsidian amber cinematic reveal on cold boot (dismissable with any key)</string>
+
+    <!-- Settings: root lockdown -->
+    <string name="settings_root_status">Root Engine Status</string>
+    <string name="settings_root_detected">Root (su) detected: %1$s. Direct kernel lockdown available.</string>
+    <string name="settings_root_active">Active</string>
+    <string name="settings_root_missing">Root not detected. Standard Android or Accessibility Watchdog mode is active.</string>
+    <string name="settings_root_enforce">Enforce LUNMED TV at Root Level</string>
+    <string name="settings_root_enforce_sub">Locks the Home activity in AOSP and disables competing vendor OEM launchers</string>
+    <string name="settings_root_revert">Revert Root Lockdown</string>
+    <string name="settings_root_revert_sub">Re-enables vendor stock launchers in the package manager</string>
+
+    <!-- Settings: boot persistence / home role -->
+    <string name="settings_home_role_title">Android Home Role</string>
+    <string name="settings_home_role_held">Held by LUNMED TV</string>
+    <string name="settings_home_role_held_by">Held by %1$s</string>
+    <string name="settings_home_role_none">Not assigned</string>
+    <string name="settings_watchdog_title">Accessibility Watchdog</string>
+    <string name="settings_watchdog_on">Enabled (Home key + vendor launcher interception)</string>
+    <string name="settings_watchdog_off">Not enabled (open Accessibility settings below)</string>
+    <string name="settings_device_admin_title">Device Administrator</string>
+    <string name="settings_device_admin_on">Active</string>
+    <string name="settings_device_admin_off">Inactive</string>
+    <string name="settings_device_owner_title">Device Owner Lockdown</string>
+    <string name="settings_device_owner_on">Active (immutable ROM-level HOME)</string>
+    <string name="settings_device_owner_off">Not provisioned (requires ADB provisioning)</string>
+    <string name="settings_activate_admin">Activate Device Administrator</string>
+    <string name="settings_activate_admin_sub">Lets LUNMED TV re-assert HOME after reboots on ROMs that reset the default launcher</string>
+    <string name="settings_immutable_launcher">Fully immutable launcher (STB / reseller provisioning):</string>
+    <string name="settings_role_status_default">LUNMED TV is currently set as your default launcher.</string>
+    <string name="settings_role_status_other">Another launcher is active (%1$s).</string>
+    <string name="settings_role_none_value">None</string>
+    <string name="settings_set_default">Set LUNMED TV as Default Launcher</string>
+    <string name="settings_set_default_sub">Prompts the official Android home role selector</string>
+    <string name="settings_watchdog_persistent">Persistent Home Watchdog (Restricted TV Boxes)</string>
+    <string name="settings_watchdog_persistent_sub">Enable Accessibility Watchdog to intercept the Home key and vendor launchers on locked ROMs</string>
+    <string name="settings_open_system">Open Android System Settings</string>
+    <string name="settings_open_system_sub">Access Wi-Fi, Bluetooth, Audio, and Display settings</string>
+    <string name="settings_reset_all">Reset All Preferences to Defaults</string>
+    <string name="settings_reset_all_sub">Restores factory theme, layout, and animation settings</string>
+    <string name="settings_stb_command">STB / Reseller Permanent Lock Command (ADB):</string>
+
+    <!-- Settings: language -->
+    <string name="settings_language_system">System Default</string>
+    <string name="settings_language_system_sub">Follow the host TV operating system language</string>
+    <string name="settings_language_ar">العربية (Arabic)</string>
+    <string name="settings_language_ar_sub">Authentic Arabic interface with full right-to-left support</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_en_sub">Standard international English</string>
+    <string name="settings_language_fr">Français (French)</string>
+    <string name="settings_language_fr_sub">French interface with adapted typography</string>
+    <string name="settings_language_es">Español (Spanish)</string>
+    <string name="settings_language_es_sub">Spanish interface optimized for TV</string>
+    <string name="settings_language_it">Italiano (Italian)</string>
+    <string name="settings_language_it_sub">Italian interface</string>
+
+    <!-- Settings: accessibility + about -->
+    <string name="settings_open_accessibility">Open Android Accessibility Center</string>
+    <string name="settings_open_accessibility_sub">Configure TalkBack, high-contrast text, captions, and screen magnification</string>
+    <string name="settings_contrast_title">10-Foot Television Contrast &amp; Readability:</string>
+    <string name="settings_contrast_body">All text sizes and focus rings in LUNMED TV meet or exceed WCAG AA requirements with a minimum 5.7:1 contrast ratio against obsidian dark backdrops, keeping labels legible at 3+ meters.</string>
+    <string name="settings_app_name_title">Application Name</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_value">0.1.0-alpha (Milestone 06)</string>
+    <string name="settings_product_category">Product Category</string>
+    <string name="settings_product_category_value">Premium Android TV Launcher</string>
+    <string name="settings_api_level">Android API Level</string>
+    <string name="settings_unknown">Unknown</string>
+    <string name="settings_screen_resolution">Screen Resolution</string>
+    <string name="settings_4k_detected">4K Display Detected</string>
+    <string name="settings_4k_yes">Yes (3840×2160+)</string>
+    <string name="settings_4k_no">Standard 1080p / 720p</string>
+    <string name="settings_leanback">Leanback System Feature</string>
+    <string name="settings_supported">Supported</string>
+    <string name="settings_not_reported">Not reported (AOSP TV Box)</string>
+    <string name="settings_low_ram">Low-RAM Device</string>
+    <string name="settings_low_ram_yes">Yes (memory-conserving mode active)</string>
+    <string name="settings_no">No</string>
+
+    <!-- Settings: control center banner + accents -->
+    <string name="settings_cc_title">tvOS Control Center</string>
+    <string name="settings_cc_badge">Premium</string>
+    <string name="settings_cc_body">Open the floating quick control center for connectivity, audio, 4K output, and scenic wallpapers in a single tap</string>
+    <string name="settings_cc_open">Open Center ▷</string>
+    <string name="accent_champagne_gold">Champagne Gold</string>
+    <string name="accent_champagne_gold_desc">24K gold</string>
+    <string name="accent_ice_cyan">Ice Cyan</string>
+    <string name="accent_ice_cyan_desc">Glacial cyan</string>
+    <string name="accent_platinum_silver">Platinum Silver</string>
+    <string name="accent_platinum_silver_desc">Royal platinum</string>
+    <string name="accent_obsidian_amber">Obsidian Amber</string>
+    <string name="accent_obsidian_amber_desc">Obsidian amber</string>
+
+    <!-- Settings: icon presentation -->
+    <string name="settings_icon_mode_cinema">Cinema Banners</string>
+    <string name="settings_icon_mode_cinema_sub">Wide 16:9 cinematic strips</string>
+    <string name="settings_icon_mode_squircle">Apple TV Squircle</string>
+    <string name="settings_icon_mode_squircle_sub">Luxurious 1:1 app icons</string>
+    <string name="settings_icon_mode_capsule">Capsule Dock</string>
+    <string name="settings_icon_mode_capsule_sub">Compact modern horizontal capsules</string>
+
+    <!-- Settings: reset dialog + common -->
+    <string name="settings_reset_dialog_title">Reset All Preferences?</string>
+    <string name="settings_reset_dialog_body">This restores the Champagne Gold theme, comfortable density, standard card sizes, and full animation effects.</string>
+    <string name="settings_reset_confirm">Reset to Defaults</string>
+    <string name="common_selected_desc">Selected</string>
 </resources>
 
