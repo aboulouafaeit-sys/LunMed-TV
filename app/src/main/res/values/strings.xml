@@ -2,5 +2,6 @@
     <string name="app_name">LUNMED TV</string>
     <string name="accessibility_service_label">LUNMED TV Home Watchdog</string>
     <string name="accessibility_service_description">Guarantees that LUNMED TV remains your persistent default launcher across reboots and remote Home key presses, even on restricted TV Box vendor firmware.</string>
+    <string name="device_admin_description">Keeps LUNMED TV as the permanent default launcher on this TV device, re-asserting the HOME role after reboots and blocking vendor launchers from taking over.</string>
 </resources>
 

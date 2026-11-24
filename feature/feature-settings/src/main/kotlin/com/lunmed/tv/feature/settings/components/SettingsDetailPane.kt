@@ -88,6 +88,7 @@ fun SettingsDetailPane(
     onToggleShowRecentApps: (Boolean) -> Unit,
     onToggleShowStartupSplash: (Boolean) -> Unit = {},
     onRequestDefaultLauncher: () -> Unit,
+    onRequestDeviceAdmin: () -> Unit = {},
     onOpenAndroidSettings: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
     onEnforceRootDefault: () -> Unit = {},
@@ -292,6 +293,74 @@ fun SettingsDetailPane(
                             icon = Icons.Rounded.RestartAlt,
                             onClick = onRevertRootDefault,
                         )
+                    }
+                }
+
+                SettingGroup(title = "Boot Persistence Layers (طبقات التثبيت بعد إعادة التشغيل)") {
+                    InfoSettingRow(
+                        title = "Android Home Role",
+                        value = when {
+                            defaultLauncherState.isDefaultLauncher -> "Held by LUNMED TV"
+                            defaultLauncherState.currentDefaultPackage != null ->
+                                "Held by ${defaultLauncherState.currentDefaultPackage}"
+                            else -> "Not assigned"
+                        },
+                    )
+                    InfoSettingRow(
+                        title = "Accessibility Watchdog",
+                        value = if (defaultLauncherState.isWatchdogEnabled) {
+                            "Enabled (Home key + vendor launcher interception)"
+                        } else {
+                            "Not enabled (open Accessibility settings below)"
+                        },
+                    )
+                    InfoSettingRow(
+                        title = "Device Administrator",
+                        value = if (defaultLauncherState.isDeviceAdminActive) {
+                            "Active"
+                        } else {
+                            "Inactive"
+                        },
+                    )
+                    InfoSettingRow(
+                        title = "Device Owner Lockdown",
+                        value = if (defaultLauncherState.isDeviceOwner) {
+                            "Active (immutable ROM-level HOME)"
+                        } else {
+                            "Not provisioned (requires ADB provisioning)"
+                        },
+                    )
+
+                    if (!defaultLauncherState.isDeviceAdminActive &&
+                        !defaultLauncherState.isDeviceOwner
+                    ) {
+                        ActionSettingButton(
+                            title = "Activate Device Administrator (تفعيل مدير الجهاز)",
+                            subtitle = "Lets LUNMED TV re-assert HOME after reboots on ROMs that reset the default launcher",
+                            icon = Icons.Rounded.Tune,
+                            onClick = onRequestDeviceAdmin,
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(colors.surfaceElevated.copy(alpha = 0.5f), LunmedTheme.shapes.cardSmall)
+                            .padding(14.dp),
+                    ) {
+                        Column {
+                            Text(
+                                text = "Fully immutable launcher (STB / reseller provisioning):",
+                                style = LunmedTheme.typography.labelAction,
+                                color = colors.accentPrimary,
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "adb shell dpm set-device-owner com.lunmed.tv/com.lunmed.tv.receiver.LunmedDeviceAdminReceiver",
+                                style = LunmedTheme.typography.labelMeta,
+                                color = colors.textSecondary,
+                            )
+                        }
                     }
                 }
 

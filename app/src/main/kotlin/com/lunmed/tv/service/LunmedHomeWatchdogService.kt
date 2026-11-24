@@ -40,7 +40,7 @@ class LunmedHomeWatchdogService : AccessibilityService() {
     }
 
     private fun isTargetLauncher(targetPackage: String): Boolean {
-        if (targetPackage == packageName) return false
+        if (targetPackage == packageName || targetPackage == SYSTEM_PACKAGE) return false
         if (isKnownVendorStockLauncher(targetPackage)) return true
         return isDynamicHomeLauncher(targetPackage)
     }
@@ -57,7 +57,7 @@ class LunmedHomeWatchdogService : AccessibilityService() {
             dynamicLauncherPackages.clear()
             for (resolve in homeActivities) {
                 val pkg = resolve.activityInfo?.packageName
-                if (!pkg.isNullOrBlank() && pkg != packageName) {
+                if (!pkg.isNullOrBlank() && pkg != packageName && pkg != SYSTEM_PACKAGE) {
                     dynamicLauncherPackages.add(pkg)
                 }
             }
@@ -100,6 +100,7 @@ class LunmedHomeWatchdogService : AccessibilityService() {
     companion object {
         private const val DEBOUNCE_WINDOW_MS = 600L
         private const val DYNAMIC_SCAN_INTERVAL_MS = 60_000L
+        private const val SYSTEM_PACKAGE = "android"
 
         private val KNOWN_VENDOR_LAUNCHERS = setOf(
             // Google / Android TV stock

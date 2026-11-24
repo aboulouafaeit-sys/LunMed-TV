@@ -35,6 +35,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
@@ -64,6 +66,12 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Re-read the HOME role / watchdog / device-admin state after the role dialog,
+    // Android settings, or a reboot locked the screen.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.onRefreshLauncherState()
+    }
 
     LaunchedEffect(uiState.statusMessage) {
         if (uiState.statusMessage != null) {

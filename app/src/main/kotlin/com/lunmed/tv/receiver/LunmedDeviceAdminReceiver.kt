@@ -28,6 +28,19 @@ class LunmedDeviceAdminReceiver : DeviceAdminReceiver() {
         lockHomeToLunmed(context)
     }
 
+    override fun onDisabled(context: Context, intent: Intent) {
+        super.onDisabled(context, intent)
+        // Leaving a persistent preferred activity behind would soft-brick Home on some ROMs
+        // once the admin is gone, so always release the pin explicitly.
+        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as? DevicePolicyManager
+        runCatching {
+            dpm?.clearPackagePersistentPreferredActivities(
+                getComponentName(context),
+                context.packageName,
+            )
+        }
+    }
+
     companion object {
         const val RECEIVER_CLASS_NAME = "com.lunmed.tv.receiver.LunmedDeviceAdminReceiver"
 

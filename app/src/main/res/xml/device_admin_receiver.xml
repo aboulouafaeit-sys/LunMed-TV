@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <device-admin xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-policies>
-        <limit-password />
-        <watch-login />
-        <reset-password />
-        <force-lock />
-        <wipe-data />
-        <expire-password />
-        <encrypted-storage />
-        <disable-camera />
-        <disable-keyguard-features />
-    </uses-policies>
+    <!--
+      Deliberately minimal. Pinning the HOME activity (addPersistentPreferredActivity) requires
+      Device Owner privileges only - it does not require wipe-data, reset-password, force-lock or
+      any other destructive policy. Requesting those on a TV launcher would be an unnecessary
+      privacy/security risk and blocks Play Store distribution.
+    -->
+    <uses-policies />
 </device-admin>
 

@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
 import com.lunmed.tv.core.design.theme.LunmedTheme
@@ -38,11 +40,16 @@ import kotlinx.coroutines.delay
 fun SettingsRoute(
     onNavigate: (LunmedDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
+    onRequestDeviceAdmin: () -> Unit = {},
     onOpenAndroidSettings: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.onRefreshLauncherState()
+    }
 
     LaunchedEffect(uiState.statusMessage) {
         if (uiState.statusMessage != null) {
@@ -55,6 +62,7 @@ fun SettingsRoute(
         uiState = uiState,
         onNavigate = onNavigate,
         onRequestDefaultLauncher = onRequestDefaultLauncher,
+        onRequestDeviceAdmin = onRequestDeviceAdmin,
         onOpenAndroidSettings = onOpenAndroidSettings,
         onOpenAccessibilitySettings = onOpenAccessibilitySettings,
         onSelectSection = viewModel::onSelectSection,
@@ -82,6 +90,7 @@ fun SettingsScreen(
     uiState: SettingsUiState,
     onNavigate: (LunmedDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
+    onRequestDeviceAdmin: () -> Unit = {},
     onOpenAndroidSettings: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
     onSelectSection: (SettingsSection) -> Unit,
@@ -176,6 +185,7 @@ fun SettingsScreen(
                     onToggleShowRecentApps = onToggleShowRecentApps,
                     onToggleShowStartupSplash = onToggleShowStartupSplash,
                     onRequestDefaultLauncher = onRequestDefaultLauncher,
+                    onRequestDeviceAdmin = onRequestDeviceAdmin,
                     onOpenAndroidSettings = onOpenAndroidSettings,
                     onOpenAccessibilitySettings = onOpenAccessibilitySettings,
                     onEnforceRootDefault = onEnforceRootDefault,

@@ -35,6 +35,7 @@ class DeviceCenterViewModel @Inject constructor(
     private val deviceReport = MutableStateFlow<FullDeviceReport?>(null)
     private val isOptimizing = MutableStateFlow(false)
     private val statusNotification = MutableStateFlow<String?>(null)
+    private val launcherStateTick = MutableStateFlow(0)
 
     init {
         refreshDiagnostics()
@@ -45,6 +46,7 @@ class DeviceCenterViewModel @Inject constructor(
         val report: FullDeviceReport?,
         val optimizing: Boolean,
         val notification: String?,
+        val launcherTick: Int,
     )
 
     private val localFlow = combine(
@@ -52,8 +54,9 @@ class DeviceCenterViewModel @Inject constructor(
         deviceReport,
         isOptimizing,
         statusNotification,
-    ) { tab, rep, opt, notif ->
-        LocalTabAndStatus(tab, rep, opt, notif)
+        launcherStateTick,
+    ) { tab, rep, opt, notif, tick ->
+        LocalTabAndStatus(tab, rep, opt, notif, tick)
     }
 
     val uiState: StateFlow<DeviceCenterUiState> = combine(
@@ -91,6 +94,12 @@ class DeviceCenterViewModel @Inject constructor(
     fun onRefreshDiagnostics() {
         refreshDiagnostics()
         statusNotification.value = "Hardware telemetry refreshed"
+    }
+
+    /** Silent re-read used when the screen resumes (HOME role may have just changed). */
+    fun onRefreshLauncherState() {
+        launcherStateTick.value += 1
+        refreshDiagnostics()
     }
 
     fun onClearMemoryCache() {

@@ -48,7 +48,9 @@ class LunmedHomeWatchdogServiceTest {
         assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.BOOT_COMPLETED"))
         assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.LOCKED_BOOT_COMPLETED"))
         assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.QUICKBOOT_POWERON"))
-        assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.REBOOT"))
+        assertTrue(LunmedBootReceiver.BOOT_ACTIONS.contains("com.htc.intent.action.QUICKBOOT_POWERON"))
+        // ACTION_REBOOT is a protected broadcast and is never delivered to third-party apps.
+        assertFalse(LunmedBootReceiver.BOOT_ACTIONS.contains("android.intent.action.REBOOT"))
     }
 
     @Test

@@ -34,6 +34,7 @@ import com.lunmed.tv.feature.device.DeviceCenterRoute
 import com.lunmed.tv.feature.home.HomeRoute
 import com.lunmed.tv.feature.home.HomeViewModel
 import com.lunmed.tv.feature.settings.SettingsRoute
+import com.lunmed.tv.receiver.LunmedDeviceAdminReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,6 +54,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Re-assert the device-owner persistent HOME preference on every cold start so that a
+        // ROM update, package re-install, or user-data reset cannot silently drop the lock.
+        if (LunmedDeviceAdminReceiver.isDeviceOwner(this)) {
+            LunmedDeviceAdminReceiver.lockHomeToLunmed(this)
+        }
+
         val capabilities = capabilityDetector.detect()
 
         setContent {
@@ -111,6 +119,12 @@ class MainActivity : ComponentActivity() {
                     // Handled inside ViewModels
                 }
 
+                val deviceAdminLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult(),
+                ) {
+                    // The ViewModel re-reads the DPM state on resume.
+                }
+
                 fun openAppInfo(packageName: String) {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         data = Uri.fromParts("package", packageName, null)
@@ -122,6 +136,11 @@ class MainActivity : ComponentActivity() {
                 fun requestDefaultLauncher() {
                     defaultLauncherHelper.createRequestDefaultLauncherIntent()
                         ?.let { roleLauncher.launch(it) }
+                }
+
+                fun requestDeviceAdmin() {
+                    defaultLauncherHelper.createDeviceAdminRequestIntent()
+                        ?.let { deviceAdminLauncher.launch(it) }
                 }
 
                 val anim = LunmedTheme.animation
@@ -176,6 +195,7 @@ class MainActivity : ComponentActivity() {
                             SettingsRoute(
                                 onNavigate = ::handleNavigate,
                                 onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onRequestDeviceAdmin = ::requestDeviceAdmin,
                                 onOpenAndroidSettings = ::openAndroidSettings,
                                 onOpenAccessibilitySettings = ::openAccessibilitySettings,
                             )

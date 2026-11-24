@@ -17,5 +17,11 @@ data class DefaultLauncherState(
     val isDefaultLauncher: Boolean,
     val currentDefaultPackage: String?,
     val canRequestRole: Boolean,
+    /** True when the Accessibility Home Watchdog service is enabled and bound by the system. */
+    val isWatchdogEnabled: Boolean = false,
+    /** True when our DeviceAdminReceiver is an active device administrator. */
+    val isDeviceAdminActive: Boolean = false,
+    /** True when the app is Device Owner (allows immutable persistent home preference). */
+    val isDeviceOwner: Boolean = false,
 )
 
