@@ -530,9 +530,10 @@ fun AppleControlCenterOverlay(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         // Action 1: Default Launcher
+                        val isProtectedDefault = defaultLauncherState?.isEffectivelyDefault == true
                         AppleSystemActionButton(
-                            icon = if (defaultLauncherState?.isDefaultLauncher == true) Icons.Rounded.Lock else Icons.Rounded.Tune,
-                            title = if (defaultLauncherState?.isDefaultLauncher == true) "Default Locked" else "Set Default",
+                            icon = if (isProtectedDefault) Icons.Rounded.Lock else Icons.Rounded.Tune,
+                            title = if (isProtectedDefault) "Default Locked" else "Set Default",
                             accent = colors.accentPrimary,
                             modifier = Modifier.weight(1f),
                             onClick = onRequestDefaultLauncher,

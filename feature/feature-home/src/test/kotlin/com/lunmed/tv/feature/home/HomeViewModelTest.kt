@@ -29,6 +29,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -105,6 +106,73 @@ class HomeViewModelTest {
         job.cancel()
     }
 
+    @Test
+    fun `HomeViewModel prompts accessibility setup on startup when unprotected and auto-completes on watchdog enable`() =
+        runTest(dispatcher) {
+            val prefsRepo = FakePreferencesRepository()
+            val launcherHelper = FakeDefaultLauncherHelper(
+                DefaultLauncherState(
+                    isDefaultLauncher = false,
+                    currentDefaultPackage = "com.google.android.apps.tv.launcherx",
+                    canRequestRole = false,
+                    isWatchdogEnabled = false,
+                ),
+            )
+            val vm = HomeViewModel(
+                appRepository = FakeAppRepository(listOf(app("com.ok", "OK App"))),
+                preferencesRepository = prefsRepo,
+                networkStatusMonitor = FakeNetworkStatusMonitor(),
+                defaultLauncherHelper = launcherHelper,
+                capabilityDetector = FakeCapabilityDetector(),
+            )
+
+            val job = backgroundScope.launch(dispatcher) { vm.uiState.collect() }
+
+            assertTrue(vm.uiState.value.showLauncherSetupDialog)
+            assertTrue(vm.uiState.value.isLauncherSetupStartupPrompt)
+
+            // User enables LUNMED TV in Accessibility settings and returns to Home
+            launcherHelper.launcherState = launcherHelper.launcherState.copy(isWatchdogEnabled = true)
+            vm.onRefreshLauncherState()
+
+            assertFalse(vm.uiState.value.showLauncherSetupDialog)
+            assertTrue(vm.uiState.value.defaultLauncherState.isEffectivelyDefault)
+            assertEquals(HomeStatusMessage.LauncherActivated, vm.uiState.value.statusMessage)
+
+            job.cancel()
+        }
+
+    @Test
+    fun `HomeViewModel suppresses startup setup prompt when user chooses Dont Ask Again`() =
+        runTest(dispatcher) {
+            val prefsRepo = FakePreferencesRepository()
+            val launcherHelper = FakeDefaultLauncherHelper(
+                DefaultLauncherState(
+                    isDefaultLauncher = false,
+                    currentDefaultPackage = "com.android.launcher3",
+                    canRequestRole = true,
+                    isWatchdogEnabled = false,
+                ),
+            )
+            val vm = HomeViewModel(
+                appRepository = FakeAppRepository(listOf(app("com.ok", "OK App"))),
+                preferencesRepository = prefsRepo,
+                networkStatusMonitor = FakeNetworkStatusMonitor(),
+                defaultLauncherHelper = launcherHelper,
+                capabilityDetector = FakeCapabilityDetector(),
+            )
+
+            val job = backgroundScope.launch(dispatcher) { vm.uiState.collect() }
+
+            assertTrue(vm.uiState.value.showLauncherSetupDialog)
+            vm.onDisableStartupLauncherPrompt()
+
+            assertFalse(vm.uiState.value.showLauncherSetupDialog)
+            assertFalse(prefsRepo.preferences.value.promptDefaultLauncherOnStartup)
+
+            job.cancel()
+        }
+
     private fun app(
         pkg: String,
         label: String,
@@ -156,6 +224,9 @@ class HomeViewModelTest {
         override suspend fun setLanguageTag(tag: String) = Unit
         override suspend fun setSelectedWallpaperId(wallpaperId: String) = Unit
         override suspend fun setShowStartupSplash(show: Boolean) = Unit
+        override suspend fun setPromptDefaultLauncherOnStartup(prompt: Boolean) {
+            preferences.value = preferences.value.copy(promptDefaultLauncherOnStartup = prompt)
+        }
         override suspend fun resetToDefaults() = Unit
     }
 
@@ -163,8 +234,10 @@ class HomeViewModelTest {
         override val networkStatus = MutableStateFlow(NetworkStatus(true, NetworkTransport.ETHERNET))
     }
 
-    private class FakeDefaultLauncherHelper : DefaultLauncherHelper {
-        override fun getState() = DefaultLauncherState(true, "com.lunmed.tv", false)
+    private class FakeDefaultLauncherHelper(
+        var launcherState: DefaultLauncherState = DefaultLauncherState(true, "com.lunmed.tv", false),
+    ) : DefaultLauncherHelper {
+        override fun getState() = launcherState
         override fun createRequestDefaultLauncherIntent(): Intent? = null
     }
 

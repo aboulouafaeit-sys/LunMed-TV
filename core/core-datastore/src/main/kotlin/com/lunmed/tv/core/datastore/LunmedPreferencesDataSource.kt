@@ -32,6 +32,7 @@ class LunmedPreferencesDataSource @Inject constructor(
         val LANGUAGE_TAG = stringPreferencesKey("language_tag")
         val SELECTED_WALLPAPER_ID = stringPreferencesKey("selected_wallpaper_id")
         val SHOW_STARTUP_SPLASH = booleanPreferencesKey("show_startup_splash")
+        val PROMPT_DEFAULT_LAUNCHER_ON_STARTUP = booleanPreferencesKey("prompt_default_launcher_on_startup")
     }
 
     val preferences: Flow<LauncherPreferences> = dataStore.data.map { prefs ->
@@ -57,6 +58,7 @@ class LunmedPreferencesDataSource @Inject constructor(
             languageTag = prefs[Keys.LANGUAGE_TAG] ?: "system",
             selectedWallpaperId = prefs[Keys.SELECTED_WALLPAPER_ID] ?: "lunmed_aurora_nordic",
             showStartupSplash = prefs[Keys.SHOW_STARTUP_SPLASH] ?: true,
+            promptDefaultLauncherOnStartup = prefs[Keys.PROMPT_DEFAULT_LAUNCHER_ON_STARTUP] ?: true,
         )
     }
 
@@ -102,6 +104,10 @@ class LunmedPreferencesDataSource @Inject constructor(
 
     suspend fun setShowStartupSplash(show: Boolean) {
         dataStore.edit { it[Keys.SHOW_STARTUP_SPLASH] = show }
+    }
+
+    suspend fun setPromptDefaultLauncherOnStartup(prompt: Boolean) {
+        dataStore.edit { it[Keys.PROMPT_DEFAULT_LAUNCHER_ON_STARTUP] = prompt }
     }
 
     suspend fun resetToDefaults() {

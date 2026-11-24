@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,7 +68,9 @@ import com.lunmed.tv.core.model.LauncherPreferences
 import com.lunmed.tv.core.model.LunmedWallpapers
 import com.lunmed.tv.core.model.NetworkStatus
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
+import com.lunmed.tv.core.ui.R as UiR
 import com.lunmed.tv.core.ui.components.AppleControlCenterOverlay
+import com.lunmed.tv.core.ui.components.DefaultLauncherSetupDialog
 import com.lunmed.tv.feature.settings.model.SettingsSection
 
 @Composable
@@ -88,6 +91,7 @@ fun SettingsDetailPane(
     onToggleShowDeviceIndicators: (Boolean) -> Unit,
     onToggleShowRecentApps: (Boolean) -> Unit,
     onToggleShowStartupSplash: (Boolean) -> Unit = {},
+    onTogglePromptDefaultLauncherOnStartup: (Boolean) -> Unit = {},
     onRequestDefaultLauncher: () -> Unit,
     onRequestDeviceAdmin: () -> Unit = {},
     onOpenAndroidSettings: () -> Unit,
@@ -101,6 +105,7 @@ fun SettingsDetailPane(
     val spacing = LunmedTheme.spacing
     val colors = LunmedTheme.colors
     var showAppleControlCenter by remember { mutableStateOf(false) }
+    var showLauncherSetupFromControlCenter by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -395,10 +400,18 @@ fun SettingsDetailPane(
                     }
 
                     ActionSettingButton(
-                        title = "Persistent Home Watchdog (Restricted TV Boxes)",
-                        subtitle = "Enable Accessibility Watchdog to intercept Home key and vendor launchers on locked ROMs",
+                        title = stringResource(UiR.string.settings_watchdog_persistent),
+                        subtitle = stringResource(UiR.string.settings_watchdog_persistent_sub),
                         icon = Icons.Rounded.Tune,
+                        highlight = !defaultLauncherState.isEffectivelyDefault,
                         onClick = onOpenAccessibilitySettings,
+                    )
+
+                    ToggleOptionRow(
+                        title = stringResource(UiR.string.settings_prompt_startup_title),
+                        subtitle = stringResource(UiR.string.settings_prompt_startup_sub),
+                        isChecked = preferences.promptDefaultLauncherOnStartup,
+                        onToggle = onTogglePromptDefaultLauncherOnStartup,
                     )
 
                     ActionSettingButton(
@@ -543,8 +556,22 @@ fun SettingsDetailPane(
             onSetIconDisplayMode = onSetIconDisplayMode,
             onSelectWallpaper = onSelectWallpaper,
             onOpenAndroidSettings = onOpenAndroidSettings,
-            onRequestDefaultLauncher = onRequestDefaultLauncher,
+            onRequestDefaultLauncher = {
+                showAppleControlCenter = false
+                showLauncherSetupFromControlCenter = true
+            },
             onDismiss = { showAppleControlCenter = false },
+        )
+    }
+
+    if (showLauncherSetupFromControlCenter) {
+        DefaultLauncherSetupDialog(
+            defaultLauncherState = defaultLauncherState,
+            isStartupPrompt = false,
+            onEnableAccessibilityWatchdog = onOpenAccessibilitySettings,
+            onRequestSystemHomeRole = onRequestDefaultLauncher,
+            onRequestDeviceAdmin = onRequestDeviceAdmin,
+            onDismiss = { showLauncherSetupFromControlCenter = false },
         )
     }
 }

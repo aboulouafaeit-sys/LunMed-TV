@@ -32,14 +32,17 @@ data class HomeUiState(
     ),
     val capabilities: DeviceCapabilities? = null,
     val statusMessage: HomeStatusMessage? = null,
+    val showLauncherSetupDialog: Boolean = false,
+    val isLauncherSetupStartupPrompt: Boolean = false,
 )
 
 /**
- * Semantic launch-failure message, localised by the composable that renders the toast.
+ * Semantic launch-failure or system-activation message, localised by the composable that renders the toast.
  */
 sealed interface HomeStatusMessage {
     data class Unavailable(val appLabel: String) : HomeStatusMessage
     data class PermissionDenied(val appLabel: String) : HomeStatusMessage
     data class LaunchFailed(val appLabel: String, val reason: String) : HomeStatusMessage
+    data object LauncherActivated : HomeStatusMessage
 }
 

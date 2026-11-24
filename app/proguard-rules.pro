@@ -19,9 +19,8 @@
 -keep @androidx.room.Entity class * { *; }
 -keep @androidx.room.Dao interface * { *; }
 
-# Proto & DataStore
+# Proto & DataStore (consumer rules cover reflection needs; avoid keeping unused protobuf bloat)
 -dontwarn androidx.datastore.**
--keep class androidx.datastore.preferences.protobuf.** { *; }
 
 # Kotlin Coroutines & Flow
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
@@ -33,11 +32,6 @@
 -keep class * extends dagger.hilt.internal.GeneratedComponent { *; }
 -keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
 
-# Compose for TV & Material 3
+# Compose for TV & Material 3 (let R8 tree-shake unused widgets via consumer rules)
 -dontwarn androidx.compose.**
--keep class androidx.compose.ui.platform.** { *; }
--keep class androidx.tv.material3.** { *; }
-
-# Coil Image Loading Engine
--keep class coil.** { *; }
 -dontwarn coil.**

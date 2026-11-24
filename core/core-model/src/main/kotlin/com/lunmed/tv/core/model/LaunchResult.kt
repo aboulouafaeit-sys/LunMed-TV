@@ -23,5 +23,12 @@ data class DefaultLauncherState(
     val isDeviceAdminActive: Boolean = false,
     /** True when the app is Device Owner (allows immutable persistent home preference). */
     val isDeviceOwner: Boolean = false,
-)
+) {
+    /**
+     * True when LUNMED TV actively retains Home control via official system role,
+     * Device Owner lock, or the Projectivy-style Accessibility Watchdog service.
+     */
+    val isEffectivelyDefault: Boolean
+        get() = isDefaultLauncher || isWatchdogEnabled || isDeviceOwner
+}
 

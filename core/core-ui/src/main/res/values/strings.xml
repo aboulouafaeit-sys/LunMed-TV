@@ -354,5 +354,26 @@
     <string name="settings_reset_dialog_body">This restores the Champagne Gold theme, comfortable density, standard card sizes, and full animation effects.</string>
     <string name="settings_reset_confirm">Reset to Defaults</string>
     <string name="common_selected_desc">Selected</string>
+
+    <!-- Projectivy-style Default Launcher & Accessibility Setup Dialog -->
+    <string name="launcher_setup_title">Activate LUNMED TV as Default Launcher</string>
+    <string name="launcher_setup_subtitle">Select how LUNMED TV intercepts the Home key and replaces your TV box stock launcher.</string>
+    <string name="launcher_setup_accessibility_title">Override Stock Launcher (Accessibility Watchdog)</string>
+    <string name="launcher_setup_accessibility_sub">Recommended for Google TV, Fire TV &amp; TV Boxes. Intercepts Home button presses and blocks OEM launchers automatically.</string>
+    <string name="launcher_setup_accessibility_guide">On the next screen, toggle ON \"LUNMED TV Home Watchdog\"</string>
+    <string name="launcher_setup_badge_recommended">Recommended</string>
+    <string name="launcher_setup_badge_active">Active</string>
+    <string name="launcher_setup_badge_inactive">Not Active</string>
+    <string name="launcher_setup_role_title">Android System Home Role</string>
+    <string name="launcher_setup_role_sub">Opens standard Android Home selection (if permitted by your TV ROM)</string>
+    <string name="launcher_setup_role_held">Already assigned as system Home</string>
+    <string name="launcher_setup_admin_title">Activate Device Administrator</string>
+    <string name="launcher_setup_admin_sub">Helps restore LUNMED TV after reboots on aggressive vendor ROMs</string>
+    <string name="launcher_setup_later">Remind Later</string>
+    <string name="launcher_setup_close">Close</string>
+    <string name="launcher_setup_dont_ask">Don\'t Ask on Startup</string>
+    <string name="launcher_setup_activated_toast">LUNMED TV is now active as your default launcher!</string>
+    <string name="settings_prompt_startup_title">Startup Default Launcher Prompt</string>
+    <string name="settings_prompt_startup_sub">Offer Projectivy-style setup on startup if LUNMED TV is not set as Home or Watchdog</string>
 </resources>
 

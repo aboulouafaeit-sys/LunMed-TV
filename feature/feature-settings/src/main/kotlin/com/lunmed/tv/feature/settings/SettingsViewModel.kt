@@ -158,6 +158,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onTogglePromptDefaultLauncherOnStartup(prompt: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setPromptDefaultLauncherOnStartup(prompt)
+        }
+    }
+
     fun onEnforceRootPermanentDefault() {
         viewModelScope.launch {
             statusMessage.value = "Enforcing root default launcher..."

@@ -48,6 +48,7 @@ import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.core.navigation.focus.rememberFocusMemoryRegistry
 import com.lunmed.tv.core.navigation.remote.RemoteCommand
 import com.lunmed.tv.core.navigation.remote.onRemoteKeyCommand
+import com.lunmed.tv.core.ui.components.DefaultLauncherSetupDialog
 import com.lunmed.tv.core.ui.components.LunmedAmbientCanvas
 import com.lunmed.tv.core.ui.R
 import com.lunmed.tv.core.ui.components.LunmedEmptyState
@@ -64,6 +65,8 @@ fun HomeRoute(
     homePressTick: Int = 0,
     onNavigate: (HomeNavDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit = {},
+    onRequestDeviceAdmin: () -> Unit = {},
     onOpenAppInfo: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -87,6 +90,11 @@ fun HomeRoute(
         homePressTick = homePressTick,
         onNavigate = onNavigate,
         onRequestDefaultLauncher = onRequestDefaultLauncher,
+        onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+        onRequestDeviceAdmin = onRequestDeviceAdmin,
+        onOpenLauncherSetup = viewModel::onOpenLauncherSetup,
+        onDismissLauncherSetup = viewModel::onDismissLauncherSetup,
+        onDisableStartupLauncherPrompt = viewModel::onDisableStartupLauncherPrompt,
         onAppFocused = viewModel::onAppFocused,
         onAppClicked = viewModel::onAppClicked,
         onAppLongClicked = viewModel::onAppLongClicked,
@@ -106,6 +114,11 @@ fun HomeScreen(
     homePressTick: Int = 0,
     onNavigate: (HomeNavDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit = {},
+    onRequestDeviceAdmin: () -> Unit = {},
+    onOpenLauncherSetup: () -> Unit = onRequestDefaultLauncher,
+    onDismissLauncherSetup: () -> Unit = {},
+    onDisableStartupLauncherPrompt: () -> Unit = {},
     onAppFocused: (AppInfo) -> Unit,
     onAppClicked: (AppInfo) -> Unit,
     onAppLongClicked: (AppInfo) -> Unit,
@@ -159,6 +172,7 @@ fun HomeScreen(
     // Never exit the TV Home launcher on Back press; instead return to top or close dialog
     BackHandler(enabled = true) {
         when {
+            uiState.showLauncherSetupDialog -> onDismissLauncherSetup()
             uiState.contextMenuApp != null -> dismissMenuAndRestoreFocus()
             listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 -> {
                 coroutineScope.launch {
@@ -207,10 +221,10 @@ fun HomeScreen(
                 capabilities = uiState.capabilities,
                 showClock = uiState.preferences.showClock,
                 showDeviceIndicators = uiState.preferences.showDeviceIndicators,
-                isDefaultLauncher = uiState.defaultLauncherState.isDefaultLauncher,
-                canRequestDefaultLauncher = uiState.defaultLauncherState.canRequestRole,
+                isDefaultLauncher = uiState.defaultLauncherState.isEffectivelyDefault,
+                canRequestDefaultLauncher = !uiState.defaultLauncherState.isEffectivelyDefault,
                 onNavigate = onNavigate,
-                onRequestDefaultLauncher = onRequestDefaultLauncher,
+                onRequestDefaultLauncher = onOpenLauncherSetup,
             )
 
             HomeSpotlightStage(
@@ -334,9 +348,25 @@ fun HomeScreen(
                 Text(
                     text = uiState.statusMessage?.asDisplayText().orEmpty(),
                     style = LunmedTheme.typography.bodySecondary,
-                    color = colors.statusError,
+                    color = if (uiState.statusMessage is HomeStatusMessage.LauncherActivated) {
+                        colors.statusSuccess
+                    } else {
+                        colors.statusError
+                    },
                 )
             }
+        }
+
+        if (uiState.showLauncherSetupDialog) {
+            DefaultLauncherSetupDialog(
+                defaultLauncherState = uiState.defaultLauncherState,
+                isStartupPrompt = uiState.isLauncherSetupStartupPrompt,
+                onEnableAccessibilityWatchdog = onOpenAccessibilitySettings,
+                onRequestSystemHomeRole = onRequestDefaultLauncher,
+                onRequestDeviceAdmin = onRequestDeviceAdmin,
+                onDismiss = onDismissLauncherSetup,
+                onDontAskAgain = onDisableStartupLauncherPrompt,
+            )
         }
 
         uiState.contextMenuApp?.let { app ->
@@ -439,4 +469,5 @@ private fun HomeStatusMessage.asDisplayText(): String = when (this) {
     is HomeStatusMessage.Unavailable -> stringResource(R.string.apps_msg_unavailable, appLabel)
     is HomeStatusMessage.PermissionDenied -> stringResource(R.string.apps_msg_permission_denied, appLabel)
     is HomeStatusMessage.LaunchFailed -> stringResource(R.string.apps_msg_launch_failed, appLabel, reason)
+    HomeStatusMessage.LauncherActivated -> stringResource(R.string.launcher_setup_activated_toast)
 }

@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appRepository: AppRepository,
-    preferencesRepository: PreferencesRepository,
+    private val preferencesRepository: PreferencesRepository,
     networkStatusMonitor: NetworkStatusMonitor,
     private val defaultLauncherHelper: DefaultLauncherHelper,
     capabilityDetector: DeviceCapabilityDetector,
@@ -35,14 +35,30 @@ class HomeViewModel @Inject constructor(
     private val contextMenuApp = MutableStateFlow<AppInfo?>(null)
     private val statusMessage = MutableStateFlow<HomeStatusMessage?>(null)
     private val defaultLauncherState = MutableStateFlow(defaultLauncherHelper.getState())
+    private val showLauncherSetupDialog = MutableStateFlow(false)
+    private val isLauncherSetupStartupPrompt = MutableStateFlow(false)
+    private var hasEvaluatedStartupPrompt = false
+
+    private val setupDialogState = combine(
+        showLauncherSetupDialog,
+        isLauncherSetupStartupPrompt,
+    ) { show, isStartup -> show to isStartup }
 
     private val localOverlayState = combine(
         focusedApp,
         contextMenuApp,
         statusMessage,
         defaultLauncherState,
-    ) { focused, menuApp, message, launcherState ->
-        LocalOverlayState(focused, menuApp, message, launcherState)
+        setupDialogState,
+    ) { focused, menuApp, message, launcherState, setupDialog ->
+        LocalOverlayState(
+            focusedApp = focused,
+            contextMenuApp = menuApp,
+            statusMessage = message,
+            defaultLauncherState = launcherState,
+            showLauncherSetupDialog = setupDialog.first,
+            isLauncherSetupStartupPrompt = setupDialog.second,
+        )
     }
 
     val uiState: StateFlow<HomeUiState> = combine(
@@ -51,6 +67,16 @@ class HomeViewModel @Inject constructor(
         networkStatusMonitor.networkStatus,
         localOverlayState,
     ) { apps, prefs, network, overlay ->
+        if (!hasEvaluatedStartupPrompt) {
+            hasEvaluatedStartupPrompt = true
+            if (!overlay.defaultLauncherState.isEffectivelyDefault &&
+                prefs.promptDefaultLauncherOnStartup
+            ) {
+                isLauncherSetupStartupPrompt.value = true
+                showLauncherSetupDialog.value = true
+            }
+        }
+
         val sections = buildHomeSections(apps, prefs)
         val effectiveFocus = overlay.focusedApp?.let { current ->
             apps.firstOrNull { it.packageName == current.packageName }
@@ -71,6 +97,8 @@ class HomeViewModel @Inject constructor(
             defaultLauncherState = overlay.defaultLauncherState,
             capabilities = capabilities,
             statusMessage = overlay.statusMessage,
+            showLauncherSetupDialog = overlay.showLauncherSetupDialog,
+            isLauncherSetupStartupPrompt = overlay.isLauncherSetupStartupPrompt,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -121,7 +149,29 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onRefreshLauncherState() {
-        defaultLauncherState.value = defaultLauncherHelper.getState()
+        val previous = defaultLauncherState.value
+        val updated = defaultLauncherHelper.getState()
+        defaultLauncherState.value = updated
+        if (showLauncherSetupDialog.value && !previous.isEffectivelyDefault && updated.isEffectivelyDefault) {
+            showLauncherSetupDialog.value = false
+            statusMessage.value = HomeStatusMessage.LauncherActivated
+        }
+    }
+
+    fun onOpenLauncherSetup() {
+        isLauncherSetupStartupPrompt.value = false
+        showLauncherSetupDialog.value = true
+    }
+
+    fun onDismissLauncherSetup() {
+        showLauncherSetupDialog.value = false
+    }
+
+    fun onDisableStartupLauncherPrompt() {
+        showLauncherSetupDialog.value = false
+        viewModelScope.launch {
+            preferencesRepository.setPromptDefaultLauncherOnStartup(false)
+        }
     }
 
     fun onClearStatusMessage() {
@@ -133,6 +183,8 @@ class HomeViewModel @Inject constructor(
         val contextMenuApp: AppInfo?,
         val statusMessage: HomeStatusMessage?,
         val defaultLauncherState: DefaultLauncherState,
+        val showLauncherSetupDialog: Boolean,
+        val isLauncherSetupStartupPrompt: Boolean,
     )
 
     internal data class HomeSections(

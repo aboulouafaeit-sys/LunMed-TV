@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.lunmed.tv.core.design.theme.LunmedTheme
 import com.lunmed.tv.core.navigation.LunmedDestination
 import com.lunmed.tv.core.navigation.remote.RemoteCommand
 import com.lunmed.tv.core.navigation.remote.onRemoteKeyCommand
+import com.lunmed.tv.core.ui.components.DefaultLauncherSetupDialog
 import com.lunmed.tv.core.ui.components.LunmedAmbientCanvas
 import com.lunmed.tv.core.ui.components.LunmedTopBar
 import com.lunmed.tv.feature.settings.components.ResetConfirmationDialog
@@ -76,6 +79,7 @@ fun SettingsRoute(
         onToggleShowDeviceIndicators = viewModel::onToggleShowDeviceIndicators,
         onToggleShowRecentApps = viewModel::onToggleShowRecentApps,
         onToggleShowStartupSplash = viewModel::onToggleShowStartupSplash,
+        onTogglePromptDefaultLauncherOnStartup = viewModel::onTogglePromptDefaultLauncherOnStartup,
         onEnforceRootDefault = viewModel::onEnforceRootPermanentDefault,
         onRevertRootDefault = viewModel::onRevertRootEnforcement,
         onSetLanguageTag = viewModel::onSetLanguageTag,
@@ -104,6 +108,7 @@ fun SettingsScreen(
     onToggleShowDeviceIndicators: (Boolean) -> Unit,
     onToggleShowRecentApps: (Boolean) -> Unit,
     onToggleShowStartupSplash: (Boolean) -> Unit = {},
+    onTogglePromptDefaultLauncherOnStartup: (Boolean) -> Unit = {},
     onEnforceRootDefault: () -> Unit = {},
     onRevertRootDefault: () -> Unit = {},
     onSetLanguageTag: (String) -> Unit,
@@ -113,12 +118,19 @@ fun SettingsScreen(
 ) {
     val spacing = LunmedTheme.spacing
     val colors = LunmedTheme.colors
+    var showLauncherSetupDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.defaultLauncherState.isEffectivelyDefault) {
+        if (uiState.defaultLauncherState.isEffectivelyDefault && showLauncherSetupDialog) {
+            showLauncherSetupDialog = false
+        }
+    }
 
     BackHandler(enabled = true) {
-        if (uiState.isResetConfirmationOpen) {
-            onDismissResetConfirmation()
-        } else {
-            onNavigate(LunmedDestination.HOME)
+        when {
+            showLauncherSetupDialog -> showLauncherSetupDialog = false
+            uiState.isResetConfirmationOpen -> onDismissResetConfirmation()
+            else -> onNavigate(LunmedDestination.HOME)
         }
     }
 
@@ -149,10 +161,10 @@ fun SettingsScreen(
                 capabilities = uiState.capabilities,
                 showClock = uiState.preferences.showClock,
                 showDeviceIndicators = uiState.preferences.showDeviceIndicators,
-                isDefaultLauncher = uiState.defaultLauncherState.isDefaultLauncher,
-                canRequestDefaultLauncher = uiState.defaultLauncherState.canRequestRole,
+                isDefaultLauncher = uiState.defaultLauncherState.isEffectivelyDefault,
+                canRequestDefaultLauncher = !uiState.defaultLauncherState.isEffectivelyDefault,
                 onNavigate = onNavigate,
-                onRequestDefaultLauncher = onRequestDefaultLauncher,
+                onRequestDefaultLauncher = { showLauncherSetupDialog = true },
             )
 
             Spacer(modifier = Modifier.height(spacing.sm))
@@ -184,6 +196,7 @@ fun SettingsScreen(
                     onToggleShowDeviceIndicators = onToggleShowDeviceIndicators,
                     onToggleShowRecentApps = onToggleShowRecentApps,
                     onToggleShowStartupSplash = onToggleShowStartupSplash,
+                    onTogglePromptDefaultLauncherOnStartup = onTogglePromptDefaultLauncherOnStartup,
                     onRequestDefaultLauncher = onRequestDefaultLauncher,
                     onRequestDeviceAdmin = onRequestDeviceAdmin,
                     onOpenAndroidSettings = onOpenAndroidSettings,
@@ -224,6 +237,17 @@ fun SettingsScreen(
             ResetConfirmationDialog(
                 onConfirm = onConfirmResetToDefaults,
                 onDismiss = onDismissResetConfirmation,
+            )
+        }
+
+        if (showLauncherSetupDialog) {
+            DefaultLauncherSetupDialog(
+                defaultLauncherState = uiState.defaultLauncherState,
+                isStartupPrompt = false,
+                onEnableAccessibilityWatchdog = onOpenAccessibilitySettings,
+                onRequestSystemHomeRole = onRequestDefaultLauncher,
+                onRequestDeviceAdmin = onRequestDeviceAdmin,
+                onDismiss = { showLauncherSetupDialog = false },
             )
         }
     }

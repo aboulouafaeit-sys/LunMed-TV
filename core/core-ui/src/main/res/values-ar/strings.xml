@@ -289,5 +289,26 @@
     <string name="settings_reset_all">إعادة كل التفضيلات إلى الافتراضي</string>
     <string name="settings_reset_all_sub">يعيد ثيم المصنع والتخطيط وإعدادات الحركة</string>
     <string name="settings_stb_command">أمر القفل الدائم لأجهزة STB / الموزعين (ADB):</string>
+
+    <!-- نافذة تفعيل اللانشر الافتراضي وإمكانية الوصول (نمط Projectivy) -->
+    <string name="launcher_setup_title">تفعيل LUNMED TV كلانشر افتراضي</string>
+    <string name="launcher_setup_subtitle">اختر الطريقة الأنسب لاعتراض زر الرئيسية واستبدال المشغل الأصلي على جهازك.</string>
+    <string name="launcher_setup_accessibility_title">البديل التلقائي عبر إمكانية الوصول (مثل Projectivy)</string>
+    <string name="launcher_setup_accessibility_sub">مُوصى به لأجهزة Google TV و Fire TV و TV Box. يلتقط زر الرئيسية ويمنع عودة مشغل الشركة تلقائياً.</string>
+    <string name="launcher_setup_accessibility_guide">في الشاشة التالية: قم بتفعيل «مراقب لانشر LUNMED TV الافتراضي»</string>
+    <string name="launcher_setup_badge_recommended">مُوصى به</string>
+    <string name="launcher_setup_badge_active">مُفعّل</string>
+    <string name="launcher_setup_badge_inactive">غير مُفعّل</string>
+    <string name="launcher_setup_role_title">محدد الرئيسية القياسي في أندرويد</string>
+    <string name="launcher_setup_role_sub">يستخدم خيار النظام الرسمي في أندرويد (إن كان مدعوماً في نظامك)</string>
+    <string name="launcher_setup_role_held">مُعيّن بالفعل كرئيسية في النظام</string>
+    <string name="launcher_setup_admin_title">تفعيل مدير الجهاز (تثبيت إضافي)</string>
+    <string name="launcher_setup_admin_sub">يساعد على استعادة اللانشر بعد إعادة التشغيل في الرومات المقيدة</string>
+    <string name="launcher_setup_later">تذكير لاحقاً</string>
+    <string name="launcher_setup_close">إغلاق</string>
+    <string name="launcher_setup_dont_ask">عدم الإظهار عند البدء</string>
+    <string name="launcher_setup_activated_toast">تم تفعيل LUNMED TV كلانشر افتراضي بنجاح!</string>
+    <string name="settings_prompt_startup_title">مطالبة التعيين الافتراضي عند البدء</string>
+    <string name="settings_prompt_startup_sub">إظهار نافذة التفعيل عند التشغيل إذا لم يكن اللانشر أو المراقب مفعّلاً</string>
 </resources>
 

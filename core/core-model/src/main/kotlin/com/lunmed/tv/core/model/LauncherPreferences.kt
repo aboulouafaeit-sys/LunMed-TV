@@ -45,5 +45,6 @@ data class LauncherPreferences(
     val languageTag: String = "system",
     val selectedWallpaperId: String = "lunmed_aurora_nordic",
     val showStartupSplash: Boolean = true,
+    val promptDefaultLauncherOnStartup: Boolean = true,
 )
 

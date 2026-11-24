@@ -181,6 +181,8 @@ class MainActivity : ComponentActivity() {
                                 viewModel = homeViewModel,
                                 onNavigate = ::handleNavigate,
                                 onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onOpenAccessibilitySettings = ::openAccessibilitySettings,
+                                onRequestDeviceAdmin = ::requestDeviceAdmin,
                                 onOpenAppInfo = ::openAppInfo,
                             )
                         }
@@ -204,6 +206,8 @@ class MainActivity : ComponentActivity() {
                             DeviceCenterRoute(
                                 onNavigate = ::handleNavigate,
                                 onRequestDefaultLauncher = ::requestDefaultLauncher,
+                                onOpenAccessibilitySettings = ::openAccessibilitySettings,
+                                onRequestDeviceAdmin = ::requestDeviceAdmin,
                                 onOpenAndroidSettings = ::openAndroidSettings,
                             )
                         }

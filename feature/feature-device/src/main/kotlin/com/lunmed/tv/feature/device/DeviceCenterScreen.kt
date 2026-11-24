@@ -60,6 +60,7 @@ import com.lunmed.tv.core.navigation.LunmedDestination
 import com.lunmed.tv.core.navigation.focus.lunmedFocusGroupRestorer
 import com.lunmed.tv.core.navigation.remote.RemoteCommand
 import com.lunmed.tv.core.navigation.remote.onRemoteKeyCommand
+import com.lunmed.tv.core.ui.components.DefaultLauncherSetupDialog
 import com.lunmed.tv.core.ui.components.LunmedAmbientCanvas
 import com.lunmed.tv.core.ui.components.LunmedTopBar
 import com.lunmed.tv.core.ui.R
@@ -74,6 +75,8 @@ import kotlinx.coroutines.delay
 fun DeviceCenterRoute(
     onNavigate: (LunmedDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit = {},
+    onRequestDeviceAdmin: () -> Unit = {},
     onOpenAndroidSettings: () -> Unit,
     viewModel: DeviceCenterViewModel = hiltViewModel(),
 ) {
@@ -94,6 +97,8 @@ fun DeviceCenterRoute(
         uiState = uiState,
         onNavigate = onNavigate,
         onRequestDefaultLauncher = onRequestDefaultLauncher,
+        onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+        onRequestDeviceAdmin = onRequestDeviceAdmin,
         onOpenAndroidSettings = onOpenAndroidSettings,
         onSelectTab = viewModel::onSelectTab,
         onRefreshDiagnostics = viewModel::onRefreshDiagnostics,
@@ -107,6 +112,8 @@ fun DeviceCenterScreen(
     uiState: DeviceCenterUiState,
     onNavigate: (LunmedDestination) -> Unit,
     onRequestDefaultLauncher: () -> Unit,
+    onOpenAccessibilitySettings: () -> Unit = {},
+    onRequestDeviceAdmin: () -> Unit = {},
     onOpenAndroidSettings: () -> Unit,
     onSelectTab: (DeviceCenterTab) -> Unit,
     onRefreshDiagnostics: () -> Unit,
@@ -115,9 +122,20 @@ fun DeviceCenterScreen(
 ) {
     val colors = LunmedTheme.colors
     val spacing = LunmedTheme.spacing
+    var showLauncherSetupDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.defaultLauncherState.isEffectivelyDefault) {
+        if (uiState.defaultLauncherState.isEffectivelyDefault && showLauncherSetupDialog) {
+            showLauncherSetupDialog = false
+        }
+    }
 
     BackHandler(enabled = true) {
-        onNavigate(LunmedDestination.HOME)
+        if (showLauncherSetupDialog) {
+            showLauncherSetupDialog = false
+        } else {
+            onNavigate(LunmedDestination.HOME)
+        }
     }
 
     LunmedAmbientCanvas(
@@ -143,10 +161,10 @@ fun DeviceCenterScreen(
                 capabilities = uiState.capabilities,
                 showClock = uiState.preferences.showClock,
                 showDeviceIndicators = uiState.preferences.showDeviceIndicators,
-                isDefaultLauncher = uiState.defaultLauncherState.isDefaultLauncher,
-                canRequestDefaultLauncher = uiState.defaultLauncherState.canRequestRole,
+                isDefaultLauncher = uiState.defaultLauncherState.isEffectivelyDefault,
+                canRequestDefaultLauncher = !uiState.defaultLauncherState.isEffectivelyDefault,
                 onNavigate = onNavigate,
-                onRequestDefaultLauncher = onRequestDefaultLauncher,
+                onRequestDefaultLauncher = { showLauncherSetupDialog = true },
             )
 
             // Sub Tab Bar (Resources, Wallpapers, Hardware)
@@ -224,6 +242,17 @@ fun DeviceCenterScreen(
                     color = colors.statusSuccess,
                 )
             }
+        }
+
+        if (showLauncherSetupDialog) {
+            DefaultLauncherSetupDialog(
+                defaultLauncherState = uiState.defaultLauncherState,
+                isStartupPrompt = false,
+                onEnableAccessibilityWatchdog = onOpenAccessibilitySettings,
+                onRequestSystemHomeRole = onRequestDefaultLauncher,
+                onRequestDeviceAdmin = onRequestDeviceAdmin,
+                onDismiss = { showLauncherSetupDialog = false },
+            )
         }
     }
 }
